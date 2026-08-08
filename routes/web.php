@@ -1,6 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\SocialiteController;
+
+
+
+// Email Verification Routes
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/home');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+// Dynamic Social Login Routes
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('social.callback');
 
 // Frontend Routes
 Route::get('/', [App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('home');
@@ -15,7 +39,7 @@ Route::get('/contact', [App\Http\Controllers\Frontend\PageController::class, 'co
 require __DIR__ . '/auth.php';
 
 // Admin Routes Group
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 
     // Jobs
@@ -46,12 +70,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 });
 
 // Super Admin Only Routes (User deletion, etc.)
-Route::prefix('admin')->middleware(['auth', 'superadmin'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified', 'superadmin'])->group(function () {
     Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
 });
 
 // Author Routes (Post jobs, news, scholarships, admissions)
-Route::prefix('author')->middleware(['auth', 'author'])->group(function () {
+Route::prefix('author')->middleware(['auth', 'verified', 'author'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Author\DashboardController::class, 'index'])->name('author.dashboard');
     Route::resource('jobs', App\Http\Controllers\Author\JobController::class, ['as' => 'author']);
     Route::resource('news', App\Http\Controllers\Author\NewsController::class, ['as' => 'author']);
@@ -60,7 +84,7 @@ Route::prefix('author')->middleware(['auth', 'author'])->group(function () {
 });
 
 // Employer Routes
-Route::prefix('employer')->middleware(['auth', 'employer'])->group(function () {
+Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Employer\DashboardController::class, 'index'])->name('employer.dashboard');
     Route::resource('jobs', App\Http\Controllers\Employer\JobController::class, ['as' => 'employer']);
     Route::get('/applications', [App\Http\Controllers\Employer\ApplicationController::class, 'index'])->name('employer.applications.index');
@@ -71,7 +95,7 @@ Route::prefix('employer')->middleware(['auth', 'employer'])->group(function () {
 });
 
 // Seeker Routes
-Route::prefix('seeker')->middleware(['auth', 'seeker'])->group(function () {
+Route::prefix('seeker')->middleware(['auth', 'verified', 'seeker'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Seeker\DashboardController::class, 'index'])->name('seeker.dashboard');
     Route::get('/profile', [App\Http\Controllers\Seeker\ProfileController::class, 'edit'])->name('seeker.profile.edit');
     Route::put('/profile', [App\Http\Controllers\Seeker\ProfileController::class, 'update'])->name('seeker.profile.update');
@@ -80,4 +104,16 @@ Route::prefix('seeker')->middleware(['auth', 'seeker'])->group(function () {
     Route::get('/favourites', [App\Http\Controllers\Seeker\FavouriteController::class, 'index'])->name('seeker.favourites.index');
     Route::post('/favourites/{job}', [App\Http\Controllers\Seeker\FavouriteController::class, 'store'])->name('seeker.favourites.store');
     Route::delete('/favourites/{job}', [App\Http\Controllers\Seeker\FavouriteController::class, 'destroy'])->name('seeker.favourites.destroy');
+});
+
+
+
+
+
+// Temporary test route for direct logout via URL
+Route::get('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
 });

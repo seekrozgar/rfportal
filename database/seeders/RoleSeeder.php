@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
+        // Create permissions safely
         $permissions = [
             'manage jobs',
             'manage companies',
@@ -32,15 +32,15 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Create roles and assign permissions
-        $superAdmin = Role::create(['name' => 'superadmin']);
-        $superAdmin->givePermissionTo(Permission::all());
+        // Create roles safely and assign permissions
+        $superAdmin = Role::firstOrCreate(['name' => 'superadmin', 'guard_name' => 'web']);
+        $superAdmin->syncPermissions(Permission::all()); // syncPermissions duplicate entries se bachata hai
 
-        $admin = Role::create(['name' => 'admin']);
-        $admin->givePermissionTo([
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $admin->syncPermissions([
             'manage jobs',
             'manage companies',
             'manage users',
@@ -53,8 +53,8 @@ class RoleSeeder extends Seeder
             'manage results',
         ]);
 
-        $author = Role::create(['name' => 'author']);
-        $author->givePermissionTo([
+        $author = Role::firstOrCreate(['name' => 'author', 'guard_name' => 'web']);
+        $author->syncPermissions([
             'manage jobs',
             'manage blog',
             'manage scholarships',
@@ -63,7 +63,8 @@ class RoleSeeder extends Seeder
             'manage results',
         ]);
 
-        Role::create(['name' => 'employer']);
-        Role::create(['name' => 'seeker']);
+        // Seeker aur Employer roles safely create karein
+        Role::firstOrCreate(['name' => 'employer', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'seeker', 'guard_name' => 'web']);
     }
 }
