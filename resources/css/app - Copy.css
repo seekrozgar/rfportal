@@ -1,0 +1,562 @@
+/* ============================================================
+   🎯 ROZGAAR FINDER - MASTER STYLESHEET
+   ============================================================
+   📁 File: resources/css/app.css
+   📅 Version: 1.0.0
+
+   📋 TABLE OF CONTENTS:
+   1.  Framework Imports
+   2.  Root Variables
+   3.  Global Reset & Base
+   4.  Auth Pages Layout
+   5.  Auth Card Components
+   6.  Auth Icons
+   7.  Form Elements
+   8.  Password Toggle
+   9.  Buttons
+   10. Role Buttons (Register)
+   11. Social Login
+   12. Links
+   13. Alerts
+   14. Utilities
+   15. Responsive Breakpoints
+   ============================================================ */
+
+/* ============================================================
+   1.  FRAMEWORK IMPORTS
+   ============================================================ */
+/* Bootstrap 5 - Base framework */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Font Awesome 6 - Icons library */
+@import 'font-awesome/css/font-awesome.min.css';
+
+/* Material Design Iconic Font - Additional icons */
+@import 'material-design-iconic-font/dist/css/material-design-iconic-font.min.css';
+
+/* Select2 - Enhanced dropdowns */
+@import 'select2/dist/css/select2.min.css';
+
+
+/* ============================================================
+   2.  ROOT VARIABLES
+   ============================================================ */
+:root {
+    /* 🎨 Brand Colors */
+    --primary-color: #11998e;
+    --secondary-color: #38ef7d;
+    --gradient-main: linear-gradient(to left, #11998e, #38ef7d);
+    --gradient-body: linear-gradient(to bottom, #11998e, #38ef7d);
+
+    /* 📝 Typography */
+    --font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* 📦 Spacing */
+    --card-padding-desktop: 40px 50px;
+    --card-padding-tablet: 25px 20px;
+    --card-padding-mobile: 20px 15px;
+
+    /* 🔲 Border Radius */
+    --radius-card: 10px;
+    --radius-input: 8px;
+    --radius-button: 25px;
+
+    /* 📐 Max Widths */
+    --auth-max-width: 600px;
+}
+
+
+/* ============================================================
+   3.  GLOBAL RESET & BASE
+   ============================================================ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--gradient-body);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* ============================================================
+   4.  AUTH PAGES LAYOUT
+   ============================================================
+   📌 Used in: login, register, verify-email,
+               forgot-password, reset-password, confirm-password
+   ============================================================ */
+.auth-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 45px 15px 50px;
+}
+
+.auth-wrapper .auth-container {
+    width: 100%;
+    max-width: var(--auth-max-width);
+    margin: 0 auto;
+}
+
+
+/* ============================================================
+   5.  AUTH CARD COMPONENTS
+   ============================================================
+   📌 Reusable card for all auth pages
+   ============================================================ */
+.auth-card {
+    border-radius: var(--radius-card);
+    background: #ffffff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+/* 🎯 Card Header - Gradient Background */
+.auth-card .auth-card-header {
+    background: var(--gradient-main);
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.auth-card .auth-card-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.auth-card .auth-card-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+/* 🎯 Card Body */
+.auth-card .auth-card-body {
+    padding: var(--card-padding-desktop);
+}
+
+
+/* ============================================================
+   6.  AUTH ICONS
+   ============================================================
+   📌 Gradient icons for auth pages
+   ============================================================ */
+.auth-icon {
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* 📌 Gradient text for icons (with vendor prefixes) */
+.auth-icon .fa-icon,
+.auth-icon .fas,
+.auth-icon .far {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--primary-color); /* Fallback for older browsers */
+}
+
+
+/* ============================================================
+   7.  FORM ELEMENTS
+   ============================================================ */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group .name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #333333;
+    margin-bottom: 8px;
+}
+
+/* 📌 Input Fields */
+.input--style-5 {
+    width: 100%;
+    padding: 12px 18px;
+    border: 1px solid #e5e5e5;
+    border-radius: var(--radius-input);
+    font-size: 14px;
+    font-family: var(--font-family);
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.input--style-5:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.2);
+    background: #ffffff;
+}
+
+.input--style-5.is-invalid {
+    border-color: #e74c3c;
+}
+
+/* 📌 Password Hint */
+.password-hint {
+    font-size: 12px;
+    color: #999999;
+    margin-top: 3px;
+}
+
+
+/* ============================================================
+   8.  PASSWORD TOGGLE (Eye Icon)
+   ============================================================
+   📌 Used in: login, reset-password, confirm-password
+   ============================================================ */
+.password-toggle-wrapper {
+    position: relative;
+}
+
+.password-toggle-wrapper .input--style-5 {
+    padding-right: 45px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999999;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px 8px;
+    transition: color 0.3s ease;
+}
+
+.password-toggle-btn:hover {
+    color: var(--primary-color);
+}
+
+.password-toggle-btn:focus {
+    outline: none;
+}
+
+
+/* ============================================================
+   9.  BUTTONS
+   ============================================================ */
+/* 📌 Primary Gradient Button */
+.btn-gradient {
+    background: var(--gradient-main);
+    color: #ffffff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: var(--radius-button);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    letter-spacing: 0.5px;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(56, 239, 125, 0.4);
+    color: #ffffff;
+}
+
+/* 📌 Outline Gradient Button */
+.btn-outline-gradient {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 10px 25px;
+    border-radius: var(--radius-button);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-outline-gradient:hover {
+    background: var(--primary-color);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(17, 153, 142, 0.3);
+}
+
+
+/* ============================================================
+   10. ROLE BUTTONS (Register Page)
+   ============================================================ */
+.role-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.role-btn {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid #e5e5e5;
+    border-radius: var(--radius-input);
+    background: #f8f9fa;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: #666666;
+}
+
+.role-btn:hover {
+    border-color: var(--secondary-color);
+    background: #f0f8f0;
+}
+
+.role-btn.active {
+    border-color: var(--secondary-color);
+    background: var(--secondary-color);
+    color: #ffffff;
+}
+
+.role-btn .icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.role-btn .label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.role-btn small {
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+.role-btn input[type="radio"] {
+    display: none;
+}
+
+
+/* ============================================================
+   11. SOCIAL LOGIN
+   ============================================================ */
+.social-login {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.social-login .divider {
+    position: relative;
+    margin: 20px 0;
+}
+
+.social-login .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #dddddd;
+}
+
+.social-login .divider span {
+    background: #ffffff;
+    padding: 0 15px;
+    position: relative;
+    color: #999999;
+    font-size: 14px;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.social-btn {
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: var(--radius-button);
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #333333;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.social-btn:hover {
+    background: #f5f5f5;
+    border-color: #bbbbbb;
+}
+
+.social-btn.google:hover {
+    border-color: #DB4437;
+    color: #DB4437;
+}
+
+.social-btn.github:hover {
+    border-color: #333333;
+    color: #333333;
+}
+
+
+/* ============================================================
+   12. LINKS
+   ============================================================ */
+/* 📌 Auth page links (Forgot Password, Register, Back to Login) */
+.auth-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666666;
+}
+
+.auth-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* 📌 Forgot Password (inside login form) */
+.forgot-link {
+    font-size: 14px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   13. ALERTS
+   ============================================================ */
+.alert-custom {
+    padding: 12px 20px;
+    border-radius: var(--radius-input);
+    margin-bottom: 15px;
+}
+
+.alert-custom.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-custom.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-custom.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+
+/* ============================================================
+   14. UTILITIES
+   ============================================================ */
+/* 📌 Text Gradient */
+.text-gradient {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--primary-color);
+}
+
+/* 📌 Remember Me Checkbox */
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.25);
+}
+
+.form-check-label {
+    font-size: 14px;
+    color: #666666;
+}
+
+
+/* ============================================================
+   15. RESPONSIVE BREAKPOINTS
+   ============================================================ */
+
+/* 📱 Tablets and smaller desktops (max-width: 992px) */
+@media (max-width: 992px) {
+    .auth-card .auth-card-body {
+        padding: var(--card-padding-tablet);
+    }
+}
+
+/* 📱 Mobile devices (max-width: 768px) */
+@media (max-width: 768px) {
+    /* Auth Card */
+    .auth-card .auth-card-header h2 {
+        font-size: 22px;
+    }
+
+    .auth-card .auth-card-body {
+        padding: var(--card-padding-tablet);
+    }
+
+    /* Role Buttons - Stack vertically */
+    .role-buttons {
+        flex-direction: column;
+    }
+
+    /* Social Login - Stack vertically */
+    .social-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .social-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* 📱 Small mobile devices (max-width: 480px) */
+@media (max-width: 480px) {
+    .auth-wrapper {
+        padding: 20px 10px;
+    }
+
+    .auth-card .auth-card-body {
+        padding: var(--card-padding-mobile);
+    }
+}

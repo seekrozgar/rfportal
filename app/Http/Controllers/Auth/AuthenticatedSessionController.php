@@ -70,11 +70,21 @@ class AuthenticatedSessionController extends Controller
         session()->forget('unverified_user_id');
 
         // 6. ✅ Role-based redirect
-        Log::info('🔍 CHECKING USER ROLES', ['user_id' => $user->id, 'role_column' => $user->role]);
+        Log::info('🔍 CHECKING USER ROLES', ['user_id' => $user->id, 'role_column' => $user->role, 'spatie_roles' => $user->getRoleNames()->toArray()]);
 
-        if ($user->hasRole('superadmin') || $user->hasRole('admin') || $user->hasRole('author')) {
-            Log::info('➡️ REDIRECTING TO ADMIN DASHBOARD');
+        if ($user->hasRole('superadmin')) {
+            Log::info('➡️ SUPERADMIN - REDIRECTING TO ADMIN DASHBOARD');
             return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->hasRole('admin')) {
+            Log::info('➡️ ADMIN - REDIRECTING TO ADMIN DASHBOARD');
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->hasRole('author')) {
+            Log::info('➡️ AUTHOR - REDIRECTING TO AUTHOR DASHBOARD');
+            return redirect()->route('author.dashboard');
         }
 
         if ($user->hasRole('employer')) {
@@ -86,6 +96,8 @@ class AuthenticatedSessionController extends Controller
             Log::info('➡️ REDIRECTING TO SEEKER DASHBOARD');
             return redirect()->route('seeker.dashboard');
         }
+
+        // 6. Fallback
 
         Log::warning('⚠️ NO ROLE FOUND - REDIRECT TO HOME');
         return redirect()->route('home')->with('warning', 'No role assigned. Please contact admin.');

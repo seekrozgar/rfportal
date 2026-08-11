@@ -1,29 +1,6 @@
 /* ============================================================
-   🎯 ROZGAAR FINDER - MASTER STYLESHEET
-   ============================================================
-   📁 File: resources/css/app.css
-   📅 Version: 1.0.0
-
-   📋 TABLE OF CONTENTS:
-   1.  Framework Imports
-   2.  Root Variables
-   3.  Global Reset & Base
-   4.  Auth Pages Layout
-   5.  Auth Card Components
-   6.  Auth Icons
-   7.  Form Elements
-   8.  Password Toggle
-   9.  Buttons
-   10. Role Buttons (Register)
-   11. Social Login
-   12. Links
-   13. Alerts
-   14. Utilities
-   15. Responsive Breakpoints
-   ============================================================ */
-
-/* ============================================================
-   1.  FRAMEWORK IMPORTS
+   ROZGAR FINDER - MASTER STYLESHEET
+   Includes: Auth, Frontend, Admin
    ============================================================ */
 /* Bootstrap 5 - Base framework */
 @import 'bootstrap/dist/css/bootstrap.min.css';
@@ -31,15 +8,21 @@
 /* Font Awesome 6 - Icons library */
 @import 'font-awesome/css/font-awesome.min.css';
 
-/* Material Design Iconic Font - Additional icons */
+/* ✅ Material Design Iconic Font */
 @import 'material-design-iconic-font/dist/css/material-design-iconic-font.min.css';
 
-/* Select2 - Enhanced dropdowns */
+
+/* ✅ DataTables CSS */
+@import 'datatables.net-dt/css/jquery.dataTables.min.css';
+
+/* ✅ Toastr */
+@import 'toastr/build/toastr.min.css';
+
+/* ✅ Select2 CSS */
 @import 'select2/dist/css/select2.min.css';
 
-
 /* ============================================================
-   2.  ROOT VARIABLES
+   1. ROOT VARIABLES
    ============================================================ */
 :root {
     /* 🎨 Brand Colors */
@@ -63,11 +46,21 @@
 
     /* 📐 Max Widths */
     --auth-max-width: 600px;
+
+    /* 🎨 Admin Colors */
+    --admin-sidebar-width: 260px;
+    --admin-header-height: 64px;
+    --admin-bg: #f0f2f5;
+    --admin-card-bg: #ffffff;
+    --admin-text-dark: #2c3e50;
+    --admin-text-light: #7f8c8d;
+    --admin-border: #e9ecef;
+    --admin-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    --admin-sidebar-dark: #1a1a2e;
 }
 
-
 /* ============================================================
-   3.  GLOBAL RESET & BASE
+   2. GLOBAL RESET & BASE
    ============================================================ */
 * {
     box-sizing: border-box;
@@ -75,28 +68,22 @@
 
 body {
     font-family: var(--font-family);
-    background: var(--gradient-body);
+    background: #f8f9fa;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
     margin: 0;
     padding: 0;
 }
 
-
 /* ============================================================
-   4.  AUTH PAGES LAYOUT
-   ============================================================
-   📌 Used in: login, register, verify-email,
-               forgot-password, reset-password, confirm-password
+   3. AUTH PAGES LAYOUT
    ============================================================ */
 .auth-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    width: 100%;
     padding: 45px 15px 50px;
+    background: var(--gradient-body);
 }
 
 .auth-wrapper .auth-container {
@@ -105,12 +92,6 @@ body {
     margin: 0 auto;
 }
 
-
-/* ============================================================
-   5.  AUTH CARD COMPONENTS
-   ============================================================
-   📌 Reusable card for all auth pages
-   ============================================================ */
 .auth-card {
     border-radius: var(--radius-card);
     background: #ffffff;
@@ -118,7 +99,6 @@ body {
     overflow: hidden;
 }
 
-/* 🎯 Card Header - Gradient Background */
 .auth-card .auth-card-header {
     background: var(--gradient-main);
     padding: 30px 20px;
@@ -139,24 +119,16 @@ body {
     font-size: 14px;
 }
 
-/* 🎯 Card Body */
 .auth-card .auth-card-body {
     padding: var(--card-padding-desktop);
 }
 
-
-/* ============================================================
-   6.  AUTH ICONS
-   ============================================================
-   📌 Gradient icons for auth pages
-   ============================================================ */
 .auth-icon {
     font-size: 64px;
     text-align: center;
     margin-bottom: 15px;
 }
 
-/* 📌 Gradient text for icons (with vendor prefixes) */
 .auth-icon .fa-icon,
 .auth-icon .fas,
 .auth-icon .far {
@@ -164,12 +136,11 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: var(--primary-color); /* Fallback for older browsers */
+    color: var(--primary-color);
 }
 
-
 /* ============================================================
-   7.  FORM ELEMENTS
+   4. AUTH FORM ELEMENTS
    ============================================================ */
 .form-group {
     margin-bottom: 20px;
@@ -182,7 +153,6 @@ body {
     margin-bottom: 8px;
 }
 
-/* 📌 Input Fields */
 .input--style-5 {
     width: 100%;
     padding: 12px 18px;
@@ -205,19 +175,12 @@ body {
     border-color: #e74c3c;
 }
 
-/* 📌 Password Hint */
 .password-hint {
     font-size: 12px;
     color: #999999;
     margin-top: 3px;
 }
 
-
-/* ============================================================
-   8.  PASSWORD TOGGLE (Eye Icon)
-   ============================================================
-   📌 Used in: login, reset-password, confirm-password
-   ============================================================ */
 .password-toggle-wrapper {
     position: relative;
 }
@@ -248,11 +211,9 @@ body {
     outline: none;
 }
 
-
 /* ============================================================
-   9.  BUTTONS
+   5. BUTTONS
    ============================================================ */
-/* 📌 Primary Gradient Button */
 .btn-gradient {
     background: var(--gradient-main);
     color: #ffffff;
@@ -273,7 +234,6 @@ body {
     color: #ffffff;
 }
 
-/* 📌 Outline Gradient Button */
 .btn-outline-gradient {
     background: transparent;
     color: var(--primary-color);
@@ -295,9 +255,65 @@ body {
     box-shadow: 0 5px 20px rgba(17, 153, 142, 0.3);
 }
 
+/* ✅ Admin Buttons */
+.btn-admin-primary {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-admin-primary:hover {
+    background: #0d7a72;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+}
+
+.btn-admin-danger {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-danger:hover {
+    background: #c0392b;
+    color: #fff;
+}
+
+.btn-admin-outline {
+    background: transparent;
+    color: var(--admin-text-dark);
+    border: 1px solid var(--admin-border);
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-outline:hover {
+    background: var(--admin-bg);
+}
 
 /* ============================================================
-   10. ROLE BUTTONS (Register Page)
+   6. ROLE BUTTONS (Register Page)
    ============================================================ */
 .role-buttons {
     display: flex;
@@ -351,9 +367,8 @@ body {
     display: none;
 }
 
-
 /* ============================================================
-   11. SOCIAL LOGIN
+   7. SOCIAL LOGIN
    ============================================================ */
 .social-login {
     margin-top: 20px;
@@ -419,11 +434,9 @@ body {
     color: #333333;
 }
 
-
 /* ============================================================
-   12. LINKS
+   8. LINKS
    ============================================================ */
-/* 📌 Auth page links (Forgot Password, Register, Back to Login) */
 .auth-link {
     text-align: center;
     margin-top: 15px;
@@ -441,7 +454,6 @@ body {
     text-decoration: underline;
 }
 
-/* 📌 Forgot Password (inside login form) */
 .forgot-link {
     font-size: 14px;
     color: var(--primary-color);
@@ -453,9 +465,8 @@ body {
     text-decoration: underline;
 }
 
-
 /* ============================================================
-   13. ALERTS
+   9. ALERTS
    ============================================================ */
 .alert-custom {
     padding: 12px 20px;
@@ -481,12 +492,53 @@ body {
     border: 1px solid #bee5eb;
 }
 
-
 /* ============================================================
-   14. UTILITIES
+   10. ADMIN LAYOUT
    ============================================================ */
-/* 📌 Text Gradient */
-.text-gradient {
+.admin-body {
+    background: var(--admin-bg);
+    min-height: 100vh;
+    font-family: var(--font-family);
+}
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ✅ Admin Sidebar */
+.admin-sidebar {
+    width: var(--admin-sidebar-width);
+    background: var(--admin-sidebar-dark);
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.admin-sidebar .brand {
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.admin-sidebar .brand h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 20px;
     background: var(--gradient-main);
     -webkit-background-clip: text;
     background-clip: text;
@@ -494,37 +546,367 @@ body {
     color: var(--primary-color);
 }
 
-/* 📌 Remember Me Checkbox */
-.form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+.admin-sidebar .brand small {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    display: block;
+    margin-top: 2px;
 }
 
-.form-check-input:focus {
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.25);
+.admin-sidebar .menu {
+    padding: 15px 0;
 }
 
-.form-check-label {
+.admin-sidebar .menu .menu-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 10px 20px 5px;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.admin-sidebar .menu .menu-item {
+    display: block;
+    padding: 10px 20px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
     font-size: 14px;
-    color: #666666;
+    border-left: 3px solid transparent;
+    position: relative;
 }
 
+.admin-sidebar .menu .menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.admin-sidebar .menu .menu-item.active {
+    background: rgba(17, 153, 142, 0.15);
+    color: #fff;
+    border-left-color: var(--primary-color);
+}
+
+.admin-sidebar .menu .menu-item i {
+    width: 22px;
+    margin-right: 10px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.admin-sidebar .menu .menu-item .badge {
+    float: right;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.admin-sidebar .menu .sub-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.admin-sidebar .menu .sub-menu.open {
+    display: block;
+}
+
+.admin-sidebar .menu .sub-menu .sub-item {
+    display: block;
+    padding: 8px 20px 8px 52px;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .menu .sub-menu .sub-item:hover {
+    color: #fff;
+}
+
+.admin-sidebar .menu .sub-menu .sub-item.active {
+    color: var(--secondary-color);
+}
+
+.admin-sidebar .menu .sub-menu .sub-item i {
+    width: 18px;
+    margin-right: 8px;
+    font-size: 12px;
+}
+
+.admin-sidebar .sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-sidebar .sidebar-footer .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-sidebar .sidebar-footer .user-info .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+}
+
+.admin-sidebar .sidebar-footer .user-info .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.admin-sidebar .sidebar-footer .user-info .role {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-sidebar .sidebar-footer .logout-btn {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-left: auto;
+}
+
+.admin-sidebar .sidebar-footer .logout-btn:hover {
+    color: #e74c3c;
+}
+
+/* ✅ Admin Content */
+.admin-content {
+    margin-left: var(--admin-sidebar-width);
+    flex: 1;
+    min-height: 100vh;
+}
+
+/* ✅ Admin Top Header */
+.admin-top-header {
+    background: #fff;
+    padding: 12px 25px;
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.admin-top-header .page-title h4 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--admin-text-dark);
+}
+
+.admin-top-header .page-title small {
+    color: var(--admin-text-light);
+    font-size: 12px;
+}
+
+.admin-top-header .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-top-header .header-actions .btn-toggle-sidebar {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--admin-text-dark);
+}
+
+/* ✅ Page Content */
+.admin-page-content {
+    padding: 25px;
+}
+
+/* ✅ Admin Cards */
+.admin-card {
+    background: var(--admin-card-bg);
+    border-radius: var(--radius-card);
+    box-shadow: var(--admin-shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--admin-border);
+}
+
+.admin-card .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-card .card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--admin-text-dark);
+}
+
+.admin-card .card-header .card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* ✅ Admin Tables */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 12px 15px;
+    background: var(--admin-bg);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--admin-text-light);
+    border-bottom: 2px solid var(--admin-border);
+}
+
+.admin-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--admin-border);
+    font-size: 14px;
+    color: var(--admin-text-dark);
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(17, 153, 142, 0.03);
+}
+
+/* ✅ Admin Stats Cards */
+.admin-stat-card {
+    background: var(--admin-card-bg);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    box-shadow: var(--admin-shadow);
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.admin-stat-card .stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--admin-text-dark);
+    margin: 0;
+}
+
+.admin-stat-card .stat-label {
+    font-size: 13px;
+    color: var(--admin-text-light);
+    margin: 0;
+}
+
+.admin-stat-card .stat-icon {
+    float: right;
+    font-size: 32px;
+    opacity: 0.2;
+    color: var(--primary-color);
+}
+
+.admin-stat-card.warning {
+    border-left-color: #f39c12;
+}
+
+.admin-stat-card.warning .stat-icon {
+    color: #f39c12;
+}
+
+.admin-stat-card.danger {
+    border-left-color: #e74c3c;
+}
+
+.admin-stat-card.danger .stat-icon {
+    color: #e74c3c;
+}
+
+.admin-stat-card.info {
+    border-left-color: #3498db;
+}
+
+.admin-stat-card.info .stat-icon {
+    color: #3498db;
+}
+
+.admin-stat-card.success {
+    border-left-color: #2ecc71;
+}
+
+.admin-stat-card.success .stat-icon {
+    color: #2ecc71;
+}
+
+/* ✅ Admin Form */
+.admin-form .form-group {
+    margin-bottom: 20px;
+}
+
+.admin-form .form-group label {
+    font-weight: 600;
+    color: var(--admin-text-dark);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.admin-form .form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--radius-input);
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.admin-form .form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+}
+
+.admin-form .form-control.is-invalid {
+    border-color: #e74c3c;
+}
 
 /* ============================================================
-   15. RESPONSIVE BREAKPOINTS
+   11. RESPONSIVE
    ============================================================ */
-
-/* 📱 Tablets and smaller desktops (max-width: 992px) */
 @media (max-width: 992px) {
     .auth-card .auth-card-body {
         padding: var(--card-padding-tablet);
     }
 }
 
-/* 📱 Mobile devices (max-width: 768px) */
 @media (max-width: 768px) {
-    /* Auth Card */
     .auth-card .auth-card-header h2 {
         font-size: 22px;
     }
@@ -533,12 +915,10 @@ body {
         padding: var(--card-padding-tablet);
     }
 
-    /* Role Buttons - Stack vertically */
     .role-buttons {
         flex-direction: column;
     }
 
-    /* Social Login - Stack vertically */
     .social-buttons {
         flex-direction: column;
         align-items: center;
@@ -548,9 +928,34 @@ body {
         width: 100%;
         justify-content: center;
     }
+
+    /* ✅ Admin Responsive */
+    .admin-sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+    .admin-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .admin-content {
+        margin-left: 0;
+    }
+
+    .admin-top-header .header-actions .btn-toggle-sidebar {
+        display: block;
+    }
+
+    .admin-page-content {
+        padding: 15px;
+    }
+
+    .admin-stat-card .stat-number {
+        font-size: 22px;
+    }
 }
 
-/* 📱 Small mobile devices (max-width: 480px) */
 @media (max-width: 480px) {
     .auth-wrapper {
         padding: 20px 10px;
@@ -559,4 +964,77 @@ body {
     .auth-card .auth-card-body {
         padding: var(--card-padding-mobile);
     }
+
+    .admin-sidebar {
+        width: 100%;
+    }
+}
+
+/* ✅ Admin Overlay */
+.admin-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+}
+
+.admin-overlay.active {
+    display: block;
+}
+
+/* ============================================================
+   12. BADGE / STATUS
+   ============================================================ */
+.badge-pending {
+    background: #ffc107;
+    color: #212529;
+}
+
+.badge-shortlisted {
+    background: #17a2b8;
+    color: #fff;
+}
+
+.badge-hired {
+    background: #28a745;
+    color: #fff;
+}
+
+.badge-rejected {
+    background: #dc3545;
+    color: #fff;
+}
+
+.badge-interview {
+    background: #6f42c1;
+    color: #fff;
+}
+
+.badge-active {
+    background: #28a745;
+    color: #fff;
+}
+
+.badge-inactive {
+    background: #dc3545;
+    color: #fff;
+}
+
+.badge-fraud {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.badge-verified {
+    background: #28a745;
+    color: #fff;
+}
+
+.badge-unverified {
+    background: #ffc107;
+    color: #212529;
 }
