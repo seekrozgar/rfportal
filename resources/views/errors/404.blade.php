@@ -71,7 +71,7 @@
             <div class="error-code">404</div>
             <h1 class="error-title">Page Not Found</h1>
             <p class="error-desc">Oops! The page you are looking for does not exist or has been moved.</p>
-            <a href="{{ route('home') }}" class="btn-home">
+            <a href="{{ url('/') }}" class="btn-home">
                 <i class="fas fa-arrow-left me-2"></i>Back to Home
             </a>
         </div>

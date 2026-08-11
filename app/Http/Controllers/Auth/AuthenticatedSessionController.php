@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -24,30 +28,67 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // ✅ Authenticate user
-        $request->authenticate();
+        Log::info('🔐 LOGIN ATTEMPT STARTED', ['email' => $request->email]);
 
-        // ✅ Regenerate session
-        $request->session()->regenerate();
+        // 1. Extract exact inputs from the request array safely
+        $email = $request->input('email');
+        $password = $request->input('password');
 
-        // ✅ Get authenticated user
-        $user = Auth::user();
+        // 2. Find user by email first
+        $user = User::where('email', $email)->first();
 
-        // ✅ Check if email is verified (skip for social login users)
-        if (is_null($user->email_verified_at) && !$user->provider) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        // 3. Validate credentials manually using exact string variables
+        if (!$user || !Hash::check($password, $user->password)) {
+            Log::error('❌ AUTHENTICATION FAILED', ['email' => $email]);
 
-            // ✅ Resend verification email
-            $user->sendEmailVerificationNotification();
-
-            return redirect()->route('login')
-                ->with('error', 'Please verify your email address first. A new verification link has been sent to your email.');
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
         }
 
-        // ✅ Role-based redirect
-        return $this->redirectBasedOnRole($user);
+        Log::info('✅ CREDENTIALS VALIDATED SUCCESSFULLY', ['email' => $email]);
+
+        // 4. 🔥 Check email verification BEFORE logging in
+        if (is_null($user->email_verified_at) && !$user->provider) {
+            Log::warning('⚠️ EMAIL NOT VERIFIED - BLOCKING LOGIN', ['user_id' => $user->id, 'email' => $user->email]);
+
+            // Save user ID in session for your closure routes
+            session()->put('unverified_user_id', $user->id);
+
+            Log::info('➡️ REDIRECTING TO CLOSURE-BASED VERIFICATION ROUTE');
+            return redirect()->route('verification.notice')
+                ->with('error', 'Please verify your email address first. Check your inbox.');
+        }
+
+        // 5. ✅ If verified, login user officially
+        Auth::login($user, $request->boolean('remember'));
+
+        $request->session()->regenerate();
+        Log::info('🔄 SESSION REGENERATED & USER LOGGED IN', ['user_id' => $user->id]);
+
+        // Clear unverified session garbage if any
+        session()->forget('unverified_user_id');
+
+        // 6. ✅ Role-based redirect
+        Log::info('🔍 CHECKING USER ROLES', ['user_id' => $user->id, 'role_column' => $user->role]);
+
+        if ($user->hasRole('superadmin') || $user->hasRole('admin') || $user->hasRole('author')) {
+            Log::info('➡️ REDIRECTING TO ADMIN DASHBOARD');
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->hasRole('employer')) {
+            Log::info('➡️ REDIRECTING TO EMPLOYER DASHBOARD');
+            return redirect()->route('employer.dashboard');
+        }
+
+        if ($user->hasRole('seeker')) {
+            Log::info('➡️ REDIRECTING TO SEEKER DASHBOARD');
+            return redirect()->route('seeker.dashboard');
+        }
+
+        Log::warning('⚠️ NO ROLE FOUND - REDIRECT TO HOME');
+        return redirect()->route('home')->with('warning', 'No role assigned. Please contact admin.');
     }
 
     /**
@@ -55,45 +96,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        Log::info('🚪 LOGOUT ATTEMPT', ['user_id' => Auth::id()]);
+
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
+        Log::info('✅ LOGOUT SUCCESSFUL');
         return redirect('/');
-    }
-
-    /**
-     * Redirect user based on their role.
-     */
-    private function redirectBasedOnRole($user): RedirectResponse
-    {
-        // ✅ Super Admin & Admin & Author
-        if ($user->hasRole('superadmin') || $user->hasRole('admin') || $user->hasRole('author')) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        // ✅ Employer
-        if ($user->hasRole('employer')) {
-            return redirect()->route('employer.dashboard');
-        }
-
-        // ✅ Seeker
-        if ($user->hasRole('seeker')) {
-            return redirect()->route('seeker.dashboard');
-        }
-
-        // ✅ Default fallback
-        return redirect()->route('home');
-    }
-
-    /**
-     * Show login form with custom view.
-     * (Alternative to create() method)
-     */
-    public function showLoginForm(): View
-    {
-        return view('auth.login');
     }
 }

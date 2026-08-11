@@ -2,10 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\Auth\VerifyEmailController; // ✅ Import this
-use App\Http\Controllers\Auth\EmailVerificationNotificationController; // ✅ Import this
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\JobController;
@@ -35,34 +32,116 @@ use App\Http\Controllers\Seeker\ProfileController as SeekerProfileController;
 use App\Http\Controllers\Seeker\ResumeController as SeekerResumeController;
 use App\Http\Controllers\Seeker\ApplicationController as SeekerApplicationController;
 use App\Http\Controllers\Seeker\FavouriteController as SeekerFavouriteController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
-// ====================
-// EMAIL VERIFICATION ROUTES
-// ====================
+// ============================================================
+// 🔥 VERIFICATION ROUTES - CLOSURE BASED (NO CONTROLLERS)
+// ============================================================
 
-// ====================
-// PUBLIC VERIFICATION NOTICE (No auth required)
-// ====================
-Route::get('/verify-notice', [EmailVerificationPromptController::class, '__invoke'])
-    ->name('verification.notice.public');
+// ✅ Main verification page (accessible without auth)
+Route::get('/verify-email', function () {
+    Log::info('📧 VERIFY EMAIL ROUTE HIT (CLOSURE)');
 
-// ====================
-// EMAIL VERIFICATION ROUTES (Auth required)
-// ====================
-Route::middleware('auth')->group(function () {
-    Route::get('email/verify', [EmailVerificationPromptController::class, '__invoke'])
-        ->name('verification.notice'); // ✅ This will work after login
+    if (session()->has('unverified_user_id')) {
+        $user = User::find(session('unverified_user_id'));
+        if ($user) {
+            Log::info('👤 USER FOUND IN SESSION', ['email' => $user->email]);
+            return view('auth.verify-email', [
+                'unverifiedEmail' => $user->email,
+                'userId' => $user->id,
+            ]);
+        }
+    }
 
-    Route::get('email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
+    if (auth()->check()) {
+        $user = auth()->user();
+        if (!$user->hasVerifiedEmail()) {
+            return view('auth.verify-email', [
+                'unverifiedEmail' => $user->email,
+                'userId' => $user->id,
+            ]);
+        }
+        return redirect()->route('dashboard');
+    }
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
+    Log::warning('⚠️ NO USER IN SESSION, REDIRECT TO LOGIN');
+    return redirect()->route('login')->with('error', 'Please login first.');
+})->name('verification.notice');
+
+// ✅ Resend verification email
+Route::post('/verify-email/resend', function () {
+    Log::info('📧 RESEND ROUTE HIT (CLOSURE)');
+
+    if (session()->has('unverified_user_id')) {
+        $user = User::find(session('unverified_user_id'));
+        if ($user) {
+            Log::info('👤 SENDING EMAIL TO SESSION USER', ['email' => $user->email]);
+            $user->sendEmailVerificationNotification();
+            return back()->with('status', 'verification-link-sent');
+        }
+    }
+
+    if (auth()->check()) {
+        $user = auth()->user();
+        if (!$user->hasVerifiedEmail()) {
+            Log::info('👤 SENDING EMAIL TO LOGGED IN USER', ['email' => $user->email]);
+            $user->sendEmailVerificationNotification();
+            return back()->with('status', 'verification-link-sent');
+        }
+    }
+
+    return redirect()->route('login')->with('error', 'User not found.');
+})->name('verification.send');
+
+// ✅ Verify email confirmation
+Route::get('/verify-email/confirm/{id}/{hash}', function ($id, $hash) {
+    Log::info('📧 CONFIRM ROUTE HIT', ['id' => $id]);
+
+    $user = User::find($id);
+    if (!$user) {
+        return redirect()->route('login')->with('error', 'User not found.');
+    }
+
+    if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        return redirect()->route('login')->with('error', 'Invalid verification link.');
+    }
+
+    if ($user->markEmailAsVerified()) {
+        event(new \Illuminate\Auth\Events\Verified($user));
+    }
+
+    session()->forget('unverified_user_id');
+    return redirect()->route('login')->with('success', 'Email verified successfully! You can now login.');
+})->name('verification.verify');
+
+// ✅ Redirect old email/verify to new route
+Route::get('/email/verify', function () {
+    Log::info('📧 OLD EMAIL/VERIFY REDIRECT');
+    return redirect()->route('verification.notice');
 });
 
-// ✅ Password Confirmation Route
+// ============================================================
+// 🔥 DEBUG ROUTE
+// ============================================================
+Route::get('/debug-session', function () {
+    return [
+        'session_all' => session()->all(),
+        'session_has_unverified' => session()->has('unverified_user_id'),
+        'unverified_user_id' => session('unverified_user_id'),
+        'is_logged_in' => auth()->check(),
+        'user' => auth()->user() ? [
+            'id' => auth()->id(),
+            'email' => auth()->user()->email,
+            'verified' => auth()->user()->email_verified_at
+        ] : null,
+    ];
+});
+
+// ============================================================
+// PASSWORD CONFIRMATION
+// ============================================================
 Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
     ->middleware('auth')
     ->name('password.confirm');
@@ -70,15 +149,15 @@ Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
 Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
     ->middleware('auth');
 
-// ====================
-// DYNAMIC SOCIAL LOGIN ROUTES
-// ====================
+// ============================================================
+// SOCIAL LOGIN
+// ============================================================
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('social.callback');
 
-// ====================
-// FRONTEND ROUTES (Public)
-// ====================
+// ============================================================
+// FRONTEND
+// ============================================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{slug}', [JobController::class, 'show'])->name('jobs.show');
@@ -87,55 +166,57 @@ Route::get('/companies/{slug}', [CompanyController::class, 'show'])->name('compa
 Route::get('/about-us', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
-// ====================
-// AUTH ROUTES (Breeze)
-// ====================
+// ============================================================
+// AUTH (Breeze)
+// ============================================================
 require __DIR__ . '/auth.php';
 
-// ====================
-// ADMIN ROUTES GROUP (SuperAdmin + Admin + Author)
-// ====================
+// ============================================================
+// DASHBOARD
+// ============================================================
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+
+        if ($user->hasRole('superadmin') || $user->hasRole('admin') || $user->hasRole('author')) {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->hasRole('employer')) {
+            return redirect()->route('employer.dashboard');
+        } elseif ($user->hasRole('seeker')) {
+            return redirect()->route('seeker.dashboard');
+        }
+        return redirect()->route('home');
+    })->name('dashboard');
+});
+
+// ============================================================
+// ADMIN
+// ============================================================
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
-    // Jobs Management
     Route::resource('jobs', AdminJobController::class)->except(['show']);
     Route::post('jobs/import', [AdminJobController::class, 'import'])->name('jobs.import');
-
-    // Companies Management
     Route::resource('companies', AdminCompanyController::class)->except(['show']);
-
-    // Users Management
     Route::resource('users', AdminUserController::class);
-
-    // Scholarships
     Route::resource('scholarships', AdminScholarshipController::class)->except(['show']);
-
-    // Admissions
     Route::resource('admissions', AdminAdmissionController::class)->except(['show']);
-
-    // News
     Route::resource('news', AdminNewsController::class)->except(['show']);
-
-    // FAQ
     Route::resource('faq', AdminFaqController::class)->except(['show']);
-
-    // Settings (Only Superadmin & Admin)
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::put('/settings/{key}', [AdminSettingController::class, 'update'])->name('settings.update');
 });
 
-// ====================
-// SUPER ADMIN ONLY ROUTES (User deletion, etc.)
-// ====================
+// ============================================================
+// SUPER ADMIN
+// ============================================================
 Route::prefix('admin')->middleware(['auth', 'verified', 'superadmin'])->name('admin.')->group(function () {
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     Route::delete('/admin-users/{admin}', [AdminUserController::class, 'destroyAdmin'])->name('admin-users.destroy');
 });
 
-// ====================
-// AUTHOR ROUTES (Post jobs, news, scholarships, admissions)
-// ====================
+// ============================================================
+// AUTHOR
+// ============================================================
 Route::prefix('author')->middleware(['auth', 'verified', 'author'])->name('author.')->group(function () {
     Route::get('/dashboard', [AuthorDashboardController::class, 'index'])->name('dashboard');
     Route::resource('jobs', AuthorJobController::class)->except(['show']);
@@ -144,9 +225,9 @@ Route::prefix('author')->middleware(['auth', 'verified', 'author'])->name('autho
     Route::resource('admissions', AuthorAdmissionController::class)->except(['show']);
 });
 
-// ====================
-// EMPLOYER ROUTES
-// ====================
+// ============================================================
+// EMPLOYER
+// ============================================================
 Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('employer.')->group(function () {
     Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->name('dashboard');
     Route::resource('jobs', EmployerJobController::class);
@@ -159,9 +240,9 @@ Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('e
     Route::post('/packages/subscribe', [EmployerPackageController::class, 'subscribe'])->name('packages.subscribe');
 });
 
-// ====================
-// SEEKER ROUTES
-// ====================
+// ============================================================
+// SEEKER
+// ============================================================
 Route::prefix('seeker')->middleware(['auth', 'verified', 'seeker'])->name('seeker.')->group(function () {
     Route::get('/dashboard', [SeekerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [SeekerProfileController::class, 'edit'])->name('profile.edit');
@@ -175,13 +256,12 @@ Route::prefix('seeker')->middleware(['auth', 'verified', 'seeker'])->name('seeke
     Route::delete('/favourites/{job}', [SeekerFavouriteController::class, 'destroy'])->name('favourites.destroy');
 });
 
-// ====================
-// TEMPORARY LOGOUT ROUTE (For testing - remove in production)
-// ====================
+// ============================================================
+// LOGOUT
+// ============================================================
 Route::get('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/login');
 })->name('logout.get');
-
