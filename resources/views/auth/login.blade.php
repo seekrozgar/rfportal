@@ -94,10 +94,10 @@
                             <div class="divider"><span>Or</span></div>
                             <div class="social-buttons">
                                 <a href="{{ route('social.redirect', 'google') }}" class="social-btn google">
-                                    <i class="fa fa-google"></i> Google
+                                    <i class="fab fa-google"></i> Google
                                 </a>
                                 <a href="{{ route('social.redirect', 'github') }}" class="social-btn github">
-                                    <i class="fa fa-github"></i> GitHub
+                                    <i class="fab fa-github"></i> GitHub
                                 </a>
                             </div>
                         </div>

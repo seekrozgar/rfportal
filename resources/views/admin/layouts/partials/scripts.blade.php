@@ -1,11 +1,12 @@
-<!-- Move all logic and styling into a single @vite load entry -->
+<!-- ✅ Single Asset Delivery Bundle -->
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-<!-- ✅ Keep only Laravel Session triggers in your HTML layout -->
+<!-- ✅ Active Toastr Notification Routing Components -->
 <script>
     window.addEventListener('DOMContentLoaded', () => {
-    @if(session('success')) window.showToast('success', "{{ session('success') }}"); @endif
-        @if(session('error')) window.showToast('error', "{{ session('error') }}"); @endif
-        @if(session('warning')) window.showToast('warning', "{{ session('warning') }}"); @endif
-});
+        @if(session('success')) if (window.showToast) window.showToast('success', "{{ session('success') }}"); @endif
+        @if(session('error')) if (window.showToast) window.showToast('error', "{{ session('error') }}"); @endif
+        @if(session('warning')) if (window.showToast) window.showToast('warning', "{{ session('warning') }}"); @endif
+        @if(session('info')) if (window.showToast) window.showToast('info', "{{ session('info') }}"); @endif
+    });
 </script>

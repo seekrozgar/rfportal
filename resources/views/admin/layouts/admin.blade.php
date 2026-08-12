@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -7,13 +7,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Panel - Rozgar Finder')</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    @stack('styles')
 </head>
 
 <body class="admin-body">
-    <!-- ✅ Overlay for mobile -->
+    <!-- ✅ Overlay -->
     <div class="admin-overlay" id="adminOverlay"></div>
 
     <div class="admin-wrapper">
@@ -21,9 +18,9 @@
         @include('admin.layouts.partials.sidebar')
 
         <!-- ✅ Main Content -->
-        <div class="admin-content">
-            <!-- ✅ Header -->
-            @include('admin.layouts.partials.header')
+        <div class="admin-content" id="adminContent">
+            <!-- ✅ Top Header -->
+            @include('admin.layouts.partials.topbar')
 
             <!-- ✅ Page Content -->
             <div class="admin-page-content">

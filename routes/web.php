@@ -4,19 +4,33 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\JobController;
 use App\Http\Controllers\Frontend\CompanyController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
+use App\Http\Controllers\Admin\CompanyJobController as AdminCompanyJobController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use App\Http\Controllers\Admin\AdmissionController as AdminAdmissionController;
+use App\Http\Controllers\Admin\ResultController as AdminResultController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\SeoController as AdminSeoController;
+use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
+use App\Http\Controllers\Admin\CountryController as AdminCountryController;
+use App\Http\Controllers\Admin\StateController as AdminStateController;
+use App\Http\Controllers\Admin\CityController as AdminCityController;
+use App\Http\Controllers\Admin\PackageController as AdminPackageController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Author\DashboardController as AuthorDashboardController;
 use App\Http\Controllers\Author\JobController as AuthorJobController;
 use App\Http\Controllers\Author\NewsController as AuthorNewsController;
@@ -190,24 +204,114 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // ============================================================
-// ADMIN
+// ADMIN ROUTES (Complete - All Sidebar Links)
 // ============================================================
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.')->group(function () {
+
+    // ✅ Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // ✅ Admin Users Management (SuperAdmin + Admin only)
+    Route::resource('users', AdminUserController::class);
+    Route::get('/user-profiles', [AdminUserController::class, 'profiles'])->name('users.profiles');
+    Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::post('/users/{user}/mark-fraud', [AdminUserController::class, 'markFraud'])->name('users.mark-fraud');
+
+    // ✅ Jobs Management (General Jobs - PPSC/FPSC)
     Route::resource('jobs', AdminJobController::class)->except(['show']);
     Route::post('jobs/import', [AdminJobController::class, 'import'])->name('jobs.import');
+
+    // ✅ Company Jobs Management
+    Route::resource('company-jobs', AdminCompanyJobController::class)->except(['show']);
+
+    // ✅ Companies Management
     Route::resource('companies', AdminCompanyController::class)->except(['show']);
-    Route::resource('users', AdminUserController::class);
+
+    // ✅ Scholarships
     Route::resource('scholarships', AdminScholarshipController::class)->except(['show']);
+
+    // ✅ Admissions
     Route::resource('admissions', AdminAdmissionController::class)->except(['show']);
+
+    // ✅ Results
+    Route::resource('results', AdminResultController::class)->except(['show']);
+
+    // ✅ News / Announcements
     Route::resource('news', AdminNewsController::class)->except(['show']);
+
+    // ✅ SEO
+    Route::get('/seo', [AdminSeoController::class, 'index'])->name('seo.index');
+    Route::post('/seo/update', [AdminSeoController::class, 'update'])->name('seo.update');
+
+    // ✅ FAQ
     Route::resource('faq', AdminFaqController::class)->except(['show']);
+
+    // ✅ Languages
+    Route::get('/languages', [AdminLanguageController::class, 'index'])->name('languages.index');
+    Route::post('/languages', [AdminLanguageController::class, 'store'])->name('languages.store');
+    Route::put('/languages/{language}', [AdminLanguageController::class, 'update'])->name('languages.update');
+    Route::delete('/languages/{language}', [AdminLanguageController::class, 'destroy'])->name('languages.destroy');
+
+    // ✅ Locations (SuperAdmin only)
+    Route::prefix('locations')->middleware(['superadmin'])->name('locations.')->group(function () {
+        Route::resource('countries', AdminCountryController::class)->except(['show']);
+        Route::resource('states', AdminStateController::class)->except(['show']);
+        Route::resource('cities', AdminCityController::class)->except(['show']);
+    });
+
+    // ✅ Packages
+    Route::resource('packages', AdminPackageController::class)->except(['show']);
+
+    // ✅ Payments
+    Route::get('/payments/company', [AdminPaymentController::class, 'companyPayments'])->name('payments.company');
+    Route::get('/payments/seeker', [AdminPaymentController::class, 'seekerPayments'])->name('payments.seeker');
+    Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
+
+    // ✅ Job Attributes
+    Route::prefix('attributes')->name('attributes.')->group(function () {
+        $attributeRoutes = [
+            'language-levels' => 'languageLevels',
+            'career-levels' => 'careerLevels',
+            'functional-areas' => 'functionalAreas',
+            'genders' => 'genders',
+            'industries' => 'industries',
+            'job-experience' => 'jobExperience',
+            'job-skills' => 'jobSkills',
+            'job-types' => 'jobTypes',
+            'job-shifts' => 'jobShifts',
+            'degree-levels' => 'degreeLevels',
+            'degree-types' => 'degreeTypes',
+            'major-subjects' => 'majorSubjects',
+            'result-types' => 'resultTypes',
+            'marital-status' => 'maritalStatus',
+            'ownership-types' => 'ownershipTypes',
+            'salary-periods' => 'salaryPeriods',
+        ];
+
+        foreach ($attributeRoutes as $route => $method) {
+            Route::get('/' . $route, [AdminAttributeController::class, $method])->name($route);
+        }
+    });
+
+    // ✅ Settings
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
-    Route::put('/settings/{key}', [AdminSettingController::class, 'update'])->name('settings.update');
+    Route::post('/settings/update', [AdminSettingController::class, 'update'])->name('settings.update');
+
+    // ✅ Profile
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+    // ✅ Change Password
+    Route::get('/change-password', [PasswordController::class, 'index'])->name('change-password');
+    Route::post('/change-password', [PasswordController::class, 'update'])->name('change-password.update');
+
+    // ✅ Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
 });
 
 // ============================================================
-// SUPER ADMIN
+// SUPER ADMIN ONLY ROUTES (User deletion)
 // ============================================================
 Route::prefix('admin')->middleware(['auth', 'verified', 'superadmin'])->name('admin.')->group(function () {
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
@@ -215,7 +319,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'superadmin'])->name('ad
 });
 
 // ============================================================
-// AUTHOR
+// AUTHOR ROUTES
 // ============================================================
 Route::prefix('author')->middleware(['auth', 'verified', 'author'])->name('author.')->group(function () {
     Route::get('/dashboard', [AuthorDashboardController::class, 'index'])->name('dashboard');
@@ -226,7 +330,7 @@ Route::prefix('author')->middleware(['auth', 'verified', 'author'])->name('autho
 });
 
 // ============================================================
-// EMPLOYER
+// EMPLOYER ROUTES
 // ============================================================
 Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('employer.')->group(function () {
     Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->name('dashboard');
@@ -241,7 +345,7 @@ Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('e
 });
 
 // ============================================================
-// SEEKER
+// SEEKER ROUTES
 // ============================================================
 Route::prefix('seeker')->middleware(['auth', 'verified', 'seeker'])->name('seeker.')->group(function () {
     Route::get('/dashboard', [SeekerDashboardController::class, 'index'])->name('dashboard');

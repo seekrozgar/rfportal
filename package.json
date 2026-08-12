@@ -25,6 +25,8 @@
         "bootstrap": "^5.3.8",
         "datatables.net": "^3.0.1",
         "datatables.net-dt": "^3.0.1",
+        "datatables.net-responsive": "^4.0.1",
+        "datatables.net-responsive-dt": "^4.0.1",
         "font-awesome": "^4.7.0",
         "jquery": "^3.7.1",
         "material-design-iconic-font": "^2.2.0",
