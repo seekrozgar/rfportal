@@ -76,7 +76,6 @@
         <a href="{{ route('admin.users.profiles') }}"
             class="menu-item {{ $currentRoute == 'admin.users.profiles' ? 'active' : '' }}">
             <i class="fa fa-user-tie"></i> User Profiles
-            <span class="badge">{{ \App\Models\User::whereIn('role', ['employer', 'seeker'])->count() }}</span>
         </a>
 
         <!-- 📝 Content Management -->

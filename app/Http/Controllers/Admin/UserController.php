@@ -228,7 +228,11 @@ class UserController extends Controller
     // ✅ TRADITIONAL: Profiles (Page Load)
     public function profiles()
     {
-        $users = User::whereIn('role', ['employer', 'seeker'])->latest()->paginate(20);
+        $users = User::whereIn('role', ['employer', 'seeker'])
+            ->with('company')
+            ->latest()
+            ->paginate(20);
+
         return view('admin.users.profiles', compact('users'));
     }
 
