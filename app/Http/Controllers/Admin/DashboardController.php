@@ -32,7 +32,7 @@ class DashboardController extends Controller
                 'activeJobs' => $jobStatus->get(1, 0),
                 'inactiveJobs' => $jobStatus->get(0, 0),
                 'totalCompanies' => Company::count(),
-                'totalUsers' => $userRoles->sum(),
+                'totalUsers' => $userRoles->get('employer', 0) + $userRoles->get('seeker', 0),
                 'totalApplications' => Application::count(),
                 'totalRevenue' => Payment::where('status', 'completed')->sum('amount') ?? 0,
                 'totalEmployers' => $userRoles->get('employer', 0),

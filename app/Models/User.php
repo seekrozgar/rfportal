@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail; // ✅ Ye interface import karein
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail // ✅ implement karein
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, HasRoles;
 
@@ -20,6 +20,11 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ implement k
         'password',
         'role',
         'company_id',
+        'provider',
+        'provider_id',
+        'is_active',      // ✅ Add this
+        'is_fraud',       // ✅ Add this
+        'permissions',    // ✅ Add this (JSON for menu permissions)
     ];
 
     protected $hidden = [
@@ -27,13 +32,13 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ implement k
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_active' => 'boolean',
+        'is_fraud' => 'boolean',
+        'permissions' => 'array',
+    ];
 
     public function company()
     {
@@ -58,5 +63,28 @@ class User extends Authenticatable implements MustVerifyEmail // ✅ implement k
     public function isSeeker()
     {
         return $this->role === 'seeker';
+    }
+
+    public function isAuthor()
+    {
+        return $this->role === 'author';
+    }
+
+    public function isActive()
+    {
+        return $this->is_active && !$this->is_fraud;
+    }
+
+    public function canAccessMenu($menuItem)
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        if (!$this->permissions) {
+            return false;
+        }
+
+        return in_array($menuItem, $this->permissions);
     }
 }

@@ -1158,7 +1158,7 @@ a:hover { color: var(--primary-dark); }
 .admin-table .action-buttons {
     display: flex;
     gap: 6px;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
 }
 

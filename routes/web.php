@@ -211,12 +211,6 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     // ✅ Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    // ✅ Admin Users Management (SuperAdmin + Admin only)
-    Route::resource('users', AdminUserController::class);
-    Route::get('/user-profiles', [AdminUserController::class, 'profiles'])->name('users.profiles');
-    Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
-    Route::post('/users/{user}/mark-fraud', [AdminUserController::class, 'markFraud'])->name('users.mark-fraud');
-
     // ✅ Jobs Management (General Jobs - PPSC/FPSC)
     Route::resource('jobs', AdminJobController::class)->except(['show']);
     Route::post('jobs/import', [AdminJobController::class, 'import'])->name('jobs.import');
@@ -311,9 +305,22 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
 });
 
 // ============================================================
-// SUPER ADMIN ONLY ROUTES (User deletion)
+// 🛡️ SUPER ADMIN ONLY ROUTES (Users Management - HYBRID)
 // ============================================================
 Route::prefix('admin')->middleware(['auth', 'verified', 'superadmin'])->name('admin.')->group(function () {
+
+    // ✅ Traditional Routes (Page Reload)
+    Route::resource('users', AdminUserController::class);
+    Route::get('/user-profiles', [AdminUserController::class, 'profiles'])->name('users.profiles');
+    Route::post('/users/{user}/resend-verification', [AdminUserController::class, 'resendVerification'])->name('users.resend-verification');
+
+    // ✅ AJAX Routes (No Page Reload)
+    Route::post('/users/{user}/toggle-status-ajax', [AdminUserController::class, 'toggleStatusAjax'])->name('users.toggle-status-ajax');
+    Route::post('/users/{user}/mark-fraud-ajax', [AdminUserController::class, 'markFraudAjax'])->name('users.mark-fraud-ajax');
+    Route::delete('/users/{user}/delete-ajax', [AdminUserController::class, 'destroyAjax'])->name('users.destroy-ajax');
+    Route::post('/users/{user}/resend-verification-ajax', [AdminUserController::class, 'resendVerificationAjax'])->name('users.resend-verification-ajax');
+
+    // ✅ Delete User (SuperAdmin only)
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     Route::delete('/admin-users/{admin}', [AdminUserController::class, 'destroyAdmin'])->name('admin-users.destroy');
 });

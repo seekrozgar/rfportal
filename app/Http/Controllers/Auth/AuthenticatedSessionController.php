@@ -48,6 +48,22 @@ class AuthenticatedSessionController extends Controller
 
         Log::info('✅ CREDENTIALS VALIDATED SUCCESSFULLY', ['email' => $email]);
 
+        // ✅ CHECK IF USER IS BLOCKED
+        if (!$user->is_active) {
+            Log::warning('🚫 BLOCKED USER ATTEMPTED LOGIN', ['user_id' => $user->id, 'email' => $user->email]);
+
+            return redirect()->route('login')
+                ->with('error', 'Your account has been temporarily blocked. Please contact support at support@rozgarfinder.com to unblock your account.');
+        }
+
+        // ✅ CHECK IF USER IS MARKED AS FRAUD
+        if ($user->is_fraud) {
+            Log::warning('🚫 FRAUD USER ATTEMPTED LOGIN', ['user_id' => $user->id, 'email' => $user->email]);
+
+            return redirect()->route('login')
+                ->with('error', 'Your account has been flagged for suspicious activity. Please contact support at support@rozgarfinder.com.');
+        }
+
         // 4. 🔥 Check email verification BEFORE logging in
         if (is_null($user->email_verified_at) && !$user->provider) {
             Log::warning('⚠️ EMAIL NOT VERIFIED - BLOCKING LOGIN', ['user_id' => $user->id, 'email' => $user->email]);
