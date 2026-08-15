@@ -29,14 +29,63 @@ $.fn.DataTable = function (opts) {
 import toastr from 'toastr';
 import 'select2';
 
-// ⚡ Toastr Base Options
+window.toastr = toastr;
+
 toastr.options = {
     closeButton: true,
     progressBar: true,
     positionClass: 'toast-top-right',
     timeOut: 5000,
+    extendedTimeOut: 1000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
 };
-window.showToast = (type, message) => toastr[type](message);
+
+// ✅ Global Toastr Helpers
+window.showToast = function(type, message) {
+    if (toastr[type]) {
+        toastr[type](message);
+    }
+};
+
+window.showToastConfirm = function(message, callback) {
+    toastr.clear();
+
+    var confirmHtml = `
+        <div style="text-align: center; padding: 10px 0;">
+            <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="window._toastrConfirmCallback(true)"
+                        style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-check"></i> Yes
+                </button>
+                <button onclick="window._toastrConfirmCallback(false)"
+                        style="background: #dc3545; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    `;
+
+    window._toastrConfirmCallback = function(result) {
+        toastr.clear();
+        if (result) {
+            callback();
+        } else {
+            toastr.info('Action cancelled');
+        }
+        delete window._toastrConfirmCallback;
+    };
+
+    toastr.warning(confirmHtml, 'Confirm Action', {
+        closeButton: true,
+        timeOut: 0,
+        extendedTimeOut: 0,
+        positionClass: 'toast-top-center',
+        progressBar: false,
+        escapeHtml: false,
+    });
+};
 
 // 🖥️ Client Script Runtime Pipeline Area
 $(document).ready(function() {
@@ -46,6 +95,7 @@ $(document).ready(function() {
         new DataTable(this, {
             responsive: true,
             pageLength: 25,
+            retrieve: true, // ✅ Prevents "Cannot reinitialise DataTable" error
             language: {
                 search: "Search:",
                 lengthMenu: "Show _MENU_ entries",

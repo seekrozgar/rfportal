@@ -1111,21 +1111,47 @@ a:hover { color: var(--primary-dark); }
 }
 
 .table-container {
+     width: 100%;
+    overflow: hidden;
+    background: var(--bg-card);
+    position: relative;
+}
+/* ✅ Scroll Wrapper */
+.table-scroll-wrapper {
+    width: 100%;
     overflow-x: auto;
-    max-width: 100%;
     -webkit-overflow-scrolling: touch;
+    padding: 0;
+}
+/* ✅ Scroll Indicator */
+.scroll-indicator {
+    display: none;
+    text-align: center;
+    padding: 6px;
+    font-size: 11px;
+    color: var(--admin-text-light);
+    background: var(--admin-bg);
+    border-top: 1px solid var(--admin-border);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+/* ✅ Show scroll indicator on mobile */
+@media (max-width: 768px) {
+    .scroll-indicator {
+        display: block;
+    }
 }
 
 .admin-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-    min-width: 500px;
+    min-width: 650px;
 }
 
 .admin-table thead th {
     text-align: left;
-    padding: 10px 15px;
+    padding: 10px 14px;
     background: var(--admin-bg);
     font-weight: 600;
     font-size: 11px;
@@ -1133,6 +1159,7 @@ a:hover { color: var(--primary-dark); }
     letter-spacing: 0.5px;
     color: var(--admin-text-light);
     border-bottom: 2px solid var(--admin-border);
+    white-space: nowrap;
 }
 
 .admin-table tbody td {
@@ -1167,7 +1194,9 @@ a:hover { color: var(--primary-dark); }
     font-size: 12px;
     border-radius: 4px;
 }
-
+.dt-info{
+    font-size: 14px;
+}
 /* ============================================================
    15. BADGES
    ============================================================ */
