@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Notifications\PasswordChangedNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -22,9 +23,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'company_id',
         'provider',
         'provider_id',
-        'is_active',      // ✅ Add this
-        'is_fraud',       // ✅ Add this
-        'permissions',    // ✅ Add this (JSON for menu permissions)
+        'is_active',
+        'is_fraud',
+        'permissions',
     ];
 
     protected $hidden = [
@@ -40,10 +41,18 @@ class User extends Authenticatable implements MustVerifyEmail
         'permissions' => 'array',
     ];
 
+    // ============================================================
+    // ✅ RELATIONSHIPS
+    // ============================================================
+
     public function company()
     {
         return $this->hasOne(Company::class);
     }
+
+    // ============================================================
+    // ✅ ROLE CHECK METHODS
+    // ============================================================
 
     public function isSuperAdmin()
     {
@@ -75,6 +84,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->is_active && !$this->is_fraud;
     }
 
+    // ============================================================
+    // ✅ MENU PERMISSION CHECK
+    // ============================================================
+
     public function canAccessMenu($menuItem)
     {
         if ($this->isSuperAdmin()) {
@@ -86,5 +99,29 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return in_array($menuItem, $this->permissions);
+    }
+
+    // ============================================================
+    // ✅ PASSWORD CHANGE NOTIFICATION SYSTEM
+    // ============================================================
+
+    /**
+     * Send password changed notification to user
+     *
+     * @param string $type 'reset' | 'changed' | 'admin_changed'
+     */
+    public function sendPasswordChangedNotification($type = 'changed')
+    {
+        $this->notify(new PasswordChangedNotification($type));
+    }
+
+    /**
+     * Check if password was changed and send notification
+     */
+    public function handlePasswordChange($type = 'changed')
+    {
+        if ($this->wasChanged('password')) {
+            $this->sendPasswordChangedNotification($type);
+        }
     }
 }

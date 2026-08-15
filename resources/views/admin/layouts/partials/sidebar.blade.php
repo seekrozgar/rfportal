@@ -31,8 +31,6 @@
             <a href="{{ route('admin.users.index') }}"
                 class="menu-item {{ str_starts_with($currentRoute, 'admin.users.') ? 'active' : '' }}">
                 <i class="fa fa-users-cog"></i> Admin Users
-                <span
-                    class="badge">{{ \App\Models\User::whereIn('role', ['superadmin', 'admin', 'author'])->count() }}</span>
             </a>
         @endif
 
@@ -41,14 +39,12 @@
 
         <a href="{{ route('admin.jobs.index') }}"
             class="menu-item {{ str_starts_with($currentRoute, 'admin.jobs.') ? 'active' : '' }}">
-            <i class="fa fa-briefcase"></i> General Jobs (PPSC/FPSC)
-            <span class="badge">{{ \App\Models\Job::where('source', 'admin')->count() }}</span>
+            <i class="fa fa-briefcase"></i> General Jobs
         </a>
 
         <a href="{{ route('admin.company-jobs.index') }}"
             class="menu-item {{ str_starts_with($currentRoute, 'admin.company-jobs.') ? 'active' : '' }}">
             <i class="fa fa-building"></i> Company Jobs
-            <span class="badge">{{ \App\Models\Job::where('source', 'employer')->count() }}</span>
         </a>
 
         <!-- 📝 Education -->

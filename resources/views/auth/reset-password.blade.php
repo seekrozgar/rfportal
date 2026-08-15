@@ -55,7 +55,7 @@
                             <div class="name">Email Address</div>
                             <input class="input--style-5 @error('email') is-invalid @enderror" type="email" name="email"
                                 value="{{ old('email', $request->email) }}" placeholder="Enter your email address"
-                                required>
+                                required readonly>
                             @error('email')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror

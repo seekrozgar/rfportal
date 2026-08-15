@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\JobPosting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Job;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Application;
@@ -23,7 +23,7 @@ class DashboardController extends Controller
                 ->groupBy('role')
                 ->pluck('total', 'role');
 
-            $jobStatus = Job::select('is_active', DB::raw('count(*) as total'))
+            $jobStatus = JobPosting::select('is_active', DB::raw('count(*) as total'))
                 ->groupBy('is_active')
                 ->pluck('total', 'is_active');
 
@@ -43,7 +43,7 @@ class DashboardController extends Controller
 
         // ✅ Recent data
         $recentData = [
-            'recentJobs' => Job::with('company:id,company_name')->latest()->limit(10)->get(),
+            'recentJobs' => JobPosting::with('company:id,company_name')->latest()->limit(10)->get(),
             'recentUsers' => User::select('id', 'name', 'email', 'role', 'created_at')->latest()->limit(10)->get(),
             'recentPayments' => Payment::with('user:id,name')->latest()->limit(10)->get(),
         ];

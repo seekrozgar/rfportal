@@ -349,7 +349,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'superadmin'])->name('ad
     // ✅ Delete User (SuperAdmin only)
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     Route::delete('/admin-users/{admin}', [AdminUserController::class, 'destroyAdmin'])->name('admin-users.destroy');
+
+    // ✅ Reset user password (SuperAdmin only)
+    Route::get('/users/{user}/reset-password', [AdminUserController::class, 'resetPasswordForm'])->name('users.reset-password-form');
+    Route::post('/users/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('users.reset-password');
+    Route::post('/users/{user}/force-reset-password', [AdminUserController::class, 'forceResetPassword'])->name('users.force-reset-password');
 });
+
 
 // ============================================================
 // AUTHOR ROUTES

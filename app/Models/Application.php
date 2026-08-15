@@ -27,8 +27,9 @@ class Application extends Model
      */
     public function job()
     {
-        return $this->belongsTo(Job::class);
+        return $this->belongsTo(JobPosting::class, 'job_id');
     }
+
 
     /**
      * Get the seeker (user) that made the application.

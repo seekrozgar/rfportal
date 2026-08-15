@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
@@ -273,7 +274,7 @@ class UserController extends Controller
                 'verificationUrl' => $verificationUrl,
             ], function ($message) use ($user) {
                 $message->to($user->email)
-                        ->subject('Welcome to Rozgar Finder - Your Account Details');
+                    ->subject('Welcome to Rozgar Finder - Your Account Details');
             });
 
             Log::info('✅ WELCOME EMAIL SENT', ['user_id' => $user->id, 'email' => $user->email]);
@@ -309,4 +310,41 @@ class UserController extends Controller
         'attributes' => 'Job Attributes',
         'settings' => 'Site Settings',
     ];
+
+    /**
+     * Reset user password (Admin action)
+     */
+    public function resetPassword(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // ✅ Send admin reset notification
+        $user->sendPasswordChangedNotification('admin_changed');
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Password reset successfully! User has been notified.');
+    }
+
+    /**
+     * Force reset user password (Generate random password)
+     */
+    public function forceResetPassword(User $user)
+    {
+        $newPassword = Str::random(12);
+
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        // ✅ Send admin reset notification with new password
+        $user->sendPasswordChangedNotification('admin_changed');
+
+        return redirect()->route('admin.users.index')
+            ->with('success', "Password reset successfully! New password: {$newPassword}");
+    }
+
 }
