@@ -12,7 +12,7 @@ use App\Http\Controllers\Frontend\JobController;
 use App\Http\Controllers\Frontend\CompanyController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\JobController as AdminJobController;
+use App\Http\Controllers\Admin\JobPostingController as AdminJobPostingController;
 use App\Http\Controllers\Admin\CompanyJobController as AdminCompanyJobController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -238,8 +238,8 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // ✅ Jobs Management (General Jobs - PPSC/FPSC)
-    Route::resource('jobs', AdminJobController::class)->except(['show']);
-    Route::post('jobs/import', [AdminJobController::class, 'import'])->name('jobs.import');
+    Route::resource('jobs', AdminJobPostingController::class)->except(['show']);
+    Route::post('jobs/import', [AdminJobPostingController::class, 'import'])->name('jobs.import');
 
     // ✅ Company Jobs Management
     Route::resource('company-jobs', AdminCompanyJobController::class)->except(['show']);
@@ -408,3 +408,37 @@ Route::get('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/login');
 })->name('logout.get');
+
+
+// ============================================================
+// JOB ATTRIBUTES ROUTES
+// ============================================================
+
+// Route::prefix('attributes')->name('attributes.')->group(function () {
+//     $attributes = [
+//         'language-levels',
+//         'career-levels',
+//         'functional-areas',
+//         'genders',
+//         'industries',
+//         'job-experience',
+//         'job-skills',
+//         'job-types',
+//         'job-shifts',
+//         'degree-levels',
+//         'degree-types',
+//         'major-subjects',
+//         'result-types',
+//         'marital-status',
+//         'ownership-types',
+//         'salary-periods',
+//     ];
+
+//     foreach ($attributes as $attr) {
+//         Route::get('/' . $attr, [AdminAttributeController::class, 'index'])->name($attr);
+//         Route::post('/' . $attr, [AdminAttributeController::class, 'store'])->name($attr . '.store');
+//         Route::put('/' . $attr . '/{id}', [AdminAttributeController::class, 'update'])->name($attr . '.update');
+//         Route::delete('/' . $attr . '/{id}', [AdminAttributeController::class, 'destroy'])->name($attr . '.destroy');
+//         Route::post('/' . $attr . '/{id}/toggle', [AdminAttributeController::class, 'toggleStatus'])->name($attr . '.toggle');
+//     }
+// });

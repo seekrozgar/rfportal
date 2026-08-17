@@ -20,6 +20,8 @@ class JobPosting extends Model
         'posted_by',
         'title',
         'slug',
+        'ad_image',
+        'apply_link',
         'description',
         'requirements',
         'benefits',
@@ -82,7 +84,7 @@ class JobPosting extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(JobCategory::class);
     }
 
     public function postedBy()
@@ -170,5 +172,14 @@ class JobPosting extends Model
             return 'Expired';
         }
         return 'Active';
+    }
+
+    // ✅ Get Ad Image URL
+    public function getAdImageUrlAttribute()
+    {
+        if ($this->ad_image) {
+            return asset('storage/jobs/' . $this->ad_image);
+        }
+        return null;
     }
 }

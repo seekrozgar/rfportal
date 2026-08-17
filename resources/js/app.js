@@ -96,6 +96,7 @@ $(document).ready(function() {
             responsive: true,
             pageLength: 25,
             retrieve: true, // ✅ Prevents "Cannot reinitialise DataTable" error
+            destroy: true,  // ✅ Destroy existing table before reinitializing
             language: {
                 search: "Search:",
                 lengthMenu: "Show _MENU_ entries",

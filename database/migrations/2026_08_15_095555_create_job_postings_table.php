@@ -12,7 +12,7 @@ return new class extends Migration {
 
             // ✅ Foreign Keys
             $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('job_categories')->onDelete('cascade');
             $table->foreignId('posted_by')->constrained('users')->onDelete('cascade');
 
             // ✅ Basic Info
