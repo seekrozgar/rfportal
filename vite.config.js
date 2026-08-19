@@ -11,6 +11,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        hmr: {
+            host: 'localhost',
+        },
+    },
     // ✅ Ensure proper resolution of node_modules
     resolve: {
         alias: {
@@ -19,6 +24,14 @@ export default defineConfig({
     },
     // ✅ Optimize dependencies
     optimizeDeps: {
-        include: ['jquery', 'datatables.net', 'datatables.net-dt'],
+        // include: ['jquery', 'datatables.net', 'datatables.net-dt'],
+        include: [
+            'jquery',
+            'datatables.net',
+            'datatables.net-dt',
+            'toastr',
+            'select2',
+            'bootstrap'
+        ],
     },
 });

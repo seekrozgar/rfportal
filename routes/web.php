@@ -288,8 +288,9 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
 
     // ✅ Job Attributes
+    // ✅ Job Attributes Routes - FIXED
     Route::prefix('attributes')->name('attributes.')->group(function () {
-        $attributeRoutes = [
+        $attributes = [
             'language-levels' => 'languageLevels',
             'career-levels' => 'careerLevels',
             'functional-areas' => 'functionalAreas',
@@ -308,8 +309,39 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
             'salary-periods' => 'salaryPeriods',
         ];
 
-        foreach ($attributeRoutes as $route => $method) {
+        foreach ($attributes as $route => $method) {
+            // ✅ Index
             Route::get('/' . $route, [AdminAttributeController::class, $method])->name($route);
+
+            // ✅ Store - FIXED: Pass $route as type parameter
+            Route::post('/' . $route, function (Request $request) use ($route) {
+                $controller = app()->make(AdminAttributeController::class);
+                return $controller->store($request, $route);
+            })->name($route . '.store');
+
+            // ✅ Import - FIXED
+            Route::post('/' . $route . '/import', function (Request $request) use ($route) {
+                $controller = app()->make(AdminAttributeController::class);
+                return $controller->import($request, $route);
+            })->name($route . '.import');
+
+            // ✅ Update - FIXED
+            Route::put('/' . $route . '/{id}', function (Request $request, $id) use ($route) {
+                $controller = app()->make(AdminAttributeController::class);
+                return $controller->update($request, $route, $id);
+            })->name($route . '.update');
+
+            // ✅ Delete - FIXED
+            Route::delete('/' . $route . '/{id}', function ($id) use ($route) {
+                $controller = app()->make(AdminAttributeController::class);
+                return $controller->destroy($route, $id);
+            })->name($route . '.destroy');
+
+            // ✅ Toggle Status - FIXED
+            Route::post('/' . $route . '/{id}/toggle', function ($id) use ($route) {
+                $controller = app()->make(AdminAttributeController::class);
+                return $controller->toggleStatus($route, $id);
+            })->name($route . '.toggle');
         }
     });
 
@@ -411,34 +443,16 @@ Route::get('/logout', function () {
 
 
 // ============================================================
-// JOB ATTRIBUTES ROUTES
+// LANGUAGE SWITCH ROUTE
 // ============================================================
 
-// Route::prefix('attributes')->name('attributes.')->group(function () {
-//     $attributes = [
-//         'language-levels',
-//         'career-levels',
-//         'functional-areas',
-//         'genders',
-//         'industries',
-//         'job-experience',
-//         'job-skills',
-//         'job-types',
-//         'job-shifts',
-//         'degree-levels',
-//         'degree-types',
-//         'major-subjects',
-//         'result-types',
-//         'marital-status',
-//         'ownership-types',
-//         'salary-periods',
-//     ];
+Route::get('/language/switch/{locale}', function ($locale) {
+    $availableLocales = ['en', 'ur', 'ar', 'fr', 'es', 'de', 'zh', 'hi'];
 
-//     foreach ($attributes as $attr) {
-//         Route::get('/' . $attr, [AdminAttributeController::class, 'index'])->name($attr);
-//         Route::post('/' . $attr, [AdminAttributeController::class, 'store'])->name($attr . '.store');
-//         Route::put('/' . $attr . '/{id}', [AdminAttributeController::class, 'update'])->name($attr . '.update');
-//         Route::delete('/' . $attr . '/{id}', [AdminAttributeController::class, 'destroy'])->name($attr . '.destroy');
-//         Route::post('/' . $attr . '/{id}/toggle', [AdminAttributeController::class, 'toggleStatus'])->name($attr . '.toggle');
-//     }
-// });
+    if (in_array($locale, $availableLocales)) {
+        session()->put('locale', $locale);
+        app()->setLocale($locale);
+    }
+
+    return redirect()->back();
+})->name('language.switch');

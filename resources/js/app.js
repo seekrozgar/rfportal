@@ -11,6 +11,10 @@ Alpine.start();
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
+// 2. ✅ Import Bootstrap 5 (Global)
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
+
 // 2. ✅ Import Dependency-Free DataTables & Extensions (Modern ESM Standard)
 import DataTable from 'datatables.net';
 import Responsive from 'datatables.net-responsive';
@@ -91,19 +95,19 @@ window.showToastConfirm = function(message, callback) {
 $(document).ready(function() {
 
     // ✅ Initialize Offline Full Features DataTables ONLY for management pages
-    $('.datatable').each(function() {
-        new DataTable(this, {
-            responsive: true,
-            pageLength: 25,
-            retrieve: true, // ✅ Prevents "Cannot reinitialise DataTable" error
-            destroy: true,  // ✅ Destroy existing table before reinitializing
-            language: {
-                search: "Search:",
-                lengthMenu: "Show _MENU_ entries",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-            }
-        });
-    });
+    // $('.datatable').each(function() {
+    //     new DataTable(this, {
+    //         responsive: true,
+    //         pageLength: 25,
+    //         retrieve: true, // ✅ Prevents "Cannot reinitialise DataTable" error
+    //         destroy: true,  // ✅ Destroy existing table before reinitializing
+    //         language: {
+    //             search: "Search:",
+    //             lengthMenu: "Show _MENU_ entries",
+    //             info: "Showing _START_ to _END_ of _TOTAL_ entries",
+    //         }
+    //     });
+    // });
 
     // ✅ Offline Select2 Dropdowns Initialization
     $('.select2').each(function() {

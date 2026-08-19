@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+
+        // ✅ Session middleware must run before SetLocale
+        $middleware->web(append: [
+            SetLocale::class,
+        ]);
+
+
         // ✅ Middleware aliases (role-based middleware)
         $middleware->alias([
             'superadmin' => SuperAdminMiddleware::class,
@@ -30,11 +38,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             // \App\Http\Middleware\TrustHosts::class,
             // \App\Http\Middleware\TrustProxies::class,
-        ]);
-
-        // ✅ Web middleware group mein additional middleware
-        $middleware->web(append: [
-            // \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
 
         // ✅ API middleware group

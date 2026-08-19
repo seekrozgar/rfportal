@@ -1250,6 +1250,10 @@ a:hover { color: var(--primary-dark); }
 .admin-form .form-control.is-invalid {
     border-color: #e74c3c;
 }
+label{
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
 
 /* ============================================================
    17. OVERLAY
@@ -1266,6 +1270,213 @@ a:hover { color: var(--primary-dark); }
 }
 
 .admin-overlay.active { display: block; }
+
+/* ============================================================
+   SIDEBAR - ACTIVE STATE & SCROLL
+   ============================================================ */
+
+/* ============================================================
+   SIDEBAR - COMPLETE STYLES (FIXED)
+   ============================================================ */
+
+/* ✅ Sidebar container */
+.admin-sidebar {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ============================================================
+   ✅ MENU ITEM - FIXED LAYOUT
+   ============================================================ */
+
+.admin-sidebar .menu .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 5px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    border-left: 3px solid transparent;
+    gap: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.admin-sidebar .menu .menu-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-sidebar .menu .menu-item .menu-text {
+    flex: 1;
+    white-space: nowrap;
+}
+
+/* ✅ Badge */
+.admin-sidebar .menu .menu-item .badge {
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   ✅ ARROW (Chevron) - ATTRACTIVE & RIGHT SIDE
+   ============================================================ */
+
+.admin-sidebar .menu .menu-item .arrow {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-left: 10px;
+    font-weight: 300;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 2px 8px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.admin-sidebar .menu .menu-item .arrow:hover {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-sidebar .menu .menu-item .arrow.open {
+    color: var(--secondary-color);
+    background: rgba(56, 239, 125, 0.15);
+    transform: rotate(0deg);
+}
+
+/* ✅ Active menu item */
+.admin-sidebar .menu .menu-item.active {
+    background: rgba(17, 153, 142, 0.15);
+    color: #ffffff;
+    border-left-color: var(--primary-color);
+}
+
+.admin-sidebar .menu .menu-item.active i {
+    color: var(--primary-color);
+}
+
+.admin-sidebar .menu .menu-item.active .arrow {
+    color: var(--primary-color);
+    background: rgba(17, 153, 142, 0.2);
+}
+
+.admin-sidebar .menu .menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.admin-sidebar .menu .menu-item:hover i {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================================
+   ✅ SUB-MENU STYLES
+   ============================================================ */
+
+.admin-sidebar .menu .sub-menu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.admin-sidebar .menu .sub-menu.open {
+    display: block;
+}
+
+.admin-sidebar .menu .sub-menu .sub-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 20px 8px 52px;
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    gap: 10px;
+}
+
+.admin-sidebar .menu .sub-menu .sub-item i {
+    width: 18px;
+    text-align: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-sidebar .menu .sub-menu .sub-item:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar .menu .sub-menu .sub-item:hover i {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ✅ Sub-item active state */
+.admin-sidebar .menu .sub-menu .sub-item.active {
+    color: var(--secondary-color) !important;
+    border-left-color: var(--secondary-color);
+    background: rgba(56, 239, 125, 0.08);
+}
+
+.admin-sidebar .menu .sub-menu .sub-item.active i {
+    color: var(--secondary-color) !important;
+}
+
+/* ============================================================
+   ✅ SCROLLBAR STYLING
+   ============================================================ */
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* ============================================================
+   ✅ RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .admin-sidebar .menu .menu-item {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+    .admin-sidebar .menu .sub-menu .sub-item {
+        padding: 6px 15px 6px 42px;
+        font-size: 12px;
+    }
+}
 
 /* ============================================================
    18. RESPONSIVE

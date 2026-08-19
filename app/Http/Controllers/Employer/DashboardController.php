@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
+use App\Models\JobPosting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Job;
@@ -31,12 +32,12 @@ class DashboardController extends Controller
         }
 
         // ✅ Get stats
-        $totalJobs = Job::where('company_id', $companyId)->count();
+        $totalJobs = JobPosting::where('company_id', $companyId)->count();
         $totalApplications = Application::whereHas('job', function ($query) use ($companyId) {
             $query->where('company_id', $companyId);
         })->count();
-        $totalViews = Job::where('company_id', $companyId)->sum('views_count');
-        $featuredJobs = Job::where('company_id', $companyId)->where('is_featured', true)->count();
+        $totalViews = JobPosting::where('company_id', $companyId)->sum('views_count');
+        $featuredJobs = JobPosting::where('company_id', $companyId)->where('is_featured', true)->count();
 
         // ✅ Get recent applications
         $recentApplications = Application::whereHas('job', function ($query) use ($companyId) {

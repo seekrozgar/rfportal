@@ -22,6 +22,7 @@
                         <tr>
                             <th>Title</th>
                             <th>Category</th>
+                            <th>Type</th>
                             <th>Location</th>
                             <th>Image</th>
                             <th>Apply Link</th>
@@ -35,6 +36,7 @@
                             <tr id="job-row-{{ $job->id }}">
                                 <td class="job-title">{{ $job->title }}</td>
                                 <td>{{ $job->category->name ?? 'N/A' }}</td>
+                                <td>{{ $job->jobType->name ?? 'N/A' }}</td>
                                 <td><i class="fas fa-location-dot location-icon"></i> {{ $job->location }}</td>
                                 <td>
                                     @if($job->ad_image)
@@ -79,7 +81,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="empty-state">No jobs found.</td>
+                                <td colspan="9" class="empty-state">No jobs found.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -160,7 +162,7 @@
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
                 },
                 columnDefs: [
-                    { orderable: false, targets: [7] } // Actions column no sorting
+                    { orderable: false, targets: [8] } // Actions column no sorting
                 ]
             });
         });

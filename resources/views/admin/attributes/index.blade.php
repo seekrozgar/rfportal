@@ -1,0 +1,465 @@
+@extends('admin.layouts.admin')
+
+@section('title', $title . ' - Rozgar Finder')
+@section('page-title', $title)
+@section('page-subtitle', 'Manage ' . $title)
+
+@section('content')
+    <div class="admin-card">
+        <div class="card-header">
+            <h5><i class="fas fa-tag me-2" style="color: var(--primary-color);"></i> {{ $title }}</h5>
+            <div class="card-actions">
+                <button onclick="openAddModal()" class="btn-admin-primary">
+                    <i class="fas fa-plus"></i> Add New
+                </button>
+                <button onclick="openImportModal()" class="btn-admin-outline">
+                    <i class="fas fa-file-import"></i> Import
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-scroll-wrapper">
+                {{-- ✅ REMOVED 'datatable' class to prevent duplicate initialization --}}
+                <table class="admin-table" id="attributesTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($items as $item)
+                            <tr id="row-{{ $item->id }}">
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->slug }}</td>
+                                <td>
+                                    <span class="badge-{{ $item->is_active ? 'active' : 'inactive' }}">
+                                        {{ $item->is_active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <div class="action-buttons">
+                                        <button onclick="editItem({{ $item->id }}, '{{ addslashes($item->name) }}')"
+                                            class="btn btn-sm btn-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="toggleStatus({{ $item->id }})"
+                                            class="btn btn-sm {{ $item->is_active ? 'btn-warning' : 'btn-success' }}"
+                                            title="{{ $item->is_active ? 'Disable' : 'Enable' }}">
+                                            <i class="fas fa-{{ $item->is_active ? 'ban' : 'check-circle' }}"></i>
+                                        </button>
+                                        <button onclick="deleteItem({{ $item->id }}, '{{ addslashes($item->name) }}')"
+                                            class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="empty-state">No {{ strtolower($title) }} found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <div class="scroll-indicator">
+                <i class="fas fa-arrow-left me-1"></i> Scroll to see more
+            </div>
+        </div>
+
+        <div class="mt-3">
+            {{ $items->links() }}
+        </div>
+    </div>
+
+    <!-- ✅ Add/Edit Modal -->
+    <div class="modal fade" id="attributeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add New</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="attributeForm">
+                        @csrf
+                        <input type="hidden" id="itemId" value="">
+                        <div class="form-group">
+                            <label for="itemName">Name <span class="text-danger">*</span></label>
+                            <input type="text" id="itemName" class="form-control" placeholder="Enter name" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-admin-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-admin-primary" id="saveBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import {{ $title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importForm">
+                        @csrf
+                        <div class="form-group">
+                            <label>Enter names (one per line)</label>
+                            <textarea id="importNames" class="form-control" rows="5"
+                                placeholder="Name 1&#10;Name 2&#10;Name 3"></textarea>
+                            <small class="text-muted">Each name will be added as a separate entry.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-admin-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-admin-primary" id="importBtn">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        // ✅ Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function () {
+            const type = '{{ $type }}';
+
+            // ✅ Initialize Modals
+            const modalElement = document.getElementById('attributeModal');
+            const importModalElement = document.getElementById('importModal');
+
+            let modal = null;
+            let importModal = null;
+
+            if (modalElement) {
+                try {
+                    modal = new bootstrap.Modal(modalElement);
+                    console.log('✅ Attribute modal initialized');
+                } catch (e) {
+                    console.warn('⚠️ Bootstrap modal error:', e);
+                }
+            }
+            if (importModalElement) {
+                try {
+                    importModal = new bootstrap.Modal(importModalElement);
+                    console.log('✅ Import modal initialized');
+                } catch (e) {
+                    console.warn('⚠️ Bootstrap import modal error:', e);
+                }
+            }
+
+            // ✅ Store modals globally
+            window.attributeModal = modal;
+            window.importModal = importModal;
+            window.attributeType = type;
+
+            // ✅ Save button handler
+            document.getElementById('saveBtn')?.addEventListener('click', function () {
+                saveItem(type);
+            });
+
+            // ✅ Import button handler
+            document.getElementById('importBtn')?.addEventListener('click', function () {
+                importItems(type);
+            });
+
+            // ✅ Enter key handler for name input
+            document.getElementById('itemName')?.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveItem(type);
+                }
+            });
+        });
+
+        // ✅ Toastr helper
+        function showToast(type, message) {
+            if (typeof toastr !== 'undefined') {
+                toastr[type](message);
+            } else {
+                alert(message);
+            }
+        }
+
+        // ✅ Open Add Modal
+        function openAddModal() {
+            const modal = window.attributeModal;
+            if (!modal) {
+                alert('Modal not initialized. Please refresh the page.');
+                return;
+            }
+
+            try {
+                document.getElementById('modalTitle').textContent = 'Add New {{ $title }}';
+                document.getElementById('itemId').value = '';
+                document.getElementById('itemName').value = '';
+                document.getElementById('saveBtn').textContent = 'Add';
+                modal.show();
+            } catch (e) {
+                console.error('Modal error:', e);
+                alert('Error opening modal. Please refresh the page.');
+            }
+        }
+
+        // ✅ Open Import Modal
+        function openImportModal() {
+            const modal = window.importModal;
+            if (!modal) {
+                alert('Import modal not initialized. Please refresh the page.');
+                return;
+            }
+
+            try {
+                document.getElementById('importNames').value = '';
+                modal.show();
+            } catch (e) {
+                console.error('Import modal error:', e);
+                alert('Error opening import modal. Please refresh the page.');
+            }
+        }
+
+        // ✅ Edit Item
+        function editItem(id, name) {
+            const modal = window.attributeModal;
+            if (!modal) {
+                alert('Modal not initialized. Please refresh the page.');
+                return;
+            }
+
+            try {
+                document.getElementById('modalTitle').textContent = 'Edit {{ $title }}';
+                document.getElementById('itemId').value = id;
+                document.getElementById('itemName').value = name;
+                document.getElementById('saveBtn').textContent = 'Update';
+                modal.show();
+            } catch (e) {
+                console.error('Edit modal error:', e);
+                alert('Error opening edit modal. Please refresh the page.');
+            }
+        }
+
+        // ✅ Save Item (Add/Edit)
+        function saveItem(type) {
+            const id = document.getElementById('itemId').value;
+            const name = document.getElementById('itemName').value.trim();
+
+            if (!name) {
+                showToast('error', 'Please enter a name');
+                return;
+            }
+
+            const url = id ? `/admin/attributes/${type}/${id}` : `/admin/attributes/${type}`;
+            const method = id ? 'PUT' : 'POST';
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.textContent;
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify({ name: name })
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        const modal = window.attributeModal;
+                        if (modal) {
+                            try { modal.hide(); } catch (e) { }
+                        }
+                        setTimeout(() => location.reload(), 500);
+                    } else {
+                        showToast('error', response.message || 'Error saving item');
+                    }
+                })
+                .catch(() => {
+                    showToast('error', 'An error occurred');
+                })
+                .finally(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalText;
+                });
+        }
+
+        // ✅ Import Items
+        function importItems(type) {
+            const names = document.getElementById('importNames').value.trim();
+
+            if (!names) {
+                showToast('error', 'Please enter at least one name');
+                return;
+            }
+
+            const importBtn = document.getElementById('importBtn');
+            const originalText = importBtn.textContent;
+
+            importBtn.disabled = true;
+            importBtn.textContent = 'Importing...';
+
+            fetch(`/admin/attributes/${type}/import`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify({ names: names })
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        const modal = window.importModal;
+                        if (modal) {
+                            try { modal.hide(); } catch (e) { }
+                        }
+                        setTimeout(() => location.reload(), 500);
+                    } else {
+                        showToast('error', response.message || 'Error importing items');
+                    }
+                })
+                .catch(() => {
+                    showToast('error', 'An error occurred');
+                })
+                .finally(() => {
+                    importBtn.disabled = false;
+                    importBtn.textContent = originalText;
+                });
+        }
+
+        // ✅ Delete Item
+        function deleteItem(id, name) {
+            const type = window.attributeType || '{{ $type }}';
+
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+            const row = document.getElementById(`row-${id}`);
+            if (row) row.style.opacity = '0.5';
+
+            fetch(`/admin/attributes/${type}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        if (row) {
+                            row.style.transition = 'all 0.5s ease';
+                            row.style.opacity = '0';
+                            setTimeout(() => {
+                                if (row.parentNode) row.remove();
+                            }, 500);
+                        }
+                    } else {
+                        showToast('error', response.message || 'Error deleting item');
+                        if (row) row.style.opacity = '1';
+                    }
+                })
+                .catch(() => {
+                    showToast('error', 'An error occurred');
+                    if (row) row.style.opacity = '1';
+                });
+        }
+
+        // ✅ Toggle Status
+        function toggleStatus(id) {
+            const type = window.attributeType || '{{ $type }}';
+
+            fetch(`/admin/attributes/${type}/${id}/toggle`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        location.reload();
+                    } else {
+                        showToast('error', response.message || 'Error toggling status');
+                    }
+                })
+                .catch(() => {
+                    showToast('error', 'An error occurred');
+                });
+        }
+
+        // ✅ DataTables - ONLY initialize if table exists
+        document.addEventListener('DOMContentLoaded', function () {
+            function initDataTable() {
+                // ✅ Check if DataTable already exists
+                if ($.fn.DataTable.isDataTable('#attributesTable')) {
+                    console.log('DataTable already initialized');
+                    return;
+                }
+
+                // ✅ Destroy any existing instance
+                if ($.fn.DataTable.isDataTable('#attributesTable')) {
+                    $('#attributesTable').DataTable().destroy();
+                }
+
+                // ✅ Initialize DataTable with explicit column definitions
+                $('#attributesTable').DataTable({
+                    responsive: true,
+                    pageLength: 25,
+                    retrieve: true,
+                    destroy: true,
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    },
+                    columnDefs: [
+                        { orderable: false, targets: [4] } // Actions column no sorting
+                    ],
+                    // ✅ Explicit columns to match HTML
+                    columns: [
+                        { data: null, defaultContent: '' }, // #
+                        { data: null, defaultContent: '' }, // Name
+                        { data: null, defaultContent: '' }, // Slug
+                        { data: null, defaultContent: '' }, // Status
+                        { data: null, defaultContent: '' }  // Actions
+                    ]
+                });
+                console.log('✅ DataTable initialized');
+            }
+
+            // ✅ Wait for jQuery and DataTable to load
+            function waitForDataTable() {
+                if (typeof $ !== 'undefined' && typeof $.fn !== 'undefined' && typeof $.fn.DataTable !== 'undefined') {
+                    initDataTable();
+                } else {
+                    console.log('Waiting for DataTable...');
+                    setTimeout(waitForDataTable, 200);
+                }
+            }
+
+            // ✅ Start after DOM is ready
+            setTimeout(waitForDataTable, 500);
+        });
+    </script>
+@endpush

@@ -6,17 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
-use Cviebrock\EloquentSluggable\Sluggable; // ✅ Now this will work
+use Cviebrock\EloquentSluggable\Sluggable;
+use App\Traits\HasTranslations;
 
 class JobPosting extends Model
 {
-    use HasFactory, LogsActivity, Sluggable;
+    use HasFactory, LogsActivity, Sluggable, HasTranslations;
 
     protected $table = 'job_postings';
 
     protected $fillable = [
         'company_id',
         'category_id',
+        'job_type_id',
+        'experience_level_id',
         'posted_by',
         'title',
         'slug',
@@ -28,15 +31,22 @@ class JobPosting extends Model
         'location',
         'salary_min',
         'salary_max',
-        'salary_period',
-        'job_type',
-        'experience_level',
+        'salary_period_id',      // ✅ Changed to ID
+        'job_shift_id',          // ✅ New
+        'career_level_id',       // ✅ New
+        'degree_level_id',       // ✅ New
+        'gender_id',             // ✅ New
+        'industry_id',           // ✅ New
+        'functional_area_id',    // ✅ New
+        'marital_status_id',     // ✅ New
         'application_deadline',
         'source',
         'is_active',
         'is_featured',
         'views_count',
     ];
+
+
 
     protected $casts = [
         'application_deadline' => 'date',
@@ -45,46 +55,87 @@ class JobPosting extends Model
         'views_count' => 'integer',
     ];
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly([
-                'title',
-                'location',
-                'is_active',
-                'is_featured',
-                'source',
-                'company_id',
-                'category_id',
-            ])
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
-    }
+    // ============================================================
+    // ✅ MAGIC METHOD TO GET TRANSLATED ATTRIBUTES
+    // ============================================================
 
-    /**
-     * ✅ Sluggable configuration
-     */
-    public function sluggable(): array
+    public function __get($key)
     {
-        return [
-            'slug' => [
-                'source' => 'title'
-            ]
-        ];
+        // If property exists in model, return it
+        if (isset($this->attributes[$key])) {
+            $value = $this->getOriginal($key);
+            // Check if translation exists for this field
+            if ($this->hasTranslation($key)) {
+                return $this->getTranslation($key);
+            }
+            return $value;
+        }
+
+        return parent::__get($key);
     }
 
     // ============================================================
-    // ✅ RELATIONSHIPS
+    // ✅ ALL RELATIONSHIPS
     // ============================================================
+
+    public function category()
+    {
+        return $this->belongsTo(JobCategory::class, 'category_id');
+    }
+
+    public function jobType()
+    {
+        return $this->belongsTo(JobType::class, 'job_type_id');
+    }
+
+    public function experienceLevel()
+    {
+        return $this->belongsTo(ExperienceLevel::class, 'experience_level_id');
+    }
+
+    public function salaryPeriod()
+    {
+        return $this->belongsTo(SalaryPeriod::class, 'salary_period_id');
+    }
+
+    public function jobShift()
+    {
+        return $this->belongsTo(JobShift::class, 'job_shift_id');
+    }
+
+    public function careerLevel()
+    {
+        return $this->belongsTo(CareerLevel::class, 'career_level_id');
+    }
+
+    public function degreeLevel()
+    {
+        return $this->belongsTo(DegreeLevel::class, 'degree_level_id');
+    }
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class, 'gender_id');
+    }
+
+    public function industry()
+    {
+        return $this->belongsTo(Industry::class, 'industry_id');
+    }
+
+    public function functionalArea()
+    {
+        return $this->belongsTo(FunctionalArea::class, 'functional_area_id');
+    }
+
+    public function maritalStatus()
+    {
+        return $this->belongsTo(MaritalStatus::class, 'marital_status_id');
+    }
 
     public function company()
     {
         return $this->belongsTo(Company::class);
-    }
-
-    public function category()
-    {
-        return $this->belongsTo(JobCategory::class);
     }
 
     public function postedBy()
@@ -95,6 +146,31 @@ class JobPosting extends Model
     public function applications()
     {
         return $this->hasMany(Application::class, 'job_id');
+    }
+
+    // ============================================================
+    // ✅ ACTIVITY LOG
+    // ============================================================
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'location', 'is_active', 'is_featured', 'source'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    // ============================================================
+    // ✅ SLUGGABLE
+    // ============================================================
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'title'
+            ]
+        ];
     }
 
     // ============================================================
@@ -117,13 +193,8 @@ class JobPosting extends Model
         return $query->where('source', $source);
     }
 
-    public function scopeByCompany($query, $companyId)
-    {
-        return $query->where('company_id', $companyId);
-    }
-
     // ============================================================
-    // ✅ HELPER METHODS
+    // ✅ HELPERS
     // ============================================================
 
     public function isExpired()
@@ -136,45 +207,17 @@ class JobPosting extends Model
         return $this->is_active && !$this->isExpired();
     }
 
-    public function incrementViews()
-    {
-        $this->increment('views_count');
-    }
-
     public function getFormattedSalaryAttribute()
     {
         if ($this->salary_min && $this->salary_max) {
-            return $this->salary_min . ' - ' . $this->salary_max . ' ' . ($this->salary_period ?? '');
+            return $this->salary_min . ' - ' . $this->salary_max . ' ' . ($this->salaryPeriod->name ?? '');
         }
         if ($this->salary_min) {
-            return $this->salary_min . ' ' . ($this->salary_period ?? '');
+            return $this->salary_min . ' ' . ($this->salaryPeriod->name ?? '');
         }
         return 'Not specified';
     }
 
-    public function getStatusBadgeClassAttribute()
-    {
-        if (!$this->is_active) {
-            return 'badge-danger';
-        }
-        if ($this->isExpired()) {
-            return 'badge-warning';
-        }
-        return 'badge-success';
-    }
-
-    public function getStatusTextAttribute()
-    {
-        if (!$this->is_active) {
-            return 'Inactive';
-        }
-        if ($this->isExpired()) {
-            return 'Expired';
-        }
-        return 'Active';
-    }
-
-    // ✅ Get Ad Image URL
     public function getAdImageUrlAttribute()
     {
         if ($this->ad_image) {

@@ -1,68 +1,62 @@
 @extends('admin.layouts.admin')
 
 @section('title', 'Admin Dashboard - Rozgar Finder')
-@section('page-title', 'Dashboard')
-@section('page-subtitle', 'Overview of your portal')
+@section('page-title', __t('Dashboard'))
+@section('page-subtitle', __t('Overview of your portal'))
 
 @section('content')
-    <!-- ✅ Stats Grid -->
     <div class="stats-grid">
-        <!-- Total Jobs -->
         <div class="admin-stat-card">
-            <i class="fa-solid fa-briefcase stat-icon"></i>
+            <i class="fas fa-briefcase stat-icon"></i>
             <h3 class="stat-number">{{ $totalJobs ?? 0 }}</h3>
-            <p class="stat-label">Total Jobs</p>
-            <small class="stat-small text-success">{{ $activeJobs ?? 0 }} active</small>
+            <p class="stat-label">{{ __t('Total Jobs') }}</p>
+            <small class="stat-small text-success">{{ $activeJobs ?? 0 }} {{ __t('Active') }}</small>
         </div>
 
-        <!-- Companies -->
         <div class="admin-stat-card info">
-            <i class="fa-solid fa-building stat-icon"></i>
+            <i class="fas fa-building stat-icon"></i>
             <h3 class="stat-number">{{ $totalCompanies ?? 0 }}</h3>
-            <p class="stat-label">Companies</p>
-            <small class="stat-small">Registered partners</small>
+            <p class="stat-label">{{ __t('Total Companies') }}</p>
+            <small class="stat-small">{{ __t('Registered partners') }}</small>
         </div>
 
-        <!-- Total Users -->
         <div class="admin-stat-card warning">
-            <i class="fa-solid fa-users stat-icon"></i>
+            <i class="fas fa-users stat-icon"></i>
             <h3 class="stat-number">{{ $totalUsers ?? 0 }}</h3>
-            <p class="stat-label">Total Users</p>
-            <small class="stat-small">{{ $totalEmployers ?? 0 }} employers, {{ $totalSeekers ?? 0 }} seekers</small>
+            <p class="stat-label">{{ __t('Total Users') }}</p>
+            <small class="stat-small">{{ $totalEmployers ?? 0 }} {{ __t('employers') }}, {{ $totalSeekers ?? 0 }}
+                {{ __t('seekers') }}</small>
         </div>
 
-        <!-- Revenue -->
         <div class="admin-stat-card success">
-            <i class="fa-solid fa-wallet stat-icon"></i>
+            <i class="fas fa-wallet stat-icon"></i>
             <h3 class="stat-number">${{ number_format($totalRevenue ?? 0, 2) }}</h3>
-            <p class="stat-label">Revenue</p>
-            <small class="stat-small text-success">Total earnings</small>
+            <p class="stat-label">{{ __t('Revenue') }}</p>
+            <small class="stat-small text-success">{{ __t('Total earnings') }}</small>
         </div>
     </div>
 
-    <!-- ✅ Tables Grid -->
     <div class="tables-grid">
-
         <!-- Recent Jobs -->
         <div class="admin-card">
             <div class="card-header">
-                <h5><i class="fa-solid fa-clock me-2" style="color: var(--primary-color);"></i> Recent Jobs</h5>
+                <h5><i class="fas fa-clock"
+                        style="color: var(--primary-color); margin-right: 8px;"></i>{{ __t('Recent Jobs') }}</h5>
                 <div class="card-actions">
                     <a href="{{ route('admin.jobs.create') }}" class="btn-admin-primary">
-                        <i class="fa-solid fa-plus"></i> Add New
+                        <i class="fas fa-plus"></i> {{ __t('Add New') }}
                     </a>
                 </div>
             </div>
             <div class="table-container">
-                <!-- 🛠️ Changed class to clear unknown parameter warnings -->
-                <table class="admin-table" id="recentJobsTable" style="width:100%">
+                <table class="admin-table" id="jobsTable">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Company</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th style="text-align: right;">Actions</th>
+                            <th>{{ __t('Title') }}</th>
+                            <th>{{ __t('Company') }}</th>
+                            <th>{{ __t('Location') }}</th>
+                            <th>{{ __t('Status') }}</th>
+                            <th style="text-align: right;">{{ __t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,25 +64,24 @@
                             <tr>
                                 <td class="job-title">{{ $job->title }}</td>
                                 <td>{{ $job->company->company_name ?? 'N/A' }}</td>
-                                <td><i class="fa-solid fa-location-dot location-icon"></i>{{ $job->location }}</td>
+                                <td><i class="fas fa-location-dot location-icon"></i>{{ $job->location }}</td>
                                 <td>
-                                    <span class="{{ $job->is_active ? 'badge-active' : 'badge-inactive' }}">
-                                        {{ $job->is_active ? 'Active' : 'Inactive' }}
+                                    <span class="badge-{{ $job->is_active ? 'active' : 'inactive' }}">
+                                        {{ $job->is_active ? __t('Active') : __t('Inactive') }}
                                     </span>
                                 </td>
                                 <td style="text-align: right;">
                                     <div class="action-buttons">
                                         <a href="{{ route('admin.jobs.edit', $job) }}" class="btn-admin-outline btn-sm"
-                                            title="Edit Job">
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            title="{{ __t('Edit Job') }}">
+                                            <i class="fas fa-pen-to-square"></i>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="empty-state" style="text-align: center; padding: 20px;">No jobs found.
-                                </td>
+                                <td colspan="5" class="empty-state">{{ __t('No jobs found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -99,23 +92,22 @@
         <!-- Recent Users -->
         <div class="admin-card">
             <div class="card-header">
-                <h5><i class="fa-solid fa-users me-2" style="color: #3498db;"></i> Recent Users</h5>
+                <h5><i class="fas fa-users" style="color: #3498db; margin-right: 8px;"></i>{{ __t('Recent Users') }}</h5>
                 <div class="card-actions">
                     <a href="{{ route('admin.users.index') }}" class="btn-admin-outline">
-                        <i class="fa-solid fa-eye"></i> View All
+                        <i class="fas fa-eye"></i> {{ __t('View All') }}
                     </a>
                 </div>
             </div>
             <div class="table-container">
-                <!-- 🛠️ Changed class to clear unknown parameter warnings -->
-                <table class="admin-table" id="recentUsersTable" style="width:100%">
+                <table class="admin-table" id="usersTable">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th style="text-align: right;">Actions</th>
+                            <th>{{ __t('Name') }}</th>
+                            <th>{{ __t('Email') }}</th>
+                            <th>{{ __t('Role') }}</th>
+                            <th>{{ __t('Status') }}</th>
+                            <th style="text-align: right;">{{ __t('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,29 +121,27 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="{{ ($user->is_active ?? true) ? 'badge-active' : 'badge-inactive' }}">
-                                        {{ ($user->is_active ?? true) ? 'Active' : 'Inactive' }}
+                                    <span class="badge-{{ ($user->is_active ?? true) ? 'active' : 'inactive' }}">
+                                        {{ ($user->is_active ?? true) ? __t('Active') : __t('Inactive') }}
                                     </span>
                                 </td>
                                 <td style="text-align: right;">
                                     <div class="action-buttons">
                                         <a href="{{ route('admin.users.edit', $user) }}" class="btn-admin-outline btn-sm"
-                                            title="Edit User">
-                                            <i class="fa-solid fa-user-gear"></i>
+                                            title="{{ __t('Edit User') }}">
+                                            <i class="fas fa-user-gear"></i>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="empty-state" style="text-align: center; padding: 20px;">No users found.
-                                </td>
+                                <td colspan="5" class="empty-state">{{ __t('No users found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 @endsection
