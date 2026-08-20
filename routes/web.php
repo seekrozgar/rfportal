@@ -602,11 +602,42 @@ Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('e
         Route::put('/update', [EmployerProfileController::class, 'update'])->name('update');
     });
 
-    // Packages
+    // ============================================
+    // ✅ PACKAGES ROUTES (Employer)
+    // ============================================
     Route::prefix('packages')->name('packages.')->group(function () {
         Route::get('/', [EmployerPackageController::class, 'index'])->name('index');
+        Route::get('/{package}/buy', [EmployerPackageController::class, 'buy'])->name('buy');  // ✅ ADD THIS
         Route::post('/subscribe', [EmployerPackageController::class, 'subscribe'])->name('subscribe');
     });
+
+    // ============================================
+    // ✅ SUBSCRIPTIONS ROUTES (Employer)
+    // ============================================
+    Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+        Route::get('/', [EmployerPackageController::class, 'subscriptions'])->name('index');
+        Route::get('/active', [EmployerPackageController::class, 'activeSubscription'])->name('active');
+    });
+
+    // ✅ Talent Search
+    Route::prefix('talent')->name('talent.')->group(function () {
+        Route::get('/search', [TalentController::class, 'search'])->name('search');
+        Route::get('/candidate/{id}', [TalentController::class, 'view'])->name('view');
+    });
+
+    // ✅ Analytics
+    Route::prefix('analytics')->name('analytics.')->group(function () {
+        Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+        Route::get('/jobs', [AnalyticsController::class, 'jobs'])->name('jobs');
+        Route::get('/applications', [AnalyticsController::class, 'applications'])->name('applications');
+    });
+
+    // ✅ Settings
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('index');
+        Route::post('/update', [SettingsController::class, 'update'])->name('update');
+    });
+
 });
 
 

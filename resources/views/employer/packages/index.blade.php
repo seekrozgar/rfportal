@@ -69,7 +69,7 @@
 
         {{-- My Subscriptions Link --}}
         <div class="col-12 text-center mt-3">
-            <a href="{{ route('employer.subscriptions') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('employer.subscriptions.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-history me-2"></i> View My Subscriptions History
             </a>
         </div>

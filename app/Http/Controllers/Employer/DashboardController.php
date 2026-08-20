@@ -47,7 +47,7 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('employer.dashboard', [
+        return view('employer.dashboard.index', [
             'user' => $user,
             'totalJobs' => $totalJobs,
             'totalApplications' => $totalApplications,
