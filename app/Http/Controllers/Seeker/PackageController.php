@@ -1,7 +1,7 @@
 <?php
-// app/Http/Controllers/Employer/PackageController.php
+// app/Http/Controllers/Seeker/PackageController.php
 
-namespace App\Http\Controllers\Employer;
+namespace App\Http\Controllers\Seeker;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package;
@@ -13,54 +13,53 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $packages = Package::employer()->active()->orderBy('display_order')->get();
+        $packages = Package::seeker()->active()->orderBy('display_order')->get();
         $activeSubscription = Subscription::where('user_id', Auth::id())
-            ->where('type', 'employer')
+            ->where('type', 'seeker')
             ->where('status', 'active')
             ->where('end_date', '>', now())
             ->first();
 
-        return view('employer.packages.index', compact('packages', 'activeSubscription'));
+        return view('seeker.packages.index', compact('packages', 'activeSubscription'));
     }
 
     public function buy($packageId)
     {
         $package = Package::findOrFail($packageId);
 
-        // Check if already has active subscription
         $existing = Subscription::where('user_id', Auth::id())
-            ->where('type', 'employer')
+            ->where('type', 'seeker')
             ->where('status', 'active')
             ->where('end_date', '>', now())
             ->first();
 
         if ($existing) {
-            return redirect()->route('employer.packages')
+            return redirect()->route('seeker.packages')
                 ->with('error', 'You already have an active subscription.');
         }
 
-        return view('employer.packages.buy', compact('package'));
+        return view('seeker.packages.buy', compact('package'));
     }
 
     public function subscriptions()
     {
         $subscriptions = Subscription::where('user_id', Auth::id())
-            ->where('type', 'employer')
+            ->where('type', 'seeker')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('employer.packages.subscriptions', compact('subscriptions'));
+        return view('seeker.packages.subscriptions', compact('subscriptions'));
     }
 
     public function activeSubscription()
     {
         $subscription = Subscription::where('user_id', Auth::id())
-            ->where('type', 'employer')
+            ->where('type', 'seeker')
             ->where('status', 'active')
             ->where('end_date', '>', now())
             ->with('package')
             ->first();
 
-        return view('employer.packages.active', compact('subscription'));
+        return view('seeker.packages.active', compact('subscription'));
     }
 }

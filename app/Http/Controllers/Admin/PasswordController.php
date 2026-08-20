@@ -12,7 +12,7 @@ class PasswordController extends Controller
 {
     public function index()
     {
-        return view('admin.password.index');
+        return view('admin.change-password.index');
     }
 
     public function update(Request $request)

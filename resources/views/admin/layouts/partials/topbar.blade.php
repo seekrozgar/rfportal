@@ -51,7 +51,7 @@
                     @endforelse
                 </div>
                 <div class="notif-footer">
-                    <a href="{{ route('admin.notifications') }}">View all notifications</a>
+                    <a href="{{ route('admin.notifications.index') }}">View all notifications</a>
                 </div>
             </div>
         </div>
@@ -63,10 +63,10 @@
                 <span class="user-name">{{ Auth::user()->name ?? 'Admin' }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" id="userDropdownMenu">
-                <li><a class="dropdown-item" href="{{ route('admin.profile') }}">
+                <li><a class="dropdown-item" href="{{ route('admin.profile.index') }}">
                         <i class="fa fa-user"></i> My Profile
                     </a></li>
-                <li><a class="dropdown-item" href="{{ route('admin.change-password') }}">
+                <li><a class="dropdown-item" href="{{ route('admin.change-password.index') }}">
                         <i class="fa fa-key"></i> Change Password
                     </a></li>
                 <li>
@@ -86,7 +86,7 @@
 </header>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // ============================================================
         // ✅ THEME TOGGLE
         // ============================================================
@@ -98,7 +98,7 @@
         html.setAttribute('data-bs-theme', savedTheme);
         updateThemeIcon(savedTheme);
 
-        themeToggle?.addEventListener('click', function() {
+        themeToggle?.addEventListener('click', function () {
             const currentTheme = html.getAttribute('data-bs-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             html.setAttribute('data-bs-theme', newTheme);
@@ -117,13 +117,13 @@
         const notifDropdown = document.getElementById('notificationDropdown');
 
         if (notifToggle && notifDropdown) {
-            notifToggle.addEventListener('click', function(e) {
+            notifToggle.addEventListener('click', function (e) {
                 e.stopPropagation();
                 notifDropdown.classList.toggle('show');
             });
 
             // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!notifToggle.contains(e.target) && !notifDropdown.contains(e.target)) {
                     notifDropdown.classList.remove('show');
                 }
@@ -137,12 +137,12 @@
         const userDropdown = document.getElementById('userDropdownMenu');
 
         if (userToggle && userDropdown) {
-            userToggle.addEventListener('click', function(e) {
+            userToggle.addEventListener('click', function (e) {
                 e.stopPropagation();
                 userDropdown.classList.toggle('show');
             });
 
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!userToggle.contains(e.target) && !userDropdown.contains(e.target)) {
                     userDropdown.classList.remove('show');
                 }
@@ -152,7 +152,7 @@
         // ============================================================
         // ✅ MARK ALL NOTIFICATIONS AS READ
         // ============================================================
-        document.getElementById('markAllRead')?.addEventListener('click', function(e) {
+        document.getElementById('markAllRead')?.addEventListener('click', function (e) {
             e.preventDefault();
             fetch('{{ route('admin.notifications.mark-read') }}', {
                 method: 'POST',

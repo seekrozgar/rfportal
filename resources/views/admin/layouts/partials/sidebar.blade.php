@@ -18,6 +18,7 @@
             $isAdmin = $user->hasRole('admin');
             $isAuthor = $user->hasRole('author');
             $currentRoute = request()->route()->getName();
+            use \App\Models\ActivityLog;
         @endphp
 
         <!-- 🏠 Main -->
@@ -207,22 +208,28 @@
                 <span class="menu-text">{{ __t('Site Settings') }}</span>
             </a>
 
-            <a href="{{ route('admin.profile') }}" class="menu-item {{ $currentRoute == 'admin.profile' ? 'active' : '' }}">
+            <a href="{{ route('admin.profile.index') }}"
+                class="menu-item {{ str_starts_with($currentRoute, 'admin.profile') ? 'active' : '' }}">
                 <i class="fa fa-user"></i>
                 <span class="menu-text">{{ __t('My Profile') }}</span>
             </a>
 
-            <a href="{{ route('admin.change-password') }}"
-                class="menu-item {{ $currentRoute == 'admin.change-password' ? 'active' : '' }}">
+            <a href="{{ route('admin.change-password.index') }}"
+                class="menu-item {{ str_starts_with($currentRoute, 'admin.change-password') ? 'active' : '' }}">
                 <i class="fa fa-key"></i>
                 <span class="menu-text">{{ __t('Change Password') }}</span>
             </a>
 
-            <a href="{{ route('admin.notifications') }}"
-                class="menu-item {{ str_starts_with($currentRoute, 'admin.notifications') ? 'active' : '' }}">
+            <a href="{{ route('admin.notifications.index') }}"
+                class="menu-item {{ str_starts_with($currentRoute, 'admin.notifications.') ? 'active' : '' }}">
                 <i class="fa fa-bell"></i>
                 <span class="menu-text">{{ __t('Notifications') }}</span>
-                <span class="badge">{{ \App\Models\ActivityLog::whereNull('read_at')->count() }}</span>
+                @php
+                    $unreadCount = ActivityLog::whereNull('read_at')->count();
+                @endphp
+                @if($unreadCount > 0)
+                    <span class="badge">{{ $unreadCount }}</span>
+                @endif
             </a>
         @endif
     </nav>
