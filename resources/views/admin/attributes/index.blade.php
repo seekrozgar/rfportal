@@ -20,7 +20,6 @@
 
         <div class="table-container">
             <div class="table-scroll-wrapper">
-                {{-- ✅ REMOVED 'datatable' class to prevent duplicate initialization --}}
                 <table class="admin-table" id="attributesTable">
                     <thead>
                         <tr>
@@ -61,9 +60,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="5" class="empty-state">No {{ strtolower($title) }} found.</td>
-                            </tr>
+                            <!-- 🟢 DataTables khud "No data available" dikhayega -->
                         @endforelse
                     </tbody>
                 </table>
@@ -193,6 +190,53 @@
             } else {
                 alert(message);
             }
+        }
+
+        // ✅ Toastr Confirmation for Delete
+        function showDeleteConfirm(message, callback) {
+            if (typeof toastr === 'undefined') {
+                if (confirm(message.replace(/<[^>]*>/g, ''))) {
+                    callback();
+                }
+                return;
+            }
+
+            toastr.clear();
+
+            var confirmHtml = `
+                            <div style="text-align: center; padding: 10px 0;">
+                                <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+                                <div style="display: flex; gap: 10px; justify-content: center;">
+                                    <button onclick="window._deleteConfirmCallback(true)"
+                                            style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                    <button onclick="window._deleteConfirmCallback(false)"
+                                            style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+
+            window._deleteConfirmCallback = function (result) {
+                toastr.clear();
+                if (result) {
+                    callback();
+                } else {
+                    toastr.info('Action cancelled');
+                }
+                delete window._deleteConfirmCallback;
+            };
+
+            toastr.warning(confirmHtml, 'Confirm Delete', {
+                closeButton: false,
+                timeOut: 0,
+                extendedTimeOut: 0,
+                positionClass: 'toast-top-center',
+                progressBar: false,
+                escapeHtml: false,
+            });
         }
 
         // ✅ Open Add Modal
@@ -345,42 +389,46 @@
                 });
         }
 
-        // ✅ Delete Item
+        // ✅ Delete Item - WITH TOASTR CONFIRMATION
         function deleteItem(id, name) {
             const type = window.attributeType || '{{ $type }}';
+            const message = `
+                            Are you sure you want to <strong style="color: #e74c3c;">delete</strong> "<strong>${name}</strong>"?<br>
+                            <small style="color: #999;">This action cannot be undone.</small>
+                        `;
 
-            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+            showDeleteConfirm(message, function () {
+                const row = document.getElementById(`row-${id}`);
+                if (row) row.style.opacity = '0.5';
 
-            const row = document.getElementById(`row-${id}`);
-            if (row) row.style.opacity = '0.5';
-
-            fetch(`/admin/attributes/${type}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                }
-            })
-                .then(response => response.json())
-                .then(response => {
-                    if (response.success) {
-                        showToast('success', response.message);
-                        if (row) {
-                            row.style.transition = 'all 0.5s ease';
-                            row.style.opacity = '0';
-                            setTimeout(() => {
-                                if (row.parentNode) row.remove();
-                            }, 500);
-                        }
-                    } else {
-                        showToast('error', response.message || 'Error deleting item');
-                        if (row) row.style.opacity = '1';
+                fetch(`/admin/attributes/${type}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     }
                 })
-                .catch(() => {
-                    showToast('error', 'An error occurred');
-                    if (row) row.style.opacity = '1';
-                });
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                            showToast('success', response.message);
+                            if (row) {
+                                row.style.transition = 'all 0.5s ease';
+                                row.style.opacity = '0';
+                                setTimeout(() => {
+                                    if (row.parentNode) row.remove();
+                                }, 500);
+                            }
+                        } else {
+                            showToast('error', response.message || 'Error deleting item');
+                            if (row) row.style.opacity = '1';
+                        }
+                    })
+                    .catch(() => {
+                        showToast('error', 'An error occurred');
+                        if (row) row.style.opacity = '1';
+                    });
+            });
         }
 
         // ✅ Toggle Status
@@ -408,58 +456,50 @@
                 });
         }
 
-        // ✅ DataTables - ONLY initialize if table exists
+        // ✅ DataTables
         document.addEventListener('DOMContentLoaded', function () {
             function initDataTable() {
-                // ✅ Check if DataTable already exists
-                if ($.fn.DataTable.isDataTable('#attributesTable')) {
-                    console.log('DataTable already initialized');
-                    return;
-                }
+                try {
+                    if (typeof $ === 'undefined' || typeof $.fn === 'undefined' || typeof $.fn.DataTable === 'undefined') {
+                        console.warn('DataTable not available, retrying...');
+                        setTimeout(initDataTable, 500);
+                        return;
+                    }
 
-                // ✅ Destroy any existing instance
-                if ($.fn.DataTable.isDataTable('#attributesTable')) {
-                    $('#attributesTable').DataTable().destroy();
-                }
+                    var table = document.getElementById('attributesTable');
+                    if (!table) {
+                        console.warn('Table not found');
+                        return;
+                    }
 
-                // ✅ Initialize DataTable with explicit column definitions
-                $('#attributesTable').DataTable({
-                    responsive: true,
-                    pageLength: 25,
-                    retrieve: true,
-                    destroy: true,
-                    language: {
-                        search: "Search:",
-                        lengthMenu: "Show _MENU_ entries",
-                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                    },
-                    columnDefs: [
-                        { orderable: false, targets: [4] } // Actions column no sorting
-                    ],
-                    // ✅ Explicit columns to match HTML
-                    columns: [
-                        { data: null, defaultContent: '' }, // #
-                        { data: null, defaultContent: '' }, // Name
-                        { data: null, defaultContent: '' }, // Slug
-                        { data: null, defaultContent: '' }, // Status
-                        { data: null, defaultContent: '' }  // Actions
-                    ]
-                });
-                console.log('✅ DataTable initialized');
-            }
+                    // ✅ Check if DataTable already exists
+                    if ($.fn.DataTable.isDataTable && $.fn.DataTable.isDataTable('#attributesTable')) {
+                        console.log('DataTable already initialized');
+                        return;
+                    }
 
-            // ✅ Wait for jQuery and DataTable to load
-            function waitForDataTable() {
-                if (typeof $ !== 'undefined' && typeof $.fn !== 'undefined' && typeof $.fn.DataTable !== 'undefined') {
-                    initDataTable();
-                } else {
-                    console.log('Waiting for DataTable...');
-                    setTimeout(waitForDataTable, 200);
+                    $('#attributesTable').DataTable({
+                        responsive: true,
+                        pageLength: 25,
+                        retrieve: true,
+                        destroy: false,
+                        language: {
+                            search: "Search:",
+                            lengthMenu: "Show _MENU_ entries",
+                            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                            emptyTable: "No data available"  // ✅ Jab table empty ho
+                        },
+                        columnDefs: [
+                            { orderable: false, targets: [4] }
+                        ]
+                    });
+                    console.log('✅ DataTable initialized');
+                } catch (e) {
+                    console.warn('DataTable init error:', e);
                 }
             }
 
-            // ✅ Start after DOM is ready
-            setTimeout(waitForDataTable, 500);
+            setTimeout(initDataTable, 800);
         });
     </script>
 @endpush
