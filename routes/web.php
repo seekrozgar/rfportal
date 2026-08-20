@@ -426,6 +426,8 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     Route::prefix('packages')->name('packages.')->group(function () {
         Route::get('/', [AdminPackageController::class, 'index'])->name('index');
         Route::post('/', [AdminPackageController::class, 'store'])->name('store');
+        // ✅ IMPORTANT: GET route for fetching single package (View + Edit)
+        Route::get('/{package}', [AdminPackageController::class, 'show'])->name('show');
         Route::put('/{package}', [AdminPackageController::class, 'update'])->name('update');
         Route::delete('/{package}', [AdminPackageController::class, 'destroy'])->name('destroy');
         Route::post('/{package}/toggle', [AdminPackageController::class, 'toggleStatus'])->name('toggle');

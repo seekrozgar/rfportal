@@ -12,10 +12,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('package_id')->constrained()->onDelete('cascade');
-            $table->string('type')->enum(['employer', 'seeker']);
+            $table->enum('type', ['employer', 'seeker']);
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->string('status')->enum(['active', 'expired', 'cancelled', 'pending'])->default('pending');
+            $table->enum('status', ['active', 'expired', 'cancelled', 'pending'])->default('pending');
             $table->integer('job_posts_used')->default(0);
             $table->integer('job_posts_limit')->default(0);
             $table->integer('resume_views_used')->default(0);
@@ -28,6 +28,8 @@ return new class extends Migration {
 
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('subscriptions');
+        Schema::enableForeignKeyConstraints();
     }
 };

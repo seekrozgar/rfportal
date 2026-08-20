@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('type')->enum(['employer', 'seeker']); // employer | seeker
+            $table->enum('type', ['employer', 'seeker'])->default('seeker'); // employer | seeker
             $table->decimal('price', 10, 2);
             $table->integer('duration_days')->default(30);
             $table->json('features')->nullable(); // JSON features list
@@ -30,6 +30,8 @@ return new class extends Migration {
 
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('packages');
+        Schema::enableForeignKeyConstraints();
     }
 };

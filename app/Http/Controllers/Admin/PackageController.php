@@ -12,8 +12,24 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $packages = Package::orderBy('display_order')->paginate(15);
+        $type = request('type', 'all');
+
+        $packages = Package::when($type !== 'all', function($query) use ($type) {
+            return $query->where('type', $type);
+        })
+        ->orderBy('display_order')
+        ->paginate(15);
+
         return view('admin.packages.index', compact('packages'));
+    }
+
+    // ✅ NEW: Show single package (for view modal)
+    public function show(Package $package)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $package
+        ]);
     }
 
     public function store(Request $request)
@@ -71,7 +87,6 @@ class PackageController extends Controller
             ]);
 
             $validated['features'] = $request->features ?? [];
-
             $package->update($validated);
 
             return response()->json([
