@@ -65,13 +65,72 @@
                     </tbody>
                 </table>
             </div>
-            <div class="scroll-indicator">
-                <i class="fas fa-arrow-left me-1"></i> Scroll to see more
-            </div>
         </div>
 
-        <div class="mt-3">
-            {{ $items->links() }}
+        {{-- ✅ Custom Pagination (Only One) --}}
+        <div class="pagination-wrapper mt-3">
+            @if ($items->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        @if ($items->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $items->previousPageUrl() }}" rel="prev">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($items->links()->elements as $element)
+                            @if (is_string($element))
+                                <li class="page-item disabled">
+                                    <span class="page-link">{{ $element }}</span>
+                                </li>
+                            @endif
+
+                            @if (is_array($element))
+                                @foreach ($element as $page => $url)
+                                    @if ($page == $items->currentPage())
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($items->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $items->nextPageUrl() }}" rel="next">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+
+                <div class="pagination-info text-center text-muted small">
+                    Showing {{ $items->firstItem() ?? 0 }} to {{ $items->lastItem() ?? 0 }} of {{ $items->total() }} entries
+                </div>
+            @endif
         </div>
     </div>
 
@@ -204,20 +263,20 @@
             toastr.clear();
 
             var confirmHtml = `
-                            <div style="text-align: center; padding: 10px 0;">
-                                <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
-                                <div style="display: flex; gap: 10px; justify-content: center;">
-                                    <button onclick="window._deleteConfirmCallback(true)"
-                                            style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                    <button onclick="window._deleteConfirmCallback(false)"
-                                            style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                                        <i class="fas fa-times"></i> Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+                    <div style="text-align: center; padding: 10px 0;">
+                        <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="window._deleteConfirmCallback(true)"
+                                    style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button onclick="window._deleteConfirmCallback(false)"
+                                    style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                `;
 
             window._deleteConfirmCallback = function (result) {
                 toastr.clear();
@@ -393,9 +452,9 @@
         function deleteItem(id, name) {
             const type = window.attributeType || '{{ $type }}';
             const message = `
-                            Are you sure you want to <strong style="color: #e74c3c;">delete</strong> "<strong>${name}</strong>"?<br>
-                            <small style="color: #999;">This action cannot be undone.</small>
-                        `;
+                    Are you sure you want to <strong style="color: #e74c3c;">delete</strong> "<strong>${name}</strong>"?<br>
+                    <small style="color: #999;">This action cannot be undone.</small>
+                `;
 
             showDeleteConfirm(message, function () {
                 const row = document.getElementById(`row-${id}`);
@@ -456,7 +515,7 @@
                 });
         }
 
-        // ✅ DataTables
+        // ✅ DataTables - With Pagination Disabled
         document.addEventListener('DOMContentLoaded', function () {
             function initDataTable() {
                 try {
@@ -472,7 +531,6 @@
                         return;
                     }
 
-                    // ✅ Check if DataTable already exists
                     if ($.fn.DataTable.isDataTable && $.fn.DataTable.isDataTable('#attributesTable')) {
                         console.log('DataTable already initialized');
                         return;
@@ -480,20 +538,20 @@
 
                     $('#attributesTable').DataTable({
                         responsive: true,
-                        pageLength: 25,
-                        retrieve: true,
-                        destroy: false,
+                        paging: false,        // ✅ Disable DataTable pagination
+                        searching: true,       // ✅ Keep search
+                        ordering: true,        // ✅ Keep sorting
+                        info: false,           // ✅ Hide "Showing X to Y" info
+                        lengthChange: false,   // ✅ Hide "Show entries" dropdown
                         language: {
                             search: "Search:",
-                            lengthMenu: "Show _MENU_ entries",
-                            info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                            emptyTable: "No data available"  // ✅ Jab table empty ho
+                            emptyTable: "No data available"
                         },
                         columnDefs: [
                             { orderable: false, targets: [4] }
                         ]
                     });
-                    console.log('✅ DataTable initialized');
+                    console.log('✅ DataTable initialized (pagination disabled)');
                 } catch (e) {
                     console.warn('DataTable init error:', e);
                 }

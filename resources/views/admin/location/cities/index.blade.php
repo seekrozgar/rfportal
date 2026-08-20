@@ -39,9 +39,7 @@
                         <i class="fas fa-times"></i> Clear
                     </a>
                 </div>
-                <div class="col-auto ms-auto">
-                    <span class="text-muted small">Total: {{ $cities->total() }} cities</span>
-                </div>
+
             </form>
         </div>
 
@@ -102,9 +100,72 @@
             </table>
         </div>
 
-        <div class="mt-3">
-            {{ $cities->links() }}
+        {{-- ✅ Improved Pagination --}}
+        <div class="pagination-wrapper mt-3">
+            @if ($cities->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        @if ($cities->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $cities->previousPageUrl() }}" rel="prev">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($cities->links()->elements as $element)
+                            @if (is_string($element))
+                                <li class="page-item disabled">
+                                    <span class="page-link">{{ $element }}</span>
+                                </li>
+                            @endif
+
+                            @if (is_array($element))
+                                @foreach ($element as $page => $url)
+                                    @if ($page == $cities->currentPage())
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($cities->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $cities->nextPageUrl() }}" rel="next">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+
+                <div class="pagination-info text-center text-muted small">
+                    Showing {{ $cities->firstItem() ?? 0 }} to {{ $cities->lastItem() ?? 0 }} of {{ $cities->total() }} entries
+                </div>
+            @endif
         </div>
+
     </div>
 
     <!-- ✅ Add/Edit Modal with Country → State Dropdown -->
@@ -155,242 +216,242 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const modalElement = document.getElementById('cityModal');
-        let modal = new bootstrap.Modal(modalElement);
-        window.cityModal = modal;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalElement = document.getElementById('cityModal');
+            let modal = new bootstrap.Modal(modalElement);
+            window.cityModal = modal;
 
-        document.getElementById('saveBtn').addEventListener('click', function () {
-            saveItem();
-        });
-
-        document.getElementById('itemName').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
+            document.getElementById('saveBtn').addEventListener('click', function () {
                 saveItem();
-            }
+            });
+
+            document.getElementById('itemName').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveItem();
+                }
+            });
+
+            // ✅ Country → State dropdown change
+            document.getElementById('itemCountryId').addEventListener('change', function () {
+                const countryId = this.value;
+                const stateSelect = document.getElementById('itemStateId');
+
+                if (!countryId) {
+                    stateSelect.innerHTML = '<option value="">First select a country</option>';
+                    return;
+                }
+
+                stateSelect.innerHTML = '<option value="">Loading states...</option>';
+
+                fetch(`/admin/location/states-by-country/${countryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        stateSelect.innerHTML = '<option value="">Select State</option>';
+                        data.forEach(state => {
+                            stateSelect.innerHTML += `<option value="${state.id}">${state.name}</option>`;
+                        });
+                    })
+                    .catch(() => {
+                        stateSelect.innerHTML = '<option value="">Error loading states</option>';
+                    });
+            });
         });
 
-        // ✅ Country → State dropdown change
-        document.getElementById('itemCountryId').addEventListener('change', function() {
-            const countryId = this.value;
-            const stateSelect = document.getElementById('itemStateId');
+        function showToast(type, message) {
+            if (typeof toastr !== 'undefined') {
+                toastr[type](message);
+            } else {
+                alert(message);
+            }
+        }
 
-            if (!countryId) {
-                stateSelect.innerHTML = '<option value="">First select a country</option>';
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add City';
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemCountryId').value = '';
+            document.getElementById('itemStateId').innerHTML = '<option value="">First select a country</option>';
+            document.getElementById('saveBtn').textContent = 'Add';
+            window.cityModal.show();
+        }
+
+        function editItem(id, name, stateId) {
+            document.getElementById('modalTitle').textContent = 'Edit City';
+            document.getElementById('itemId').value = id;
+            document.getElementById('itemName').value = name;
+
+            // Get state info for edit
+            fetch(`/admin/location/state-info/${stateId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('itemCountryId').value = data.country_id;
+
+                    // Load states for this country
+                    const stateSelect = document.getElementById('itemStateId');
+                    fetch(`/admin/location/states-by-country/${data.country_id}`)
+                        .then(response => response.json())
+                        .then(states => {
+                            stateSelect.innerHTML = '<option value="">Select State</option>';
+                            states.forEach(state => {
+                                const selected = state.id == stateId ? 'selected' : '';
+                                stateSelect.innerHTML += `<option value="${state.id}" ${selected}>${state.name}</option>`;
+                            });
+                        });
+                });
+
+            document.getElementById('saveBtn').textContent = 'Update';
+            window.cityModal.show();
+        }
+
+        function saveItem() {
+            const id = document.getElementById('itemId').value;
+            const stateId = document.getElementById('itemStateId').value;
+            const name = document.getElementById('itemName').value.trim();
+
+            if (!stateId || !name) {
+                showToast('error', 'Please select state and enter city name');
                 return;
             }
 
-            stateSelect.innerHTML = '<option value="">Loading states...</option>';
+            const url = id ? `/admin/location/cities/${id}` : `/admin/location/cities`;
+            const method = id ? 'PUT' : 'POST';
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.textContent;
 
-            fetch(`/admin/location/states-by-country/${countryId}`)
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify({ state_id: stateId, name })
+            })
                 .then(response => response.json())
-                .then(data => {
-                    stateSelect.innerHTML = '<option value="">Select State</option>';
-                    data.forEach(state => {
-                        stateSelect.innerHTML += `<option value="${state.id}">${state.name}</option>`;
-                    });
+                .then(response => {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        window.cityModal.hide();
+                        setTimeout(() => location.reload(), 500);
+                    } else {
+                        showToast('error', response.message || 'Error saving');
+                    }
                 })
-                .catch(() => {
-                    stateSelect.innerHTML = '<option value="">Error loading states</option>';
+                .catch(() => showToast('error', 'An error occurred'))
+                .finally(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalText;
                 });
-        });
-    });
-
-    function showToast(type, message) {
-        if (typeof toastr !== 'undefined') {
-            toastr[type](message);
-        } else {
-            alert(message);
-        }
-    }
-
-    function openAddModal() {
-        document.getElementById('modalTitle').textContent = 'Add City';
-        document.getElementById('itemId').value = '';
-        document.getElementById('itemName').value = '';
-        document.getElementById('itemCountryId').value = '';
-        document.getElementById('itemStateId').innerHTML = '<option value="">First select a country</option>';
-        document.getElementById('saveBtn').textContent = 'Add';
-        window.cityModal.show();
-    }
-
-    function editItem(id, name, stateId) {
-        document.getElementById('modalTitle').textContent = 'Edit City';
-        document.getElementById('itemId').value = id;
-        document.getElementById('itemName').value = name;
-
-        // Get state info for edit
-        fetch(`/admin/location/state-info/${stateId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('itemCountryId').value = data.country_id;
-
-                // Load states for this country
-                const stateSelect = document.getElementById('itemStateId');
-                fetch(`/admin/location/states-by-country/${data.country_id}`)
-                    .then(response => response.json())
-                    .then(states => {
-                        stateSelect.innerHTML = '<option value="">Select State</option>';
-                        states.forEach(state => {
-                            const selected = state.id == stateId ? 'selected' : '';
-                            stateSelect.innerHTML += `<option value="${state.id}" ${selected}>${state.name}</option>`;
-                        });
-                    });
-            });
-
-        document.getElementById('saveBtn').textContent = 'Update';
-        window.cityModal.show();
-    }
-
-    function saveItem() {
-        const id = document.getElementById('itemId').value;
-        const stateId = document.getElementById('itemStateId').value;
-        const name = document.getElementById('itemName').value.trim();
-
-        if (!stateId || !name) {
-            showToast('error', 'Please select state and enter city name');
-            return;
         }
 
-        const url = id ? `/admin/location/cities/${id}` : `/admin/location/cities`;
-        const method = id ? 'PUT' : 'POST';
-        const saveBtn = document.getElementById('saveBtn');
-        const originalText = saveBtn.textContent;
+        function toggleStatus(id) {
+            if (!confirm('Are you sure you want to change status?')) return;
 
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Saving...';
-
-        fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-            },
-            body: JSON.stringify({ state_id: stateId, name })
-        })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                showToast('success', response.message);
-                window.cityModal.hide();
-                setTimeout(() => location.reload(), 500);
-            } else {
-                showToast('error', response.message || 'Error saving');
-            }
-        })
-        .catch(() => showToast('error', 'An error occurred'))
-        .finally(() => {
-            saveBtn.disabled = false;
-            saveBtn.textContent = originalText;
-        });
-    }
-
-    function toggleStatus(id) {
-        if (!confirm('Are you sure you want to change status?')) return;
-
-        fetch(`/admin/location/cities/${id}/toggle`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-            }
-        })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                showToast('success', response.message);
-                location.reload();
-            } else {
-                showToast('error', response.message || 'Error toggling status');
-            }
-        })
-        .catch(() => showToast('error', 'An error occurred'));
-    }
-
-    function deleteItem(id, name) {
-        let message = `Are you sure you want to delete "<strong>${name}</strong>"?`;
-        message += `<br><small style="color: #999;">This action cannot be undone.</small>`;
-
-        showDeleteConfirm(message, function () {
-            const row = document.getElementById(`row-${id}`);
-            if (row) row.style.opacity = '0.5';
-
-            fetch(`/admin/location/cities/${id}`, {
-                method: 'DELETE',
+            fetch(`/admin/location/cities/${id}/toggle`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                 }
             })
-            .then(response => response.json())
-            .then(response => {
-                if (response.success) {
-                    showToast('success', response.message);
-                    if (row) {
-                        row.style.transition = 'all 0.5s ease';
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            if (row.parentNode) row.remove();
-                        }, 500);
+                .then(response => response.json())
+                .then(response => {
+                    if (response.success) {
+                        showToast('success', response.message);
+                        location.reload();
+                    } else {
+                        showToast('error', response.message || 'Error toggling status');
                     }
-                } else {
-                    showToast('error', response.message || 'Error deleting');
-                    if (row) row.style.opacity = '1';
-                }
-            })
-            .catch(() => {
-                showToast('error', 'An error occurred');
-                if (row) row.style.opacity = '1';
-            });
-        });
-    }
-
-    function showDeleteConfirm(message, callback) {
-        if (typeof toastr === 'undefined') {
-            if (confirm(message.replace(/<[^>]*>/g, ''))) {
-                callback();
-            }
-            return;
+                })
+                .catch(() => showToast('error', 'An error occurred'));
         }
 
-        toastr.clear();
+        function deleteItem(id, name) {
+            let message = `Are you sure you want to delete "<strong>${name}</strong>"?`;
+            message += `<br><small style="color: #999;">This action cannot be undone.</small>`;
 
-        var confirmHtml = `
-            <div style="text-align: center; padding: 10px 0;">
-                <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <button onclick="window._deleteConfirmCallback(true)"
-                            style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                    <button onclick="window._deleteConfirmCallback(false)"
-                            style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </div>
-        `;
+            showDeleteConfirm(message, function () {
+                const row = document.getElementById(`row-${id}`);
+                if (row) row.style.opacity = '0.5';
 
-        window._deleteConfirmCallback = function (result) {
-            toastr.clear();
-            if (result) {
-                callback();
-            } else {
-                toastr.info('Action cancelled');
+                fetch(`/admin/location/cities/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                            showToast('success', response.message);
+                            if (row) {
+                                row.style.transition = 'all 0.5s ease';
+                                row.style.opacity = '0';
+                                setTimeout(() => {
+                                    if (row.parentNode) row.remove();
+                                }, 500);
+                            }
+                        } else {
+                            showToast('error', response.message || 'Error deleting');
+                            if (row) row.style.opacity = '1';
+                        }
+                    })
+                    .catch(() => {
+                        showToast('error', 'An error occurred');
+                        if (row) row.style.opacity = '1';
+                    });
+            });
+        }
+
+        function showDeleteConfirm(message, callback) {
+            if (typeof toastr === 'undefined') {
+                if (confirm(message.replace(/<[^>]*>/g, ''))) {
+                    callback();
+                }
+                return;
             }
-            delete window._deleteConfirmCallback;
-        };
 
-        toastr.warning(confirmHtml, 'Confirm Delete', {
-            closeButton: false,
-            timeOut: 0,
-            extendedTimeOut: 0,
-            positionClass: 'toast-top-center',
-            progressBar: false,
-            escapeHtml: false,
-        });
-    }
-</script>
+            toastr.clear();
+
+            var confirmHtml = `
+                                                    <div style="text-align: center; padding: 10px 0;">
+                                                        <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+                                                        <div style="display: flex; gap: 10px; justify-content: center;">
+                                                            <button onclick="window._deleteConfirmCallback(true)"
+                                                                    style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </button>
+                                                            <button onclick="window._deleteConfirmCallback(false)"
+                                                                    style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                                                <i class="fas fa-times"></i> Cancel
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                `;
+
+            window._deleteConfirmCallback = function (result) {
+                toastr.clear();
+                if (result) {
+                    callback();
+                } else {
+                    toastr.info('Action cancelled');
+                }
+                delete window._deleteConfirmCallback;
+            };
+
+            toastr.warning(confirmHtml, 'Confirm Delete', {
+                closeButton: false,
+                timeOut: 0,
+                extendedTimeOut: 0,
+                positionClass: 'toast-top-center',
+                progressBar: false,
+                escapeHtml: false,
+            });
+        }
+    </script>
 @endpush

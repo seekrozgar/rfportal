@@ -20,13 +20,13 @@
             <table class="admin-table" id="countriesTable">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th style="width: 50px;">#</th>
                         <th>Name</th>
-                        <th>Code</th>
-                        <th>Phone Code</th>
-                        <th>States</th>
-                        <th>Status</th>
-                        <th style="text-align: right;">Actions</th>
+                        <th style="width: 80px;">Code</th>
+                        <th style="width: 100px;">Phone Code</th>
+                        <th style="width: 80px;">States</th>
+                        <th style="width: 100px;">Status</th>
+                        <th style="width: 160px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +38,7 @@
                             <td>{{ $country->phone_code ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('admin.location.states.index', ['country_id' => $country->id]) }}"
-                                    class="text-primary">
+                                    class="text-primary fw-bold">
                                     {{ $country->states->count() }}
                                 </a>
                             </td>
@@ -79,8 +79,74 @@
             </table>
         </div>
 
-        <div class="mt-3">
-            {{ $countries->links() }}
+        {{-- ✅ Improved Pagination --}}
+        <div class="pagination-wrapper mt-3">
+            @if ($countries->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        @if ($countries->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $countries->previousPageUrl() }}" rel="prev">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($countries->links()->elements as $element)
+                            {{-- "Three Dots" Separator --}}
+                            @if (is_string($element))
+                                <li class="page-item disabled">
+                                    <span class="page-link">{{ $element }}</span>
+                                </li>
+                            @endif
+
+                            {{-- Array Of Links --}}
+                            @if (is_array($element))
+                                @foreach ($element as $page => $url)
+                                    @if ($page == $countries->currentPage())
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($countries->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $countries->nextPageUrl() }}" rel="next">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+
+                {{-- ✅ Info Text --}}
+                <div class="pagination-info text-center text-muted small">
+                    Showing {{ $countries->firstItem() ?? 0 }} to {{ $countries->lastItem() ?? 0 }} of {{ $countries->total() }}
+                    entries
+                </div>
+            @endif
         </div>
     </div>
 
@@ -122,6 +188,8 @@
     </div>
 @endsection
 
+
+
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -133,7 +201,6 @@
                 saveItem();
             });
 
-            // Enter key support
             document.getElementById('itemName').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -277,7 +344,6 @@
             });
         }
 
-        // Toastr Delete Confirmation
         function showDeleteConfirm(message, callback) {
             if (typeof toastr === 'undefined') {
                 if (confirm(message.replace(/<[^>]*>/g, ''))) {
@@ -289,20 +355,20 @@
             toastr.clear();
 
             var confirmHtml = `
-                <div style="text-align: center; padding: 10px 0;">
-                    <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button onclick="window._deleteConfirmCallback(true)"
-                                style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                        <button onclick="window._deleteConfirmCallback(false)"
-                                style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                    </div>
-                </div>
-            `;
+                        <div style="text-align: center; padding: 10px 0;">
+                            <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button onclick="window._deleteConfirmCallback(true)"
+                                        style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                                <button onclick="window._deleteConfirmCallback(false)"
+                                        style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    `;
 
             window._deleteConfirmCallback = function (result) {
                 toastr.clear();

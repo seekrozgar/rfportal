@@ -49,13 +49,13 @@
             <table class="admin-table" id="statesTable">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th style="width: 50px;">#</th>
                         <th>Name</th>
-                        <th>Code</th>
+                        <th style="width: 80px;">Code</th>
                         <th>Country</th>
-                        <th>Cities</th>
-                        <th>Status</th>
-                        <th style="text-align: right;">Actions</th>
+                        <th style="width: 80px;">Cities</th>
+                        <th style="width: 100px;">Status</th>
+                        <th style="width: 160px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,7 +69,7 @@
                             </td>
                             <td>
                                 <a href="{{ route('admin.location.cities.index', ['state_id' => $state->id]) }}"
-                                    class="text-primary">
+                                    class="text-primary fw-bold">
                                     {{ $state->cities->count() }}
                                 </a>
                             </td>
@@ -110,8 +110,70 @@
             </table>
         </div>
 
-        <div class="mt-3">
-            {{ $states->links() }}
+        {{-- ✅ Improved Pagination --}}
+        <div class="pagination-wrapper mt-3">
+            @if ($states->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {{-- Previous Page Link --}}
+                        @if ($states->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $states->previousPageUrl() }}" rel="prev">
+                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($states->links()->elements as $element)
+                            @if (is_string($element))
+                                <li class="page-item disabled">
+                                    <span class="page-link">{{ $element }}</span>
+                                </li>
+                            @endif
+
+                            @if (is_array($element))
+                                @foreach ($element as $page => $url)
+                                    @if ($page == $states->currentPage())
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($states->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $states->nextPageUrl() }}" rel="next">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+
+                <div class="pagination-info text-center text-muted small">
+                    Showing {{ $states->firstItem() ?? 0 }} to {{ $states->lastItem() ?? 0 }} of {{ $states->total() }} entries
+                </div>
+            @endif
         </div>
     </div>
 
@@ -320,20 +382,20 @@
             toastr.clear();
 
             var confirmHtml = `
-                <div style="text-align: center; padding: 10px 0;">
-                    <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button onclick="window._deleteConfirmCallback(true)"
-                                style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                        <button onclick="window._deleteConfirmCallback(false)"
-                                style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
+                    <div style="text-align: center; padding: 10px 0;">
+                        <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="window._deleteConfirmCallback(true)"
+                                    style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button onclick="window._deleteConfirmCallback(false)"
+                                    style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
 
             window._deleteConfirmCallback = function (result) {
                 toastr.clear();
