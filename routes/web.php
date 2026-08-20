@@ -23,9 +23,9 @@ use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\SeoController as AdminSeoController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
-use App\Http\Controllers\Admin\CountryController as AdminCountryController;
-use App\Http\Controllers\Admin\StateController as AdminStateController;
-use App\Http\Controllers\Admin\CityController as AdminCityController;
+use App\Http\Controllers\Admin\Location\CountryController as AdminCountryController;
+use App\Http\Controllers\Admin\Location\StateController as AdminStateController;
+use App\Http\Controllers\Admin\Location\CityController as AdminCityController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
@@ -273,10 +273,33 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     Route::delete('/languages/{language}', [AdminLanguageController::class, 'destroy'])->name('languages.destroy');
 
     // ✅ Locations (SuperAdmin only)
-    Route::prefix('locations')->middleware(['superadmin'])->name('locations.')->group(function () {
-        Route::resource('countries', AdminCountryController::class)->except(['show']);
-        Route::resource('states', AdminStateController::class)->except(['show']);
-        Route::resource('cities', AdminCityController::class)->except(['show']);
+    Route::prefix('location')->middleware(['superadmin'])->name('location.')->group(function () {
+
+        // Countries
+        Route::get('/countries', [AdminCountryController::class, 'index'])->name('countries.index');
+        Route::post('/countries', [AdminCountryController::class, 'store'])->name('countries.store');
+        Route::put('/countries/{country}', [AdminCountryController::class, 'update'])->name('countries.update');
+        Route::delete('/countries/{country}', [AdminCountryController::class, 'destroy'])->name('countries.destroy');
+        Route::post('/countries/{country}/toggle', [AdminCountryController::class, 'toggleStatus'])->name('countries.toggle');
+
+        // States
+        Route::get('/states', [AdminStateController::class, 'index'])->name('states.index');
+        Route::post('/states', [AdminStateController::class, 'store'])->name('states.store');
+        Route::put('/states/{state}', [AdminStateController::class, 'update'])->name('states.update');
+        Route::delete('/states/{state}', [AdminStateController::class, 'destroy'])->name('states.destroy');
+        Route::post('/states/{state}/toggle', [AdminStateController::class, 'toggleStatus'])->name('states.toggle');
+
+        // Cities
+        Route::get('/cities', [AdminCityController::class, 'index'])->name('cities.index');
+        Route::post('/cities', [AdminCityController::class, 'store'])->name('cities.store');
+        Route::put('/cities/{city}', [AdminCityController::class, 'update'])->name('cities.update');
+        Route::delete('/cities/{city}', [AdminCityController::class, 'destroy'])->name('cities.destroy');
+        Route::post('/cities/{city}/toggle', [AdminCityController::class, 'toggleStatus'])->name('cities.toggle');
+
+        // ✅ NEW: For dropdowns
+        Route::get('/states-by-country/{countryId}', [AdminCityController::class, 'getStatesByCountry'])->name('states.by-country');
+        Route::get('/state-info/{stateId}', [AdminCityController::class, 'getStateInfo'])->name('state.info');
+        Route::get('/cities-by-state/{stateId}', [AdminCityController::class, 'getByState'])->name('cities.by-state');
     });
 
     // ✅ Packages

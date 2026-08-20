@@ -115,20 +115,20 @@
             <!-- 🌍 Location -->
             <div class="menu-label">{{ __t('Location') }}</div>
 
-            <a href="{{ route('admin.locations.countries.index') }}"
-                class="menu-item {{ str_starts_with($currentRoute, 'admin.locations.countries.') ? 'active' : '' }}">
+            <a href="{{ route('admin.location.countries.index') }}"
+                class="menu-item {{ str_starts_with($currentRoute, 'admin.location.countries.') ? 'active' : '' }}">
                 <i class="fa fa-flag"></i>
                 <span class="menu-text">{{ __t('Countries') }}</span>
             </a>
 
-            <a href="{{ route('admin.locations.states.index') }}"
-                class="menu-item {{ str_starts_with($currentRoute, 'admin.locations.states.') ? 'active' : '' }}">
+            <a href="{{ route('admin.location.states.index') }}"
+                class="menu-item {{ str_starts_with($currentRoute, 'admin.location.states.') ? 'active' : '' }}">
                 <i class="fa fa-map-marker-alt"></i>
                 <span class="menu-text">{{ __t('States') }}</span>
             </a>
 
-            <a href="{{ route('admin.locations.cities.index') }}"
-                class="menu-item {{ str_starts_with($currentRoute, 'admin.locations.cities.') ? 'active' : '' }}">
+            <a href="{{ route('admin.location.cities.index') }}"
+                class="menu-item {{ str_starts_with($currentRoute, 'admin.location.cities.') ? 'active' : '' }}">
                 <i class="fa fa-city"></i>
                 <span class="menu-text">{{ __t('Cities') }}</span>
             </a>
