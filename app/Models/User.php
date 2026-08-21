@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active',
         'is_fraud',
         'permissions',
+        'notify_scholarships',
     ];
 
     protected $hidden = [
@@ -39,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active' => 'boolean',
         'is_fraud' => 'boolean',
         'permissions' => 'array',
+        'notify_scholarships' => 'boolean'
     ];
 
     // ============================================================
@@ -123,5 +125,11 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($this->wasChanged('password')) {
             $this->sendPasswordChangedNotification($type);
         }
+    }
+
+    // ✅ Method to check if user should receive scholarship notifications
+    public function wantsScholarshipNotifications()
+    {
+        return $this->notify_scholarships || in_array($this->role, ['admin', 'seeker']);
     }
 }

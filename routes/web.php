@@ -324,12 +324,25 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
 
     // ✅ Education: Scholarships
     Route::prefix('scholarships')->name('scholarships.')->group(function () {
+        // ✅ CRUD Routes
         Route::get('/', [AdminScholarshipController::class, 'index'])->name('index');
         Route::get('/create', [AdminScholarshipController::class, 'create'])->name('create');
         Route::post('/', [AdminScholarshipController::class, 'store'])->name('store');
         Route::get('/{scholarship}/edit', [AdminScholarshipController::class, 'edit'])->name('edit');
         Route::put('/{scholarship}', [AdminScholarshipController::class, 'update'])->name('update');
         Route::delete('/{scholarship}', [AdminScholarshipController::class, 'destroy'])->name('destroy');
+        Route::post('/{scholarship}/toggle', [AdminScholarshipController::class, 'toggleStatus'])->name('toggle');
+
+        // ✅ RSS Scraping Routes (FIXED)
+        Route::get('/scrape', [AdminScholarshipController::class, 'showScrapeForm'])->name('scrape.form');
+        Route::post('/scrape', [AdminScholarshipController::class, 'scrape'])->name('scrape');
+        Route::get('/scrape-all', [AdminScholarshipController::class, 'scrapeAll'])->name('scrape.all');
+
+        // ✅ Import/Export Routes
+        Route::get('/export', [AdminScholarshipController::class, 'export'])->name('export');
+        Route::post('/import', [AdminScholarshipController::class, 'import'])->name('import');
+        Route::get('/download-template', [AdminScholarshipController::class, 'downloadTemplate'])->name('template');
+
     });
 
     // ✅ Education: Admissions

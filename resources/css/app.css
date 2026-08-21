@@ -16,6 +16,7 @@
 @import 'datatables.net-responsive-dt/css/responsive.dataTables.css';
 @import 'toastr/build/toastr.min.css';
 @import 'select2/dist/css/select2.min.css';
+@import 'flag-icons/css/flag-icons.min.css';
 
 @import 'employer.css';
 
@@ -69,6 +70,7 @@
     --radius-sm: 6px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --bg-body: #f0f2f5;
+    --bg-purple:#800080;
     --bg-card: #ffffff;
     --dropdown-bg: #ffffff;
 }
@@ -251,7 +253,9 @@ a:hover { color: var(--primary-dark); }
 .password-toggle-btn:focus {
     outline: none;
 }
-
+.bg-purple{
+    background-color: purple;
+}
 /* ============================================================
    5. BUTTONS (Auth + Admin Combined)
    ============================================================ */
@@ -2287,3 +2291,60 @@ label{
     .auth-card .auth-card-body { padding: var(--card-padding-mobile); }
     .admin-sidebar { width: 100%; }
 }
+
+
+        /* ✅ Stats Cards - Center Aligned */
+        .stats-card .stats-card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 18px 12px;
+        }
+
+        .stats-card .stats-icon-wrapper {
+            margin-bottom: 8px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .stats-card .stats-info {
+            text-align: center;
+        }
+
+        .stats-card .stats-number {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .stats-card .stats-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .stats-progress-bar {
+            height: 3px;
+            background: #f1f5f9;
+            width: 100%;
+        }
+
+        .stats-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 0 2px 2px 0;
+            transition: width 1s ease;
+        }

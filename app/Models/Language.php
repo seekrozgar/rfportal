@@ -1,9 +1,11 @@
 <?php
+// app/Models/Language.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\LanguageHelper;
 
 class Language extends Model
 {
@@ -14,9 +16,11 @@ class Language extends Model
         'name',
         'native_name',
         'flag',
+        'flag_class',
         'is_active',
         'is_default',
         'order',
+        'direction',
     ];
 
     protected $casts = [
@@ -24,4 +28,28 @@ class Language extends Model
         'is_default' => 'boolean',
         'order' => 'integer',
     ];
+
+    /**
+     * ✅ Get flag emoji
+     */
+    public function getFlagEmojiAttribute(): string
+    {
+        return LanguageHelper::getFlag($this->code);
+    }
+
+    /**
+     * ✅ Get flag CSS class
+     */
+    public function getFlagCssClassAttribute(): string
+    {
+        return $this->flag_class ?? LanguageHelper::getFlagClass($this->code);
+    }
+
+    /**
+     * ✅ Get language direction
+     */
+    public function getDirectionAttribute(): string
+    {
+        return $this->attributes['direction'] ?? LanguageHelper::getDirection($this->code);
+    }
 }
