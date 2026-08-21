@@ -31,7 +31,8 @@ export default defineConfig({
             'datatables.net-dt',
             'toastr',
             'select2',
-            'bootstrap'
+            'bootstrap',
+            '@ckeditor/ckeditor5-build-classic'
         ],
     },
 });

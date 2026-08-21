@@ -19,6 +19,43 @@ window.bootstrap = bootstrap;
 import DataTable from 'datatables.net';
 import Responsive from 'datatables.net-responsive';
 
+// ✅ Import CKEditor 5
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+// ✅ Make it global (so blade views can access)
+window.ClassicEditor = ClassicEditor;
+
+// ✅ Initialize CKEditor 5 on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    // CKEditor 5 for all textareas with class 'ckeditor5'
+    document.querySelectorAll('.ckeditor5').forEach(function(element) {
+        if (element.id) {
+            ClassicEditor
+                .create(element, {
+                    // ✅ Optional: Custom configuration
+                    toolbar: [
+                        'heading', '|',
+                        'bold', 'italic', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'link', 'imageUpload', 'mediaEmbed', '|',
+                        'undo', 'redo'
+                    ],
+                    heading: {
+                        options: [
+                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                        ]
+                    }
+                })
+                .catch(error => {
+                    console.error('CKEditor error for', element.id, error);
+                });
+        }
+    });
+});
+
 // 3. ✅ Securely bind DataTables extensions into the core module context
 DataTable.use(Responsive); // 👈 Correct, dependency-free native linkage
 

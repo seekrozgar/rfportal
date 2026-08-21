@@ -340,6 +340,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
         Route::get('/{admission}/edit', [AdminAdmissionController::class, 'edit'])->name('edit');
         Route::put('/{admission}', [AdminAdmissionController::class, 'update'])->name('update');
         Route::delete('/{admission}', [AdminAdmissionController::class, 'destroy'])->name('destroy');
+        Route::post('/{admission}/toggle', [AdminAdmissionController::class, 'toggleStatus'])->name('toggle');
     });
 
     // ✅ Education: Results
@@ -350,6 +351,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
         Route::get('/{result}/edit', [AdminResultController::class, 'edit'])->name('edit');
         Route::put('/{result}', [AdminResultController::class, 'update'])->name('update');
         Route::delete('/{result}', [AdminResultController::class, 'destroy'])->name('destroy');
+        Route::post('/{result}/toggle', [AdminResultController::class, 'toggleStatus'])->name('toggle');
     });
 
     // ✅ News / Announcements
@@ -360,6 +362,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
         Route::get('/{news}/edit', [AdminNewsController::class, 'edit'])->name('edit');
         Route::put('/{news}', [AdminNewsController::class, 'update'])->name('update');
         Route::delete('/{news}', [AdminNewsController::class, 'destroy'])->name('destroy');
+        Route::post('/{news}/toggle', [AdminNewsController::class, 'toggleStatus'])->name('toggle');
     });
 
     // ✅ Content: SEO
