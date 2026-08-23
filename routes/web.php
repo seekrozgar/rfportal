@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\JobPostingController as AdminJobPostingController
 use App\Http\Controllers\Admin\CompanyJobController as AdminCompanyJobController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\JobCategoryController as AdminJobCategoryController;
 use App\Http\Controllers\Admin\ScholarshipController as AdminScholarshipController;
 use App\Http\Controllers\Admin\AdmissionController as AdminAdmissionController;
 use App\Http\Controllers\Admin\ResultController as AdminResultController;
@@ -289,6 +290,21 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
         Route::get('/{user}/reset-password', [AdminUserController::class, 'resetPasswordForm'])->name('reset-password-form');
         Route::post('/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('reset-password');
         Route::post('/{user}/force-reset-password', [AdminUserController::class, 'forceResetPassword'])->name('force-reset-password');
+    });
+
+    Route::prefix('job-categories')->name('job-categories.')->group(function () {
+        Route::get('/', [AdminJobCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [AdminJobCategoryController::class, 'create'])->name('create');
+        Route::post('/', [AdminJobCategoryController::class, 'store'])->name('store');
+        Route::get('/{jobCategory}/edit', [AdminJobCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{jobCategory}', [AdminJobCategoryController::class, 'update'])->name('update');
+        Route::delete('/{jobCategory}', [AdminJobCategoryController::class, 'destroy'])->name('destroy');
+        Route::post('/{jobCategory}/toggle', [AdminJobCategoryController::class, 'toggleStatus'])->name('toggle');
+        Route::post('/reorder', [AdminJobCategoryController::class, 'reorder'])->name('reorder');
+        Route::post('/bulk-delete', [AdminJobCategoryController::class, 'bulkDelete'])->name('bulk-delete');
+        Route::get('/api/categories', [AdminJobCategoryController::class, 'getCategories'])->name('api.categories');
+        Route::post('/{jobCategory}/remove-image', [AdminJobCategoryController::class, 'removeImage'])
+            ->name('admin.job-categories.remove-image');
     });
 
     // ✅ Jobs Management (General Jobs - PPSC/FPSC)

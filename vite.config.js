@@ -20,7 +20,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '~': '/node_modules/',
-            '~flag-icons': path.resolve(__dirname, 'node_modules/flag-icons'),
+            '~flag-icons': '/node_modules/flag-icons',
         }
     },
     // ✅ Optimize dependencies

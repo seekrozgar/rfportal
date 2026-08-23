@@ -52,6 +52,12 @@
             <span class="menu-text">{{ __t('Company Jobs') }}</span>
         </a>
 
+        <a href="{{ route('admin.job-categories.index') }}"
+            class="menu-item {{ str_starts_with($currentRoute, 'admin.job-categories.') ? 'active' : '' }}">
+            <i class="fa fa-file"></i>
+            <span class="menu-text">{{ __t('Job Categories') }}</span>
+        </a>
+
         <!-- 📝 Education -->
         <div class="menu-label">{{ __t('Education') }}</div>
 
