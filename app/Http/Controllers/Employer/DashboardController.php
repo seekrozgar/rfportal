@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\JobPosting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Job;
 use App\Models\Application;
+use App\Http\Controllers\Employer\EmployerJobController;
 
 class DashboardController extends Controller
 {

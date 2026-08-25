@@ -492,6 +492,7 @@ a:hover { color: var(--primary-dark); }
                 object-fit: cover;
             }
             .image-upload-wrapper {
+                position: relative;
                 border: 2px dashed #d1d5db;
                 border-radius: 8px;
                 padding: 16px;
@@ -2348,3 +2349,52 @@ label{
             border-radius: 0 2px 2px 0;
             transition: width 1s ease;
         }
+.bg-orange{
+    background-color: #ffa500;
+}
+.bulk-actions-center{
+margin: 20px;
+}
+.bulk-actions-wrapper{
+    margin: 15px 10px 15px 10px;
+}
+/* 2. Modern & Minimalist Top-Right Floating Button */
+.remove-image-btn {
+    position: absolute;
+    top: 8px;              /* Oper se margin */
+    right: 8px;            /* Right side se margin */
+    z-index: 10;           /* Taki image ke oper dikhe */
+
+    /* Design & Styling */
+    width: 32px;
+    height: 32px;
+    background-color: rgba(239, 68, 68, 0.9); /* Modern Soft Red (Tailwind-like red-500) */
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;     /* Gol shape (Circle) */
+
+    /* Flexbox taake icon perfectly center me rahe */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+
+    /* Smooth Shadows & Transitions */
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover & Active Effects */
+.remove-image-btn:hover {
+    background-color: #dc2626; /* Darker red on hover */
+    transform: scale(1.1);     /* Thoda sa bada hoga hover par */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.remove-image-btn:active {
+    transform: scale(0.95);    /* Click karne par dabne ka effect */
+}
+.tab-content{
+    margin-top: 40px;
+}

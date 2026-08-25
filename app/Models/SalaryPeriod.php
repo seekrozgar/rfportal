@@ -1,24 +1,34 @@
 <?php
+// app/Models/SalaryPeriod.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class SalaryPeriod extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'is_active'];
+    protected $fillable = ['name', 'slug', 'is_active', 'order'];
 
-    protected static function boot()
+    protected $casts = [
+        'is_active' => 'boolean',
+        'order' => 'integer',
+    ];
+
+    public function scopeActive($query)
     {
-        parent::boot();
-        static::creating(function ($model) {
-            if (empty($model->slug)) {
-                $model->slug = Str::slug($model->name) . '-' . uniqid();
-            }
-        });
+        return $query->where('is_active', true);
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order')->orderBy('name');
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(GeneralJob::class, 'salary_period_id');
     }
 }

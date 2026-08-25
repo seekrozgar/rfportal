@@ -43,7 +43,7 @@
                 <h5><i class="fas fa-clock"
                         style="color: var(--primary-color); margin-right: 8px;"></i>{{ __t('Recent Jobs') }}</h5>
                 <div class="card-actions">
-                    <a href="{{ route('admin.jobs.create') }}" class="btn-admin-primary">
+                    <a href="{{ route('admin.job-postings.create') }}" class="btn-admin-primary">
                         <i class="fas fa-plus"></i> {{ __t('Add New') }}
                     </a>
                 </div>
@@ -72,7 +72,7 @@
                                 </td>
                                 <td style="text-align: right;">
                                     <div class="action-buttons">
-                                        <a href="{{ route('admin.jobs.edit', $job) }}" class="btn-admin-outline btn-sm"
+                                        <a href="{{ route('admin.job-postings.edit', $job) }}" class="btn-admin-outline btn-sm"
                                             title="{{ __t('Edit Job') }}">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>

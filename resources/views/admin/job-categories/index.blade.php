@@ -263,20 +263,20 @@
                 const callbackKey = '_confirm_' + Date.now();
 
                 const html = `
-                                <div style="text-align:center;padding:10px 0;">
-                                    <p style="font-size:15px;margin-bottom:15px;color:#fff;">${message}</p>
-                                    <div style="display:flex;gap:10px;justify-content:center;">
-                                        <button onclick="window['${callbackKey}'](true)"
-                                                style="background:#22c55e;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
-                                            <i class="fas fa-check"></i> Yes
-                                        </button>
-                                        <button onclick="window['${callbackKey}'](false)"
-                                                style="background:#6b7280;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
-                                            <i class="fas fa-times"></i> Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
+                                        <div style="text-align:center;padding:10px 0;">
+                                            <p style="font-size:15px;margin-bottom:15px;color:#fff;">${message}</p>
+                                            <div style="display:flex;gap:10px;justify-content:center;">
+                                                <button onclick="window['${callbackKey}'](true)"
+                                                        style="background:#22c55e;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
+                                                    <i class="fas fa-check"></i> Yes
+                                                </button>
+                                                <button onclick="window['${callbackKey}'](false)"
+                                                        style="background:#6b7280;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
+                                                    <i class="fas fa-times"></i> Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
 
                 window[callbackKey] = function (result) {
                     toastr.clear();
@@ -405,7 +405,7 @@
                 @if(session('error') && !session('toast'))
                     showToast('error', '{{ session('error') }}');
                 @endif
-                        });
+                                });
         </script>
     @endpush
 @endsection

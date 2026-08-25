@@ -1,80 +1,37 @@
 <?php
+// app/Models/Company.php
 
 namespace App\Models;
 
-use App\Models\Job;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Company extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'user_id',          // ✅ Add this
-        'company_name',
+        'name',
         'slug',
-        'description',
-        'logo',
-        'cover_image',
-        'website',
-        'industry',
-        'employee_count',
-        'location',
+        'email',
         'phone',
-        'is_verified',
+        'website',
+        'address',
+        'logo',
+        'description',
         'is_active',
+        'user_id',
+        'package_id',
+        'subscription_expires_at',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'is_verified' => 'boolean',
         'is_active' => 'boolean',
-        'employee_count' => 'integer',
+        'subscription_expires_at' => 'datetime',
     ];
 
     /**
-     * Get the user that owns the company.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the jobs for the company.
-     */
-    public function jobs()
-    {
-        return $this->hasMany(Job::class);
-    }
-
-    /**
-     * Boot method to generate slug automatically.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($company) {
-            if (empty($company->slug)) {
-                $company->slug = Str::slug($company->company_name) . '-' . uniqid();
-            }
-        });
-    }
-
-    /**
-     * Scope for active companies.
+     * ✅ Scope for active companies only
      */
     public function scopeActive($query)
     {
@@ -82,10 +39,63 @@ class Company extends Model
     }
 
     /**
-     * Scope for verified companies.
+     * ✅ Scope for ordering (without 'order' column)
      */
-    public function scopeVerified($query)
+    public function scopeOrdered($query)
     {
-        return $query->where('is_verified', true);
+        return $query->orderBy('name', 'asc');
+    }
+
+    /**
+     * ✅ Relationships
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(JobPosting::class, 'company_id');
+    }
+
+    /**
+     * ✅ Accessor for logo URL
+     */
+    public function getLogoUrlAttribute()
+    {
+        if ($this->logo) {
+            return asset('storage/' . $this->logo);
+        }
+        return null;
+    }
+
+    /**
+     * ✅ Check if company has active subscription
+     */
+    public function hasActiveSubscription()
+    {
+        if (!$this->subscription_expires_at) {
+            return false;
+        }
+        return $this->subscription_expires_at->isFuture();
+    }
+
+    /**
+     * ✅ Get remaining job postings count
+     */
+    public function getRemainingJobsAttribute()
+    {
+        if (!$this->package) {
+            return 0;
+        }
+        $used = $this->jobs()->count();
+        $limit = $this->package->job_limit ?? 0;
+        return max(0, $limit - $used);
     }
 }

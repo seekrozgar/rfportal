@@ -1,5 +1,5 @@
 {{-- resources/views/employer/dashboard/index.blade.php --}}
-@extends('employer.layouts.dashboard')
+@extends('employer.layouts.employer')
 
 @section('title', 'Employer Dashboard - Rozgar Finder')
 @section('page-title', 'Employer Dashboard')

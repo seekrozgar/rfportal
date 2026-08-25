@@ -29,7 +29,6 @@ use App\Http\Controllers\Frontend\PageController;
 // ============================================================
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\JobPostingController as AdminJobPostingController;
-use App\Http\Controllers\Admin\CompanyJobController as AdminCompanyJobController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\JobCategoryController as AdminJobCategoryController;
@@ -38,6 +37,7 @@ use App\Http\Controllers\Admin\AdmissionController as AdminAdmissionController;
 use App\Http\Controllers\Admin\ResultController as AdminResultController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\FaqCategoryController as AdminFaqcategoryController;
 use App\Http\Controllers\Admin\SeoController as AdminSeoController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Location\CountryController as AdminCountryController;
@@ -45,7 +45,7 @@ use App\Http\Controllers\Admin\Location\StateController as AdminStateController;
 use App\Http\Controllers\Admin\Location\CityController as AdminCityController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
-use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -64,7 +64,7 @@ use App\Http\Controllers\Author\AdmissionController as AuthorAdmissionController
 // 🏢 EMPLOYER CONTROLLERS
 // ============================================================
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
-use App\Http\Controllers\Employer\JobController as EmployerJobController;
+use App\Http\Controllers\Employer\EmployerJobController as CompanyJobController;
 use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationController;
 use App\Http\Controllers\Employer\ProfileController as EmployerProfileController;
 use App\Http\Controllers\Employer\PackageController as EmployerPackageController;
@@ -271,6 +271,8 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     // ✅ Users Management (SuperAdmin only)
     Route::prefix('users')->name('users.')->middleware(['superadmin'])->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
+        Route::get('/create', [AdminUserController::class, 'create'])->name('create');
+        Route::post('/', [AdminUserController::class, 'store'])->name('store');
         Route::get('/profiles', [AdminUserController::class, 'profiles'])->name('profiles');
         Route::get('/{user}/edit', [AdminUserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [AdminUserController::class, 'update'])->name('update');
@@ -307,25 +309,23 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
             ->name('admin.job-categories.remove-image');
     });
 
-    // ✅ Jobs Management (General Jobs - PPSC/FPSC)
-    Route::prefix('jobs')->name('jobs.')->group(function () {
+    // General & Companies Jobs Posting Management
+    Route::prefix('job-postings')->name('job-postings.')->group(function () {
         Route::get('/', [AdminJobPostingController::class, 'index'])->name('index');
         Route::get('/create', [AdminJobPostingController::class, 'create'])->name('create');
         Route::post('/', [AdminJobPostingController::class, 'store'])->name('store');
-        Route::get('/{job}/edit', [AdminJobPostingController::class, 'edit'])->name('edit');
-        Route::put('/{job}', [AdminJobPostingController::class, 'update'])->name('update');
-        Route::delete('/{job}', [AdminJobPostingController::class, 'destroy'])->name('destroy');
-        Route::post('/import', [AdminJobPostingController::class, 'import'])->name('import');
-    });
+        Route::get('/{jobPosting}/edit', [AdminJobPostingController::class, 'edit'])->name('edit');
+        Route::put('/{jobPosting}', [AdminJobPostingController::class, 'update'])->name('update');
+        Route::delete('/{jobPosting}', [AdminJobPostingController::class, 'destroy'])->name('destroy');
+        Route::post('/{jobPosting}/toggle-status', [AdminJobPostingController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/bulk-action', [AdminJobPostingController::class, 'bulkAction'])->name('bulk-action');
 
-    // ✅ Company Jobs Management
-    Route::prefix('company-jobs')->name('company-jobs.')->group(function () {
-        Route::get('/', [AdminCompanyJobController::class, 'index'])->name('index');
-        Route::get('/create', [AdminCompanyJobController::class, 'create'])->name('create');
-        Route::post('/', [AdminCompanyJobController::class, 'store'])->name('store');
-        Route::get('/{job}/edit', [AdminCompanyJobController::class, 'edit'])->name('edit');
-        Route::put('/{job}', [AdminCompanyJobController::class, 'update'])->name('update');
-        Route::delete('/{job}', [AdminCompanyJobController::class, 'destroy'])->name('destroy');
+
+        // ✅ Scraping Routes
+        Route::get('/scrape', [AdminJobPostingController::class, 'showScrapeForm'])->name('scrape.form');
+        Route::post('/scrape', [AdminJobPostingController::class, 'scrape'])->name('scrape');
+        Route::post('test-connection', [AdminJobPostingController::class, 'testConnection'])
+            ->name('test-connection');
     });
 
     // ✅ Companies Management
@@ -401,13 +401,29 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
     });
 
     // ✅ Content: FAQ
-    Route::prefix('faq')->name('faq.')->group(function () {
+    Route::prefix('faqs')->name('faqs.')->group(function () {
         Route::get('/', [AdminFaqController::class, 'index'])->name('index');
         Route::get('/create', [AdminFaqController::class, 'create'])->name('create');
         Route::post('/', [AdminFaqController::class, 'store'])->name('store');
         Route::get('/{faq}/edit', [AdminFaqController::class, 'edit'])->name('edit');
         Route::put('/{faq}', [AdminFaqController::class, 'update'])->name('update');
         Route::delete('/{faq}', [AdminFaqController::class, 'destroy'])->name('destroy');
+        Route::post('/{faq}/toggle-status', [AdminFaqController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{faq}/toggle-featured', [AdminFaqController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/reorder', [AdminFaqController::class, 'reorder'])->name('reorder');
+        Route::post('/bulk-action', [AdminFaqController::class, 'bulkAction'])->name('bulk-action');
+
+    });
+    // ✅ FAQ Categories Routes
+    Route::prefix('faq-categories')->name('faq-categories.')->group(function () {
+        Route::get('/', [AdminFaqCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [AdminFaqCategoryController::class, 'create'])->name('create');
+        Route::post('/', [AdminFaqCategoryController::class, 'store'])->name('store');
+        Route::get('/{faqCategory}/edit', [AdminFaqCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{faqCategory}', [AdminFaqCategoryController::class, 'update'])->name('update');
+        Route::delete('/{faqCategory}', [AdminFaqCategoryController::class, 'destroy'])->name('destroy');
+        Route::post('/{faqCategory}/toggle-status', [AdminFaqCategoryController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/bulk-action', [AdminFaqCategoryController::class, 'bulkAction'])->name('bulk-action');
     });
 
     // ✅ Translation: Languages
@@ -531,8 +547,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
 
     // ✅ System: Settings
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('/', [AdminSettingController::class, 'index'])->name('index');
-        Route::post('/update', [AdminSettingController::class, 'update'])->name('update');
+        Route::get('/', [AdminSiteSettingController::class, 'index'])->name('index');
+        Route::put('/', [AdminSiteSettingController::class, 'update'])->name('update');
+        Route::post('/reset', [AdminSiteSettingController::class, 'reset'])->name('reset');
+        Route::post('/upload-logo', [AdminSiteSettingController::class, 'uploadLogo'])->name('upload-logo');
+        Route::post('/remove-logo', [AdminSiteSettingController::class, 'removeLogo'])->name('remove-logo');
+        Route::get('/get-setting', [AdminSiteSettingController::class, 'getSetting'])->name('get-setting');
     });
 
     // ✅ System: Profile
@@ -612,13 +632,13 @@ Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('e
 
     // Jobs
     Route::prefix('jobs')->name('jobs.')->group(function () {
-        Route::get('/', [EmployerJobController::class, 'index'])->name('index');
-        Route::get('/create', [EmployerJobController::class, 'create'])->name('create');
-        Route::post('/', [EmployerJobController::class, 'store'])->name('store');
-        Route::get('/{job}', [EmployerJobController::class, 'show'])->name('show');
-        Route::get('/{job}/edit', [EmployerJobController::class, 'edit'])->name('edit');
-        Route::put('/{job}', [EmployerJobController::class, 'update'])->name('update');
-        Route::delete('/{job}', [EmployerJobController::class, 'destroy'])->name('destroy');
+        Route::get('/', [CompanyJobController::class, 'index'])->name('index');
+        Route::get('/create', [CompanyJobController::class, 'create'])->name('create');
+        Route::post('/', [CompanyJobController::class, 'store'])->name('store');
+        Route::get('/{job}', [CompanyJobController::class, 'show'])->name('show');
+        Route::get('/{job}/edit', [CompanyJobController::class, 'edit'])->name('edit');
+        Route::put('/{job}', [CompanyJobController::class, 'update'])->name('update');
+        Route::delete('/{job}', [CompanyJobController::class, 'destroy'])->name('destroy');
     });
 
     // Applications

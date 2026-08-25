@@ -40,16 +40,10 @@
         <!-- 📦 Job Management -->
         <div class="menu-label">{{ __t('Job Management') }}</div>
 
-        <a href="{{ route('admin.jobs.index') }}"
-            class="menu-item {{ str_starts_with($currentRoute, 'admin.jobs.') ? 'active' : '' }}">
+        <a href="{{ route('admin.job-postings.index') }}"
+            class="menu-item {{ str_starts_with($currentRoute, 'admin.job-postings.') ? 'active' : '' }}">
             <i class="fa fa-briefcase"></i>
-            <span class="menu-text">{{ __t('General Jobs') }}</span>
-        </a>
-
-        <a href="{{ route('admin.company-jobs.index') }}"
-            class="menu-item {{ str_starts_with($currentRoute, 'admin.company-jobs.') ? 'active' : '' }}">
-            <i class="fa fa-building"></i>
-            <span class="menu-text">{{ __t('Company Jobs') }}</span>
+            <span class="menu-text">{{ __t('Jobs') }}</span>
         </a>
 
         <a href="{{ route('admin.job-categories.index') }}"
@@ -103,8 +97,8 @@
             <span class="menu-text">{{ __t('SEO') }}</span>
         </a>
 
-        <a href="{{ route('admin.faq.index') }}"
-            class="menu-item {{ str_starts_with($currentRoute, 'admin.faq.') ? 'active' : '' }}">
+        <a href="{{ route('admin.faqs.index') }}"
+            class="menu-item {{ str_starts_with($currentRoute, 'admin.faqs.') ? 'active' : '' }}">
             <i class="fa fa-question-circle"></i>
             <span class="menu-text">{{ __t('FAQs') }}</span>
         </a>

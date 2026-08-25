@@ -1,5 +1,5 @@
 {{-- resources/views/employer/packages/index.blade.php --}}
-@extends('employer.layouts.dashboard')
+@extends('employer.layouts.employer')
 
 @section('title', 'Packages - Employer Dashboard')
 @section('page-title', 'Subscription Packages')
