@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit Category - Rozgar Finder')
+@section('title', 'Edit Category')
 @section('page-title', 'Edit FAQ Category')
 @section('page-subtitle', 'Update FAQ category')
 

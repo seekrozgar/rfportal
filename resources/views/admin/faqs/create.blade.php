@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Add FAQ - Rozgar Finder')
+@section('title', 'Add FAQ')
 @section('page-title', 'Add FAQ')
 @section('page-subtitle', 'Create a new frequently asked question')
 
@@ -186,9 +186,9 @@
                         }
                         submitBtn.disabled = true;
                         submitBtn.innerHTML = `
-                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                Saving...
-                            `;
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Saving...
+                                    `;
                     });
                 }
 
@@ -197,7 +197,7 @@
                     const toast = @json(session('toast'));
                     showToast(toast.type, toast.message);
                 @endif
-                });
+                        });
 
             function showToast(type, message) {
                 if (typeof toastr !== 'undefined') {

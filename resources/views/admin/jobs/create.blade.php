@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'Add Job - Rozgar Finder')
+@section('title', 'Add Job')
 @section('page-title', 'Add New Job')
 @section('page-subtitle', 'Post a new general job with all attributes')
 
@@ -19,8 +19,8 @@
             @csrf
 
             <!-- ============================================================
-            BASIC INFORMATION
-            ============================================================ -->
+                BASIC INFORMATION
+                ============================================================ -->
             <h6 class="mb-3"
                 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
                 <i class="fas fa-info-circle me-2"></i> Basic Information
@@ -55,8 +55,8 @@
             </div>
 
             <!-- ============================================================
-            JOB DETAILS
-            ============================================================ -->
+                JOB DETAILS
+                ============================================================ -->
             <h6 class="mb-3 mt-4"
                 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
                 <i class="fas fa-briefcase me-2"></i> Job Details
@@ -241,8 +241,8 @@
             </div>
 
             <!-- ============================================================
-            SALARY
-            ============================================================ -->
+                SALARY
+                ============================================================ -->
             <h6 class="mb-3 mt-4"
                 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
                 <i class="fas fa-money-bill-wave me-2"></i> Salary Information
@@ -290,8 +290,8 @@
             </div>
 
             <!-- ============================================================
-            ADVERTISEMENT
-            ============================================================ -->
+                ADVERTISEMENT
+                ============================================================ -->
             <h6 class="mb-3 mt-4"
                 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
                 <i class="fas fa-image me-2"></i> Advertisement
@@ -324,8 +324,8 @@
             </div>
 
             <!-- ============================================================
-            DESCRIPTION
-            ============================================================ -->
+                DESCRIPTION
+                ============================================================ -->
             <h6 class="mb-3 mt-4"
                 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
                 <i class="fas fa-file-alt me-2"></i> Description
@@ -361,8 +361,8 @@
             </div>
 
             <!-- ============================================================
-            DEADLINE & STATUS
-            ============================================================ -->
+                DEADLINE & STATUS
+                ============================================================ -->
             <h6 class="mb-3 mt-4"
                 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
                 <i class="fas fa-calendar-alt me-2"></i> Deadline & Status

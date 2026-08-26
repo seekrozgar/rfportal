@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'Add User - Rozgar Finder')
+@section('title', 'Add User')
 @section('page-title', 'Add User')
 @section('page-subtitle', 'Create a new administrator or author')
 

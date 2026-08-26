@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'FAQs - Rozgar Finder')
+@section('title', 'FAQs')
 @section('page-title', 'FAQs')
 @section('page-subtitle', 'Manage frequently asked questions')
 
@@ -267,16 +267,16 @@
                 toastr.clear();
                 const key = '_confirm_' + Date.now();
                 const html = `<div style="text-align:center;padding:10px 0;">
-                        <p style="font-size:15px;margin-bottom:15px;color:#fff;">${message}</p>
-                        <div style="display:flex;gap:10px;justify-content:center;">
-                            <button onclick="window['${key}'](true)" style="background:#22c55e;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
-                                <i class="fas fa-check"></i> Yes
-                            </button>
-                            <button onclick="window['${key}'](false)" style="background:#6b7280;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                        </div>
-                    </div>`;
+                                <p style="font-size:15px;margin-bottom:15px;color:#fff;">${message}</p>
+                                <div style="display:flex;gap:10px;justify-content:center;">
+                                    <button onclick="window['${key}'](true)" style="background:#22c55e;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
+                                        <i class="fas fa-check"></i> Yes
+                                    </button>
+                                    <button onclick="window['${key}'](false)" style="background:#6b7280;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>`;
                 window[key] = function (result) { toastr.clear(); if (result) callback(); else showToast('info', 'Action cancelled'); delete window[key]; };
                 toastr.warning(html, 'Confirm Action', { closeButton: false, timeOut: 0, extendedTimeOut: 0, positionClass: 'toast-top-center', progressBar: false, escapeHtml: false });
             }
@@ -447,7 +447,7 @@
                 if (typeof toastr !== 'undefined') {
                     toastr.options = { closeButton: true, progressBar: true, timeOut: 5000, extendedTimeOut: 1000, positionClass: 'toast-top-right', preventDuplicates: true, newestOnTop: true };
                 }
-                    @if(session('toast')) const toast = @json(session('toast')); showToast(toast.type, toast.message); @endif
+                            @if(session('toast')) const toast = @json(session('toast')); showToast(toast.type, toast.message); @endif
                 updateBulkActions();
                 document.getElementById('selectAllHeader')?.addEventListener('change', function () { toggleAllCheckboxes(this); });
             });

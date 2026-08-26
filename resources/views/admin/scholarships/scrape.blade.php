@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Scrape Scholarships - Rozgar Finder')
+@section('title', 'Scrape Scholarships')
 @section('page-title', 'Scrape Scholarships')
 @section('page-subtitle', 'Fetch scholarships from RSS feeds')
 

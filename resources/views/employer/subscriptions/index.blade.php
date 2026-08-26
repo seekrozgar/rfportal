@@ -1,7 +1,7 @@
 {{-- resources/views/employer/packages/subscriptions.blade.php --}}
 @extends('employer.layouts.dashboard')
 
-@section('title', 'My Subscriptions - Employer Dashboard')
+@section('title', 'My Subscriptions')
 @section('page-title', 'Subscription History')
 @section('page-subtitle', 'View all your past and active subscriptions')
 

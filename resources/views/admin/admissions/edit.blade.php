@@ -1,7 +1,7 @@
 {{-- resources/views/admin/admissions/edit.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit Admission - Rozgar Finder')
+@section('title', 'Edit Admission')
 @section('page-title', 'Edit Admission')
 @section('page-subtitle', 'Update admission announcement')
 
@@ -431,9 +431,9 @@
                                 fileInput.classList.add('is-invalid');
                                 fileInput.value = '';
                                 preview.innerHTML = `
-                                <i class="fas fa-image fa-3x text-muted"></i>
-                                <p class="text-muted small mt-2">Click to change image</p>
-                            `;
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                        <p class="text-muted small mt-2">Click to change image</p>
+                                    `;
                                 return;
                             }
                             imageError.style.display = 'none';

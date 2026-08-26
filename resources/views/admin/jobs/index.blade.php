@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'General Jobs - Rozgar Finder')
+@section('title', 'General Jobs')
 @section('page-title', 'General Jobs')
 @section('page-subtitle', 'Manage PPSC/FPSC and admin posted jobs')
 

@@ -1,7 +1,7 @@
 {{-- resources/views/admin/results/create.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Add Result - Rozgar Finder')
+@section('title', 'Add Result')
 @section('page-title', 'Add Result')
 @section('page-subtitle', 'Create a new result')
 
@@ -172,10 +172,10 @@
                         } else {
                             const icon = file.type.includes('pdf') ? 'fa-file-pdf' : 'fa-file';
                             preview.innerHTML = `
-                                    <i class="fas ${icon} fa-3x text-danger"></i>
-                                    <p class="mt-2"><strong>${file.name}</strong></p>
-                                    <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
-                                `;
+                                            <i class="fas ${icon} fa-3x text-danger"></i>
+                                            <p class="mt-2"><strong>${file.name}</strong></p>
+                                            <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+                                        `;
                         }
                     }
                 });

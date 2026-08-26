@@ -1,5 +1,4 @@
 <?php
-// app/Helpers/SiteHelper.php
 
 namespace App\Helpers;
 
@@ -8,262 +7,195 @@ use App\Models\SiteSetting;
 class SiteHelper
 {
     /**
-     * ✅ Get a setting value
+     * Get site settings.
      */
-    public static function get($key, $default = null)
+    public static function settings(): SiteSetting
     {
-        return SiteSetting::get($key, $default);
+        return SiteSetting::getSettings();
     }
 
     /**
-     * ✅ Get site name
+     * Get a setting value.
      */
-    public static function siteName()
+    public static function get(string $key, mixed $default = null): mixed
     {
-        return self::get('site_name', 'Rozgar Finder');
+        return self::settings()->getAttribute($key) ?? $default;
     }
 
-    /**
-     * ✅ Get site tagline
-     */
-    public static function siteTagline()
+    public static function siteName(): string
     {
-        return self::get('site_tagline', '');
+        return (string) self::get('site_name', 'Rozgar Finder');
     }
 
-    /**
-     * ✅ Get site logo URL
-     */
-    public static function siteLogo()
+    public static function siteTagline(): string
     {
-        $logo = self::get('site_logo');
-        return $logo ? asset('storage/' . $logo) : null;
+        return (string) self::get('site_tagline', 'Find Your Dream Job');
     }
 
-    /**
-     * ✅ Get site favicon URL
-     */
-    public static function siteFavicon()
+    public static function siteLogo(): string
     {
-        $favicon = self::get('site_favicon');
-        return $favicon ? asset('storage/' . $favicon) : null;
+        $logo = self::settings()->site_logo;
+
+        return $logo
+            ? asset('storage/' . $logo)
+            : '';
     }
 
-    /**
-     * ✅ Get site email
-     */
-    public static function siteEmail()
+    public static function siteFavicon(): string
     {
-        return self::get('site_email', '');
+        $favicon = self::settings()->site_favicon;
+
+        return $favicon
+            ? asset('storage/' . $favicon)
+            : '';
     }
 
-    /**
-     * ✅ Get site phone
-     */
-    public static function sitePhone()
+    public static function siteEmail(): string
     {
-        return self::get('site_phone', '');
+        return (string) self::get('site_email', '');
     }
 
-    /**
-     * ✅ Get site address
-     */
-    public static function siteAddress()
+    public static function sitePhone(): string
     {
-        return self::get('site_address', '');
+        return (string) self::get('site_phone', '');
     }
 
-    /**
-     * ✅ Get all social links
-     */
-    public static function socialLinks()
+    public static function siteAddress(): string
     {
-        $settings = SiteSetting::getSettings();
-        return $settings->getSocialLinks();
+        return (string) self::get('site_address', '');
     }
 
-    /**
-     * ✅ Check if registration is enabled
-     */
-    public static function registrationEnabled()
+    public static function siteWhatsapp(): string
     {
-        return self::get('registration_enabled', true);
+        return (string) self::get('site_whatsapp', '');
     }
 
-    /**
-     * ✅ Check if maintenance mode is active
-     */
-    public static function inMaintenance()
+    public static function currency(): string
     {
-        return self::get('maintenance_mode', false);
+        return (string) self::get('currency', 'PKR');
     }
 
-    /**
-     * ✅ Get maintenance message
-     */
-    public static function maintenanceMessage()
+    public static function currencySymbol(): string
     {
-        return self::get('maintenance_message', 'We are currently under maintenance. Please check back later.');
+        return (string) self::get('currency_symbol', 'Rs.');
     }
 
-    /**
-     * ✅ Check if comments are enabled
-     */
-    public static function commentsEnabled()
+    public static function metaTitle(): string
     {
-        return self::get('comments_enabled', true);
+        return (string) self::get(
+            'meta_title',
+            self::siteName() . ' - ' . self::siteTagline()
+        );
     }
 
-    /**
-     * ✅ Get meta title
-     */
-    public static function metaTitle()
+    public static function metaDescription(): string
     {
-        return self::get('meta_title', self::siteName());
+        return (string) self::get('meta_description', '');
     }
 
-    /**
-     * ✅ Get meta description
-     */
-    public static function metaDescription()
+    public static function metaKeywords(): string
     {
-        return self::get('meta_description', '');
+        return (string) self::get('meta_keywords', '');
     }
 
-    /**
-     * ✅ Get meta keywords
-     */
-    public static function metaKeywords()
+    public static function metaAuthor(): string
     {
-        return self::get('meta_keywords', '');
+        return (string) self::get('meta_author', self::siteName());
     }
 
-    /**
-     * ✅ Get timezone
-     */
-    public static function timezone()
+    public static function metaRobots(): string
     {
-        return self::get('timezone', 'Asia/Karachi');
+        return (string) self::get('meta_robots', 'index, follow');
     }
 
-    /**
-     * ✅ Get currency
-     */
-    public static function currency()
-    {
-        return self::get('currency', 'PKR');
-    }
-
-    /**
-     * ✅ Get currency symbol
-     */
-    public static function currencySymbol()
-    {
-        return self::get('currency_symbol', 'Rs.');
-    }
-
-    /**
-     * ✅ Get date format
-     */
-    public static function dateFormat()
-    {
-        return self::get('date_format', 'd-m-Y');
-    }
-
-    /**
-     * ✅ Check if captcha is enabled
-     */
-    public static function captchaEnabled()
-    {
-        return self::get('captcha_enabled', false);
-    }
-
-    /**
-     * ✅ Get captcha site key
-     */
-    public static function captchaSiteKey()
-    {
-        return self::get('captcha_site_key', '');
-    }
-
-    /**
-     * ✅ Check if analytics is enabled
-     */
-    public static function analyticsEnabled()
-    {
-        return self::get('analytics_enabled', false);
-    }
-
-    /**
-     * ✅ Get analytics measurement ID
-     */
-    public static function analyticsMeasurementId()
-    {
-        return self::get('analytics_measurement_id', '');
-    }
-
-    /**
-     * ✅ Check if cookie consent is enabled
-     */
-    public static function cookieConsentEnabled()
-    {
-        return self::get('cookie_consent_enabled', true);
-    }
-
-    /**
-     * ✅ Get cookie consent message
-     */
-    public static function cookieConsentMessage()
-    {
-        return self::get('cookie_consent_message', 'We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.');
-    }
-
-    /**
-     * ✅ Check if ads are enabled
-     */
-    public static function adsEnabled()
-    {
-        return self::get('ads_enabled', false);
-    }
-
-    /**
-     * ✅ Get header ad code
-     */
-    public static function headerAdCode()
-    {
-        return self::get('header_ad_code', '');
-    }
-
-    /**
-     * ✅ Get sidebar ad code
-     */
-    public static function sidebarAdCode()
-    {
-        return self::get('sidebar_ad_code', '');
-    }
-
-    /**
-     * ✅ Get footer ad code
-     */
-    public static function footerAdCode()
-    {
-        return self::get('footer_ad_code', '');
-    }
-
-    /**
-     * ✅ Get copyright text
-     */
-    public static function copyrightText()
+    public static function copyrightText(): string
     {
         return '© ' . date('Y') . ' ' . self::siteName() . '. All rights reserved.';
     }
 
-    /**
-     * ✅ Format date according to settings
-     */
-    public static function formatDate($date)
+    public static function isMaintenanceMode(): bool
     {
-        $format = self::dateFormat();
-        return $date->format($format);
+        return (bool) self::get('maintenance_mode', false);
+    }
+
+    public static function isRegistrationEnabled(): bool
+    {
+        return (bool) self::get('registration_enabled', true);
+    }
+
+    public static function isCaptchaEnabled(): bool
+    {
+        return (bool) self::get('captcha_enabled', false);
+    }
+
+    public static function captchaSiteKey(): string
+    {
+        return (string) self::get('captcha_site_key', '');
+    }
+
+    public static function isAnalyticsEnabled(): bool
+    {
+        return (bool) self::get('analytics_enabled', false);
+    }
+
+    public static function analyticsMeasurementId(): string
+    {
+        return (string) self::get('analytics_measurement_id', '');
+    }
+
+    public static function isCookieConsentEnabled(): bool
+    {
+        return (bool) self::get('cookie_consent_enabled', true);
+    }
+
+    public static function cookieConsentMessage(): string
+    {
+        return (string) self::get(
+            'cookie_consent_message',
+            'We use cookies to enhance your experience.'
+        );
+    }
+
+    public static function isAdsEnabled(): bool
+    {
+        return (bool) self::get('ads_enabled', false);
+    }
+
+    public static function isSocialLoginEnabled(): bool
+    {
+        return (bool) self::get('social_login_enabled', false);
+    }
+
+    public static function isPaymentEnabled(): bool
+    {
+        return (bool) self::get('payment_enabled', false);
+    }
+
+    public static function socialLinks(): string
+    {
+        $links = [];
+
+        $socials = [
+            'facebook',
+            'twitter',
+            'instagram',
+            'linkedin',
+            'youtube',
+            'tiktok',
+            'pinterest',
+            'telegram',
+            'whatsapp_group',
+            'snapchat',
+        ];
+
+        foreach ($socials as $social) {
+            $url = self::get($social);
+
+            if (!empty($url)) {
+                $links[$social] = $url;
+            }
+        }
+
+        return json_encode($links);
     }
 }

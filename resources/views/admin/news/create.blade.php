@@ -1,7 +1,7 @@
 {{-- resources/views/admin/news/create.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Add News - Rozgar Finder')
+@section('title', 'Add News')
 @section('page-title', 'Add News')
 @section('page-subtitle', 'Create a new news post')
 

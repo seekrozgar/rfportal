@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Job Postings - Rozgar Finder')
+@section('title', 'Job Postings')
 @section('page-title', 'Job Postings')
 @section('page-subtitle', 'Manage all job postings')
 
@@ -572,16 +572,16 @@
                 toastr.clear();
                 const key = '_confirm_' + Date.now();
                 const html = `<div style="text-align:center;padding:10px 0;">
-                <p style="font-size:15px;margin-bottom:15px;color:#fff;">${message}</p>
-                <div style="display:flex;gap:10px;justify-content:center;">
-                    <button onclick="window['${key}'](true)" style="background:#22c55e;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
-                        <i class="fas fa-check"></i> Yes
-                    </button>
-                    <button onclick="window['${key}'](false)" style="background:#6b7280;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </div>`;
+                        <p style="font-size:15px;margin-bottom:15px;color:#fff;">${message}</p>
+                        <div style="display:flex;gap:10px;justify-content:center;">
+                            <button onclick="window['${key}'](true)" style="background:#22c55e;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
+                                <i class="fas fa-check"></i> Yes
+                            </button>
+                            <button onclick="window['${key}'](false)" style="background:#6b7280;color:#fff;border:none;padding:8px 25px;border-radius:5px;cursor:pointer;font-weight:600;">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>`;
 
                 window[key] = function (result) {
                     toastr.clear();
@@ -692,9 +692,9 @@
 
             function confirmBulkDelete(ids) {
                 const message = `
-                <strong>Delete ${ids.length} job(s)?</strong><br>
-                <small style="color: #999;">This action cannot be undone. All selected jobs will be permanently deleted.</small>
-            `;
+                        <strong>Delete ${ids.length} job(s)?</strong><br>
+                        <small style="color: #999;">This action cannot be undone. All selected jobs will be permanently deleted.</small>
+                    `;
                 showConfirmToast(message, function () {
                     processBulkAction('delete', ids, 'job(s) deleted successfully!');
                 });
@@ -704,9 +704,9 @@
                 const statusText = action === 'activate' ? 'Activate' : 'Deactivate';
                 const done = action === 'activate' ? 'activated' : 'deactivated';
                 const message = `
-                <strong>${statusText} ${ids.length} job(s)?</strong><br>
-                <small style="color: #999;">Selected jobs will be ${done}.</small>
-            `;
+                        <strong>${statusText} ${ids.length} job(s)?</strong><br>
+                        <small style="color: #999;">Selected jobs will be ${done}.</small>
+                    `;
                 showConfirmToast(message, function () {
                     processBulkAction('status', ids, `${ids.length} job(s) ${done} successfully!`, action);
                 });
@@ -716,9 +716,9 @@
                 const label = featured ? 'Make Featured' : 'Remove Featured';
                 const done = featured ? 'marked as featured' : 'removed from featured';
                 const message = `
-                <strong>${label} ${ids.length} job(s)?</strong><br>
-                <small style="color: #999;">Selected jobs will be ${done}.</small>
-            `;
+                        <strong>${label} ${ids.length} job(s)?</strong><br>
+                        <small style="color: #999;">Selected jobs will be ${done}.</small>
+                    `;
                 showConfirmToast(message, function () {
                     processBulkAction('featured', ids, `${ids.length} job(s) ${done} successfully!`, featured);
                 });
@@ -882,8 +882,8 @@
                     showToast(toast.type, toast.message);
                 @endif
 
-            // ✅ Attach change event to ALL checkboxes
-            const allCheckboxes = document.querySelectorAll('.job-checkbox');
+                    // ✅ Attach change event to ALL checkboxes
+                    const allCheckboxes = document.querySelectorAll('.job-checkbox');
                 allCheckboxes.forEach(cb => {
                     cb.addEventListener('change', updateBulkActions);
                 });

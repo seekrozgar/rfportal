@@ -7,7 +7,9 @@
     <meta name="description" content="Rozgar Finder - Login">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - Rozgar Finder</title>
+    @section('title', 'Login')
+    @section('page-title', 'Login')
+    @section('page-subtitle', 'Login your account')
 
     <!-- ✅ Vite - Single CSS file -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -19,6 +21,8 @@
         <div class="auth-container">
             <div class="auth-card">
                 <div class="auth-card-header">
+                    <img src="{{ sitelogo() }}" alt="{{ siteName() }}" class="auth-logo">
+                    <hr>
                     <h2>Welcome Back</h2>
                     <p>Login to your account to continue</p>
                 </div>

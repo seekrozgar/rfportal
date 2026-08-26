@@ -1,7 +1,7 @@
 {{-- resources/views/admin/profile/index.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'My Profile - Rozgar Finder')
+@section('title', 'My Profile')
 @section('page-title', 'My Profile')
 @section('page-subtitle', 'Update your profile information')
 

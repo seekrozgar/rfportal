@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit Job - Rozgar Finder')
+@section('title', 'Edit Job')
 @section('page-title', 'Edit Job')
 @section('page-subtitle', 'Update job posting')
 
@@ -793,9 +793,9 @@
                         }
                         submitBtn.disabled = true;
                         submitBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Posting...
-                    `;
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Posting...
+                            `;
                     });
                 }
 
@@ -806,7 +806,7 @@
                     const toast = @json(session('toast'));
                     showToast(toast.type, toast.message);
                 @endif
-        });
+                });
 
             function showToast(type, message) {
                 if (typeof toastr !== 'undefined') {

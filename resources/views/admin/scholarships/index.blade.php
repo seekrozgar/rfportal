@@ -1,7 +1,7 @@
 {{-- resources/views/admin/scholarships/index.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Scholarships - Rozgar Finder')
+@section('title', 'Scholarships')
 @section('page-title', 'Scholarships')
 @section('page-subtitle', 'Manage scholarship opportunities')
 

@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Add Category - Rozgar Finder')
+@section('title', 'Add Category')
 @section('page-title', 'Add Category')
 @section('page-subtitle', 'Create a new job category')
 
@@ -486,10 +486,10 @@
                     isActiveCheckbox.addEventListener('change', function () {
                         const isActive = this.checked;
                         statusLabel.innerHTML = `
-                                                                                                                                <span class="badge ${isActive ? 'bg-success' : 'bg-danger'}">
-                                                                                                                                    ${isActive ? 'Active' : 'Inactive'}
-                                                                                                                                </span>
-                                                                                                                            `;
+                                                                                                                                        <span class="badge ${isActive ? 'bg-success' : 'bg-danger'}">
+                                                                                                                                            ${isActive ? 'Active' : 'Inactive'}
+                                                                                                                                        </span>
+                                                                                                                                    `;
                     });
                 }
 
@@ -503,9 +503,9 @@
                     form.addEventListener('submit', function (e) {
                         submitBtn.disabled = true;
                         submitBtn.innerHTML = `
-                                                                                                                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                                                                                                Saving...
-                                                                                                                            `;
+                                                                                                                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                                                                                                        Saving...
+                                                                                                                                    `;
 
                         // ✅ Enable button again if form validation fails
                         setTimeout(() => {

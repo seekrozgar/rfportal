@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit Job - Rozgar Finder')
+@section('title', 'Edit Job')
 @section('page-title', 'Edit Job')
 @section('page-subtitle', 'Update job details')
 

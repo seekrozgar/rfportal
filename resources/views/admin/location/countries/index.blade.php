@@ -1,7 +1,7 @@
 {{-- resources/views/admin/location/countries/index.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Countries - Rozgar Finder')
+@section('title', 'Countries')
 @section('page-title', 'Countries')
 @section('page-subtitle', 'Manage countries worldwide')
 
@@ -355,20 +355,20 @@
             toastr.clear();
 
             var confirmHtml = `
-                        <div style="text-align: center; padding: 10px 0;">
-                            <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
-                            <div style="display: flex; gap: 10px; justify-content: center;">
-                                <button onclick="window._deleteConfirmCallback(true)"
-                                        style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                                <button onclick="window._deleteConfirmCallback(false)"
-                                        style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                                    <i class="fas fa-times"></i> Cancel
-                                </button>
+                            <div style="text-align: center; padding: 10px 0;">
+                                <p style="font-size: 15px; margin-bottom: 15px; color: #fff;">${message}</p>
+                                <div style="display: flex; gap: 10px; justify-content: center;">
+                                    <button onclick="window._deleteConfirmCallback(true)"
+                                            style="background: #e74c3c; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                    <button onclick="window._deleteConfirmCallback(false)"
+                                            style="background: #28a745; color: #fff; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
 
             window._deleteConfirmCallback = function (result) {
                 toastr.clear();

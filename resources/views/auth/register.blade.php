@@ -7,7 +7,10 @@
     <meta name="description" content="Rozgar Finder - Register">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Register - Rozgar Finder</title>
+
+    @section('title', 'Register User')
+    @section('page-title', 'Register User')
+    @section('page-subtitle', 'create a new account')
 
     <!-- ✅ Vite - Bootstrap 5 + Custom CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -25,145 +28,154 @@
         <div class="auth-container">
             <div class="auth-card">
                 <div class="auth-card-header">
+                    <img src="{{ sitelogo() }}" alt="{{ siteName() }}" class="auth-logo">
+                    <hr>
                     <h2>Create Your Account</h2>
                     <p>Start your journey to find the perfect job or talent</p>
                 </div>
-                <div class="auth-card-body">
+                @if(isRegistrationEnabled())
+                    <div class="auth-card-body">
 
-                    <!-- ✅ Flash Messages -->
-                    @if(session('error'))
-                        <div class="alert-custom alert-danger">
-                            <i class="fa fa-exclamation-circle me-2"></i>
-                            {{ session('error') }}
-                        </div>
-                    @endif
-                    @if(session('success'))
-                        <div class="alert-custom alert-success">
-                            <i class="fa fa-check-circle me-2"></i>
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
-
-                        <!-- ✅ ROLE SELECTION BUTTONS -->
-                        <div class="form-group">
-                            <div class="name">I want to register as</div>
-                            <div class="role-buttons">
-                                <label class="role-btn {{ old('role') == 'seeker' ? 'active' : '' }}" id="seeker-btn">
-                                    <input type="radio" name="role" value="seeker" {{ old('role') == 'seeker' ? 'checked' : '' }}>
-                                    <span class="icon">👤</span>
-                                    <span class="label">Job Seeker</span>
-                                    <small>Find your dream job</small>
-                                </label>
-                                <label class="role-btn {{ old('role') == 'employer' ? 'active' : '' }}"
-                                    id="employer-btn">
-                                    <input type="radio" name="role" value="employer" {{ old('role') == 'employer' ? 'checked' : '' }}>
-                                    <span class="icon">🏢</span>
-                                    <span class="label">Employer</span>
-                                    <small>Hire the best talent</small>
-                                </label>
+                        <!-- ✅ Flash Messages -->
+                        @if(session('error'))
+                            <div class="alert-custom alert-danger">
+                                <i class="fa fa-exclamation-circle me-2"></i>
+                                {{ session('error') }}
                             </div>
-                            @error('role')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        @endif
+                        @if(session('success'))
+                            <div class="alert-custom alert-success">
+                                <i class="fa fa-check-circle me-2"></i>
+                                {{ session('success') }}
+                            </div>
+                        @endif
 
-                        <!-- ✅ NAME -->
-                        <div class="form-group">
-                            <div class="name">Full Name</div>
-                            <input class="input--style-5 @error('name') is-invalid @enderror" type="text" name="name"
-                                value="{{ old('name') }}" placeholder="Enter your full name" required>
-                            @error('name')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <form method="POST" action="{{ route('register') }}">
+                            @csrf
 
-                        <!-- ✅ EMAIL -->
-                        <div class="form-group">
-                            <div class="name">Email Address</div>
-                            <input class="input--style-5 @error('email') is-invalid @enderror" type="email" name="email"
-                                value="{{ old('email') }}" placeholder="Enter your email address" required>
-                            @error('email')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <!-- ✅ ROLE SELECTION BUTTONS -->
+                            <div class="form-group">
+                                <div class="name">I want to register as</div>
+                                <div class="role-buttons">
+                                    <label class="role-btn {{ old('role') == 'seeker' ? 'active' : '' }}" id="seeker-btn">
+                                        <input type="radio" name="role" value="seeker" {{ old('role') == 'seeker' ? 'checked' : '' }}>
+                                        <span class="icon">👤</span>
+                                        <span class="label">Job Seeker</span>
+                                        <small>Find your dream job</small>
+                                    </label>
+                                    <label class="role-btn {{ old('role') == 'employer' ? 'active' : '' }}"
+                                        id="employer-btn">
+                                        <input type="radio" name="role" value="employer" {{ old('role') == 'employer' ? 'checked' : '' }}>
+                                        <span class="icon">🏢</span>
+                                        <span class="label">Employer</span>
+                                        <small>Hire the best talent</small>
+                                    </label>
+                                </div>
+                                @error('role')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                        <!-- ✅ PASSWORD WITH TOGGLE -->
-                        <div class="form-group">
-                            <div class="name">Password</div>
-                            <div class="password-toggle-wrapper">
-                                <input class="input--style-5 @error('password') is-invalid @enderror" type="password"
-                                    name="password" id="password" placeholder="Create a strong password" required>
-                                <button type="button" class="password-toggle-btn" id="togglePassword"
-                                    aria-label="Toggle password visibility">
-                                    <i class="fa fa-eye" id="eyeIcon"></i>
+                            <!-- ✅ NAME -->
+                            <div class="form-group">
+                                <div class="name">Full Name</div>
+                                <input class="input--style-5 @error('name') is-invalid @enderror" type="text" name="name"
+                                    value="{{ old('name') }}" placeholder="Enter your full name" required>
+                                @error('name')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- ✅ EMAIL -->
+                            <div class="form-group">
+                                <div class="name">Email Address</div>
+                                <input class="input--style-5 @error('email') is-invalid @enderror" type="email" name="email"
+                                    value="{{ old('email') }}" placeholder="Enter your email address" required>
+                                @error('email')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- ✅ PASSWORD WITH TOGGLE -->
+                            <div class="form-group">
+                                <div class="name">Password</div>
+                                <div class="password-toggle-wrapper">
+                                    <input class="input--style-5 @error('password') is-invalid @enderror" type="password"
+                                        name="password" id="password" placeholder="Create a strong password" required>
+                                    <button type="button" class="password-toggle-btn" id="togglePassword"
+                                        aria-label="Toggle password visibility">
+                                        <i class="fa fa-eye" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="password-hint">Must be at least 8 characters with letters, numbers &amp; symbols
+                                </div>
+                                @error('password')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- ✅ CONFIRM PASSWORD WITH TOGGLE -->
+                            <div class="form-group">
+                                <div class="name">Confirm Password</div>
+                                <div class="password-toggle-wrapper">
+                                    <input class="input--style-5 @error('password_confirmation') is-invalid @enderror"
+                                        type="password" name="password_confirmation" id="password_confirmation"
+                                        placeholder="Confirm your password" required>
+                                    <button type="button" class="password-toggle-btn" id="toggleConfirmPassword"
+                                        aria-label="Toggle password visibility">
+                                        <i class="fa fa-eye" id="eyeIconConfirm"></i>
+                                    </button>
+                                </div>
+                                @error('password_confirmation')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- ✅ COMPANY NAME (Optional - for Employers) -->
+                            <div class="form-group" id="company-field"
+                                style="{{ old('role') == 'employer' ? 'display: block;' : 'display: none;' }}">
+                                <div class="name">Company Name <span class="text-muted small">(Optional)</span></div>
+                                <input class="input--style-5 @error('company_name') is-invalid @enderror" type="text"
+                                    name="company_name" value="{{ old('company_name') }}"
+                                    placeholder="Enter your company name">
+                                @error('company_name')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- ✅ SUBMIT BUTTON -->
+                            <div class="mt-3">
+                                <button class="btn-gradient" type="submit">
+                                    <i class="fa fa-user-plus me-2"></i> Create Account
                                 </button>
                             </div>
-                            <div class="password-hint">Must be at least 8 characters with letters, numbers &amp; symbols
+
+                            <!-- ✅ SOCIAL LOGIN -->
+                            <div class="social-login">
+                                <div class="divider"><span>Or</span></div>
+                                <div class="social-buttons">
+                                    <a href="{{ route('social.redirect', 'google') }}" class="social-btn google">
+                                        <i class="fab fa-google"></i> Google
+                                    </a>
+                                    <a href="{{ route('social.redirect', 'github') }}" class="social-btn github">
+                                        <i class="fab fa-github"></i> GitHub
+                                    </a>
+                                </div>
                             </div>
-                            @error('password')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <!-- ✅ CONFIRM PASSWORD WITH TOGGLE -->
-                        <div class="form-group">
-                            <div class="name">Confirm Password</div>
-                            <div class="password-toggle-wrapper">
-                                <input class="input--style-5 @error('password_confirmation') is-invalid @enderror"
-                                    type="password" name="password_confirmation" id="password_confirmation"
-                                    placeholder="Confirm your password" required>
-                                <button type="button" class="password-toggle-btn" id="toggleConfirmPassword"
-                                    aria-label="Toggle password visibility">
-                                    <i class="fa fa-eye" id="eyeIconConfirm"></i>
-                                </button>
+                            <!-- ✅ LOGIN LINK -->
+                            <div class="auth-link">
+                                Already have an account? <a href="{{ route('login') }}">Login</a>
                             </div>
-                            @error('password_confirmation')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <!-- ✅ COMPANY NAME (Optional - for Employers) -->
-                        <div class="form-group" id="company-field"
-                            style="{{ old('role') == 'employer' ? 'display: block;' : 'display: none;' }}">
-                            <div class="name">Company Name <span class="text-muted small">(Optional)</span></div>
-                            <input class="input--style-5 @error('company_name') is-invalid @enderror" type="text"
-                                name="company_name" value="{{ old('company_name') }}"
-                                placeholder="Enter your company name">
-                            @error('company_name')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- ✅ SUBMIT BUTTON -->
-                        <div class="mt-3">
-                            <button class="btn-gradient" type="submit">
-                                <i class="fa fa-user-plus me-2"></i> Create Account
-                            </button>
-                        </div>
-
-                        <!-- ✅ SOCIAL LOGIN -->
-                        <div class="social-login">
-                            <div class="divider"><span>Or</span></div>
-                            <div class="social-buttons">
-                                <a href="{{ route('social.redirect', 'google') }}" class="social-btn google">
-                                    <i class="fab fa-google"></i> Google
-                                </a>
-                                <a href="{{ route('social.redirect', 'github') }}" class="social-btn github">
-                                    <i class="fab fa-github"></i> GitHub
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- ✅ LOGIN LINK -->
-                        <div class="auth-link">
-                            Already have an account? <a href="{{ route('login') }}">Login</a>
-                        </div>
-
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                @else
+                    <div class="alert alert-warning" style="margin: 20px;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Registration is currently disabled.
+                    </div>
+                @endif
             </div>
         </div>
     </div>

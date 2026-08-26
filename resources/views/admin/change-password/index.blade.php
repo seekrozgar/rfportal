@@ -1,7 +1,7 @@
 {{-- resources/views/admin/profile/change-password.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Change Password - Rozgar Finder')
+@section('title', 'Change Password')
 @section('page-title', 'Change Password')
 @section('page-subtitle', 'Update your account password')
 

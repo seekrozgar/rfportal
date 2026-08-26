@@ -2,7 +2,7 @@
 
 @extends('employer.layouts.employer')
 
-@section('title', 'My Jobs - Employer Dashboard')
+@section('title', 'My Jobs')
 @section('page-title', 'My Job Postings')
 @section('page-subtitle', 'Manage your employer job postings')
 

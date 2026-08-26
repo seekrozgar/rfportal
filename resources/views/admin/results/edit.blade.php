@@ -1,7 +1,7 @@
 {{-- resources/views/admin/results/edit.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit Result - Rozgar Finder')
+@section('title', 'Edit Result')
 @section('page-title', 'Edit Result')
 @section('page-subtitle', 'Update result details')
 

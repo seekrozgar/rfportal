@@ -1,7 +1,7 @@
 {{-- resources/views/admin/news/edit.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit News - Rozgar Finder')
+@section('title', 'Edit News')
 @section('page-title', 'Edit News')
 @section('page-subtitle', 'Update news post')
 

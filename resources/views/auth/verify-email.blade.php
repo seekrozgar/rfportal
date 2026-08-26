@@ -16,7 +16,9 @@
     <meta name="description" content="Rozgar Finder - Verify Email">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Verify Email - Rozgar Finder</title>
+    @section('title', 'Verify Email')
+    @section('page-title', 'Verify Email')
+    @section('page-subtitle', 'Verify Email to activate account')
 
     <!-- ✅ Vite - Bootstrap 5 + Custom CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -166,6 +168,8 @@
         <div class="auth-container">
             <div class="auth-card">
                 <div class="auth-card-header">
+                    <img src="{{ sitelogo() }}" alt="{{ siteName() }}" class="auth-logo">
+                    <hr>
                     <h2>Verify Your Email</h2>
                     <p>One last step to activate your account</p>
                 </div>

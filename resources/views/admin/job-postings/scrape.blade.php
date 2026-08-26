@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Scrape Jobs - Rozgar Finder')
+@section('title', 'Scrape Jobs')
 @section('page-title', 'Scrape Jobs')
 @section('page-subtitle', 'Fetch jobs from external sources')
 
@@ -650,9 +650,9 @@
                         isScraping = true;
                         scrapeBtn.disabled = true;
                         scrapeBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Scraping...
-                    `;
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Scraping...
+                            `;
 
                         // ✅ Show scraping status on selected card
                         const card = document.getElementById('card-' + selectedSource.value);
@@ -673,7 +673,7 @@
                         showToast('error', '{{ $error }}');
                     @endforeach
                 @endif
-        });
+                });
 
             // ✅ Add CSRF token meta if not exists
             if (!document.querySelector('meta[name="csrf-token"]')) {

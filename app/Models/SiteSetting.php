@@ -12,7 +12,6 @@ class SiteSetting extends Model
     use HasFactory;
 
     protected $fillable = [
-        // Site Information
         'site_name',
         'site_tagline',
         'site_logo',
@@ -21,8 +20,6 @@ class SiteSetting extends Model
         'site_phone',
         'site_address',
         'site_whatsapp',
-
-        // Social Networks
         'facebook',
         'twitter',
         'instagram',
@@ -33,8 +30,6 @@ class SiteSetting extends Model
         'snapchat',
         'telegram',
         'whatsapp_group',
-
-        // Social Media Login
         'social_login_enabled',
         'facebook_login',
         'facebook_client_id',
@@ -48,8 +43,6 @@ class SiteSetting extends Model
         'github_login',
         'github_client_id',
         'github_client_secret',
-
-        // Payment Gateways
         'payment_enabled',
         'easypaisa_enabled',
         'easypaisa_merchant_id',
@@ -66,37 +59,27 @@ class SiteSetting extends Model
         'stripe_enabled',
         'stripe_publishable_key',
         'stripe_secret_key',
-
-        // Captcha
         'captcha_enabled',
         'captcha_site_key',
         'captcha_secret_key',
         'captcha_on_login',
         'captcha_on_register',
         'captcha_on_contact',
-
-        // Google Analytics
         'analytics_enabled',
         'analytics_measurement_id',
         'analytics_api_key',
         'analytics_property_id',
         'analytics_anonymize_ip',
-
-        // GDPR Cookie Policy
         'cookie_consent_enabled',
         'cookie_consent_message',
         'cookie_policy_url',
         'cookie_expiry_days',
-
-        // Manage Ads
         'ads_enabled',
         'header_ad_code',
         'sidebar_ad_code',
         'footer_ad_code',
         'popup_ad_code',
         'in_content_ad_code',
-
-        // Maintenance & Features
         'maintenance_mode',
         'maintenance_message',
         'registration_enabled',
@@ -105,15 +88,11 @@ class SiteSetting extends Model
         'date_format',
         'currency',
         'currency_symbol',
-
-        // SEO & Meta
         'meta_title',
         'meta_description',
         'meta_keywords',
         'meta_author',
         'meta_robots',
-
-        // Email Settings
         'mail_driver',
         'mail_host',
         'mail_port',
@@ -151,55 +130,87 @@ class SiteSetting extends Model
     ];
 
     /**
-     * ✅ Laravel 13: Get settings using cache with proper handling
+     * Get site settings safely.
+     *
+     * Cache only plain attributes, never serialize the Eloquent model.
      */
-    public static function getSettings()
+    public static function getSettings(): self
     {
-        // ✅ Laravel 13: Use cache with fallback
-        return Cache::remember('site_settings_data', 3600, function () {
-            $settings = self::first();
+        $cached = Cache::get('site_settings_data');
 
-            if (!$settings) {
-                $settings = self::createDefault();
-            }
+        if (is_array($cached)) {
+            $settings = new static();
+
+            $settings->setRawAttributes($cached);
+            $settings->exists = true;
 
             return $settings;
-        });
+        }
+
+        $settings = static::first();
+
+        if (!$settings) {
+            $settings = static::createDefault();
+        }
+
+        Cache::put(
+            'site_settings_data',
+            $settings->getAttributes(),
+            now()->addHour()
+        );
+
+        return $settings;
     }
 
     /**
      * ✅ Create default settings
      */
-    public static function createDefault()
+    public static function createDefault(): self
     {
-        return self::create([
+        $settings = static::create([
             'site_name' => 'Rozgar Finder',
             'site_tagline' => 'Find Your Dream Job',
+
             'registration_enabled' => true,
             'comments_enabled' => true,
+
             'cookie_consent_enabled' => true,
+            'cookie_expiry_days' => 365,
+
             'timezone' => 'Asia/Karachi',
             'date_format' => 'd-m-Y',
+
             'currency' => 'PKR',
             'currency_symbol' => 'Rs.',
+
             'meta_robots' => 'index, follow',
+
             'mail_driver' => 'smtp',
-            'cookie_expiry_days' => 365,
+
             'analytics_anonymize_ip' => true,
+
             'paypal_sandbox' => true,
         ]);
+
+        Cache::put(
+            'site_settings_data',
+            $settings->getAttributes(),
+            now()->addHour()
+        );
+
+        return $settings;
     }
 
     /**
-     * ✅ Laravel 13: Clear cache on model events
+     * ✅ Laravel 13+ booted method
      */
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::saved(function () {
+        static::saved(function (): void {
             Cache::forget('site_settings_data');
         });
 
-        static::deleted(function () {
+        static::deleted(function (): void {
             Cache::forget('site_settings_data');
         });
     }
@@ -207,57 +218,46 @@ class SiteSetting extends Model
     /**
      * ✅ Get a specific setting value
      */
-    public static function get($key, $default = null)
+    public static function get(string $key, mixed $default = null): mixed
     {
-        $settings = self::getSettings();
-        return $settings->$key ?? $default;
+        $settings = static::getSettings();
+
+        return $settings->getAttribute($key) ?? $default;
     }
 
     /**
      * ✅ Get logo URL
      */
-    public function getLogoUrlAttribute()
+    public function getLogoUrlAttribute(): ?string
     {
-        if ($this->site_logo) {
-            return asset('storage/' . $this->site_logo);
-        }
-        return null;
+        return $this->site_logo ? asset('storage/' . $this->site_logo) : null;
     }
 
     /**
      * ✅ Get favicon URL
      */
-    public function getFaviconUrlAttribute()
+    public function getFaviconUrlAttribute(): ?string
     {
-        if ($this->site_favicon) {
-            return asset('storage/' . $this->site_favicon);
-        }
-        return null;
+        return $this->site_favicon ? asset('storage/' . $this->site_favicon) : null;
     }
 
     /**
-     * ✅ Check if in maintenance mode
+     * ✅ Get all social links
      */
-    public function isInMaintenance()
-    {
-        return $this->maintenance_mode;
-    }
-
-    /**
-     * ✅ Check if registration is enabled
-     */
-    public function isRegistrationEnabled()
-    {
-        return $this->registration_enabled;
-    }
-
-    /**
-     * ✅ Get all social media links
-     */
-    public function getSocialLinks()
+    public function getSocialLinksAttribute(): array
     {
         $socials = [];
-        $fields = ['facebook', 'twitter', 'instagram', 'linkedin', 'youtube', 'tiktok', 'pinterest', 'telegram', 'whatsapp_group'];
+        $fields = [
+            'facebook',
+            'twitter',
+            'instagram',
+            'linkedin',
+            'youtube',
+            'tiktok',
+            'pinterest',
+            'telegram',
+            'whatsapp_group'
+        ];
 
         foreach ($fields as $field) {
             if ($this->$field) {
@@ -271,30 +271,34 @@ class SiteSetting extends Model
     /**
      * ✅ Get enabled payment gateways
      */
-    public function getEnabledPayments()
+    public function getEnabledPaymentsAttribute(): array
     {
         $payments = [];
-
-        if ($this->easypaisa_enabled) $payments[] = 'easypaisa';
-        if ($this->jazzcash_enabled) $payments[] = 'jazzcash';
-        if ($this->paypal_enabled) $payments[] = 'paypal';
-        if ($this->stripe_enabled) $payments[] = 'stripe';
-
+        if ($this->easypaisa_enabled)
+            $payments[] = 'easypaisa';
+        if ($this->jazzcash_enabled)
+            $payments[] = 'jazzcash';
+        if ($this->paypal_enabled)
+            $payments[] = 'paypal';
+        if ($this->stripe_enabled)
+            $payments[] = 'stripe';
         return $payments;
     }
 
     /**
      * ✅ Get enabled social logins
      */
-    public function getEnabledSocialLogins()
+    public function getEnabledSocialLoginsAttribute(): array
     {
         $logins = [];
-
-        if ($this->facebook_login) $logins[] = 'facebook';
-        if ($this->google_login) $logins[] = 'google';
-        if ($this->linkedin_login) $logins[] = 'linkedin';
-        if ($this->github_login) $logins[] = 'github';
-
+        if ($this->facebook_login)
+            $logins[] = 'facebook';
+        if ($this->google_login)
+            $logins[] = 'google';
+        if ($this->linkedin_login)
+            $logins[] = 'linkedin';
+        if ($this->github_login)
+            $logins[] = 'github';
         return $logins;
     }
 }

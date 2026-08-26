@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'User Profiles - Rozgar Finder')
+@section('title', 'User Profiles')
 @section('page-title', 'User Profiles')
 @section('page-subtitle', 'Manage employers and job seekers')
 

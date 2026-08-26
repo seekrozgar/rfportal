@@ -1,7 +1,7 @@
 {{-- resources/views/employer/dashboard/index.blade.php --}}
 @extends('employer.layouts.employer')
 
-@section('title', 'Employer Dashboard - Rozgar Finder')
+@section('title', 'Employer Dashboard')
 @section('page-title', 'Employer Dashboard')
 @section('page-subtitle', 'Welcome back, ' . Auth::user()->name . '! Here\'s what\'s happening with your jobs.')
 

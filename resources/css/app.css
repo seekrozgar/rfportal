@@ -2398,3 +2398,12 @@ margin: 20px;
 .tab-content{
     margin-top: 40px;
 }
+.admin-panel-img{
+    width: 220px;
+    height: 60px;
+}
+.auth-logo{
+    width: 340px;
+    height: 80px;
+    text-align: center;
+}

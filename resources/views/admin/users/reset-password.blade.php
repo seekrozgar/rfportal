@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'Reset User Password - Rozgar Finder')
+@section('title', 'Reset User Password')
 @section('page-title', 'Reset User Password')
 @section('page-subtitle', 'Reset password for ' . $user->name)
 

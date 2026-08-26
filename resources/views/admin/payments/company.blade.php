@@ -1,7 +1,7 @@
 {{-- resources/views/admin/payments/company.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Company Payments - Rozgar Finder')
+@section('title', 'Company Payments')
 @section('page-title', 'Company Payments')
 @section('page-subtitle', 'Manage employer subscription payments')
 
@@ -503,13 +503,13 @@
             const body = document.getElementById('paymentDetails');
 
             body.innerHTML = `
-                        <div class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-3 text-muted">Loading payment details...</p>
                             </div>
-                            <p class="mt-3 text-muted">Loading payment details...</p>
-                        </div>
-                    `;
+                        `;
 
             modal.show();
 
@@ -520,11 +520,11 @@
                 })
                 .catch(() => {
                     body.innerHTML = `
-                                <div class="alert alert-danger">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Failed to load payment details.
-                                </div>
-                            `;
+                                    <div class="alert alert-danger">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Failed to load payment details.
+                                    </div>
+                                `;
                 });
         }
 

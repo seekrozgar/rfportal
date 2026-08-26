@@ -1,7 +1,7 @@
 {{-- resources/views/admin/scholarships/edit.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit Scholarship - Rozgar Finder')
+@section('title', 'Edit Scholarship')
 @section('page-title', 'Edit Scholarship')
 @section('page-subtitle', 'Update scholarship opportunity')
 
@@ -482,9 +482,9 @@
                                 fileInput.classList.add('is-invalid');
                                 fileInput.value = '';
                                 preview.innerHTML = `
-                                <i class="fas fa-image fa-3x text-muted"></i>
-                                <p class="text-muted small mt-2">Click to change image</p>
-                            `;
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                        <p class="text-muted small mt-2">Click to change image</p>
+                                    `;
                                 return;
                             }
                             imageError.style.display = 'none';

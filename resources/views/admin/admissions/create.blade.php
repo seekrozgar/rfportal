@@ -1,7 +1,7 @@
 {{-- resources/views/admin/admissions/create.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Add Admission - Rozgar Finder')
+@section('title', 'Add Admission')
 @section('page-title', 'Add Admission')
 @section('page-subtitle', 'Create a new admission announcement')
 
@@ -480,9 +480,9 @@
                     if (!preview) return;
 
                     preview.innerHTML = `
-                                                                                                                <i class="fas fa-image fa-3x text-muted"></i>
-                                                                                                                <p class="text-muted small mt-2">Click to upload image</p>
-                                                                                                            `;
+                                                                                                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                                                                                                        <p class="text-muted small mt-2">Click to upload image</p>
+                                                                                                                    `;
                 }
 
                 /*
@@ -540,12 +540,12 @@
 
                         reader.onload = function (event) {
                             preview.innerHTML = `
-                                                                                                                        <img
-                                                                                                                            src="${event.target.result}"
-                                                                                                                            class="preview-image"
-                                                                                                                            alt="Featured image preview"
-                                                                                                                        >
-                                                                                                                    `;
+                                                                                                                                <img
+                                                                                                                                    src="${event.target.result}"
+                                                                                                                                    class="preview-image"
+                                                                                                                                    alt="Featured image preview"
+                                                                                                                                >
+                                                                                                                            `;
                         };
 
                         reader.readAsDataURL(file);
@@ -708,11 +708,11 @@
                         if (submitButton) {
                             submitButton.disabled = true;
                             submitButton.innerHTML = `
-                                                                                                                        <span class="spinner-border spinner-border-sm me-1"
-                                                                                                                              role="status"
-                                                                                                                              aria-hidden="true"></span>
-                                                                                                                        Saving...
-                                                                                                                    `;
+                                                                                                                                <span class="spinner-border spinner-border-sm me-1"
+                                                                                                                                      role="status"
+                                                                                                                                      aria-hidden="true"></span>
+                                                                                                                                Saving...
+                                                                                                                            `;
                         }
 
                         HTMLFormElement.prototype.submit.call(form);

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 
-@section('title', 'Admin Dashboard - Rozgar Finder')
+@section('title', 'Dashboard')
 @section('page-title', __t('Dashboard'))
 @section('page-subtitle', __t('Overview of your portal'))
 

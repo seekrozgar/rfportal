@@ -2,7 +2,7 @@
 
 @extends('admin.layouts.admin')
 
-@section('title', 'Edit FAQ - Rozgar Finder')
+@section('title', 'Edit FAQ')
 @section('page-title', 'Edit FAQ')
 @section('page-subtitle', 'Update frequently asked question')
 
@@ -134,8 +134,8 @@
         }
 
         /* ✅ ============================================================
-           ✅ PROFESSIONAL STATS CARDS - BEAUTIFUL
-           ✅ ============================================================ */
+               ✅ PROFESSIONAL STATS CARDS - BEAUTIFUL
+               ✅ ============================================================ */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -707,9 +707,9 @@
                         }
                         submitBtn.disabled = true;
                         submitBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Updating...
-                    `;
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Updating...
+                            `;
                     });
                 }
 
@@ -724,7 +724,7 @@
                         showToast('error', '{{ $error }}');
                     @endforeach
                 @endif
-        });
+                });
 
             function showToast(type, message) {
                 if (typeof toastr !== 'undefined') {

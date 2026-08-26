@@ -1,7 +1,7 @@
 {{-- resources/views/admin/notifications/index.blade.php --}}
 @extends('admin.layouts.admin')
 
-@section('title', 'Notifications - Rozgar Finder')
+@section('title', 'Notifications')
 @section('page-title', 'Notifications')
 @section('page-subtitle', 'View all system notifications')
 

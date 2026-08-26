@@ -7,7 +7,9 @@
     <meta name="description" content="Rozgar Finder - Forgot Password">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Forgot Password - Rozgar Finder</title>
+    @section('title', 'Forgot Password')
+    @section('page-title', 'Forgot Password')
+    @section('page-subtitle', 'Get new password')
 
     <!-- ✅ Vite - Bootstrap 5 + Custom CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -19,6 +21,8 @@
         <div class="auth-container">
             <div class="auth-card">
                 <div class="auth-card-header">
+                    <img src="{{ sitelogo() }}" alt="{{ siteName() }}" class="auth-logo">
+                    <hr>
                     <h2>Forgot Password</h2>
                     <p>We'll send you a reset link</p>
                 </div>
