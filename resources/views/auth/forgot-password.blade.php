@@ -7,9 +7,7 @@
     <meta name="description" content="Rozgar Finder - Forgot Password">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @section('title', 'Forgot Password')
-    @section('page-title', 'Forgot Password')
-    @section('page-subtitle', 'Get new password')
+    <title>Forgot Password - {{ siteName() }}</title>
 
     <!-- ✅ Vite - Bootstrap 5 + Custom CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -7,9 +7,7 @@
     <meta name="description" content="Rozgar Finder - Login">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @section('title', 'Login')
-    @section('page-title', 'Login')
-    @section('page-subtitle', 'Login your account')
+    <title>Login - {{ siteName() }}</title>
 
     <!-- ✅ Vite - Single CSS file -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

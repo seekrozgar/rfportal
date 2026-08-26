@@ -16,9 +16,7 @@
     <meta name="description" content="Rozgar Finder - Verify Email">
     <meta name="author" content="Rozgar Finder">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @section('title', 'Verify Email')
-    @section('page-title', 'Verify Email')
-    @section('page-subtitle', 'Verify Email to activate account')
+    <title>Verify Email - {{ siteName() }}</title>
 
     <!-- ✅ Vite - Bootstrap 5 + Custom CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
