@@ -5,58 +5,94 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Company extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
-        'slug',
         'email',
         'phone',
         'website',
         'address',
-        'logo',
         'description',
+        'industry',
+        'company_size',
+        'founded_year',
+        'headquarters',
+        'ntn_number',
+        'secp_number',
+        'facebook',
+        'linkedin',
+        'twitter',
+        'instagram',
+        'youtube',
+
+        'logo',
+        'cover_image',
+        'business_license',
+
         'is_active',
-        'user_id',
-        'package_id',
-        'subscription_expires_at',
+
+        // Verification
+        'verification_status',
+        'verification_requested_at',
+        'verification_reviewed_at',
+        'verification_reviewed_by',
+        'verification_rejection_reason',
+        'verification_admin_note',
+
+        // Trust / fraud
+        'is_verified',
+        'is_suspended',
+        'is_blocked',
+        'is_fraud',
+        'fraud_reason',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'subscription_expires_at' => 'datetime',
+        'is_verified' => 'boolean',
+        'is_featured' => 'boolean',
+        'verified_at' => 'datetime',
+        'views_count' => 'integer',
+        'job_posts_count' => 'integer',
+
+        'verification_requested_at' => 'datetime',
+        'verification_reviewed_at' => 'datetime',
     ];
 
-    /**
-     * ✅ Scope for active companies only
-     */
-    public function scopeActive($query)
+    protected static function boot()
     {
-        return $query->where('is_active', true);
+        parent::boot();
+
+        static::creating(function ($company) {
+            if (empty($company->slug)) {
+                $company->slug = Str::slug($company->name) . '-' . uniqid();
+            }
+        });
+
+        static::updating(function ($company) {
+            if ($company->isDirty('name') && !$company->isDirty('slug')) {
+                $company->slug = Str::slug($company->name) . '-' . uniqid();
+            }
+        });
     }
 
-    /**
-     * ✅ Scope for ordering (without 'order' column)
-     */
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('name', 'asc');
-    }
-
-    /**
-     * ✅ Relationships
-     */
+    // ✅ Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    public function package()
+    public function verificationReviewer()
     {
-        return $this->belongsTo(Package::class);
+        return $this->belongsTo(
+            User::class,
+            'verification_reviewed_by'
+        );
     }
 
     public function jobs()
@@ -64,9 +100,12 @@ class Company extends Model
         return $this->hasMany(JobPosting::class, 'company_id');
     }
 
-    /**
-     * ✅ Accessor for logo URL
-     */
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    // ✅ Accessors
     public function getLogoUrlAttribute()
     {
         if ($this->logo) {
@@ -75,27 +114,91 @@ class Company extends Model
         return null;
     }
 
-    /**
-     * ✅ Check if company has active subscription
-     */
-    public function hasActiveSubscription()
+    public function getCoverImageUrlAttribute()
     {
-        if (!$this->subscription_expires_at) {
-            return false;
+        if ($this->cover_image) {
+            return asset('storage/' . $this->cover_image);
         }
-        return $this->subscription_expires_at->isFuture();
+        return null;
     }
 
-    /**
-     * ✅ Get remaining job postings count
-     */
-    public function getRemainingJobsAttribute()
+    public function getBusinessLicenseUrlAttribute()
     {
-        if (!$this->package) {
-            return 0;
+        if ($this->business_license) {
+            return asset('storage/' . $this->business_license);
         }
-        $used = $this->jobs()->count();
-        $limit = $this->package->job_limit ?? 0;
-        return max(0, $limit - $used);
+        return null;
+    }
+
+    public function getCompanySizeLabelAttribute()
+    {
+        $sizes = [
+            '1-10' => '1-10 employees',
+            '11-50' => '11-50 employees',
+            '51-200' => '51-200 employees',
+            '201-500' => '201-500 employees',
+            '500+' => '500+ employees',
+        ];
+        return $sizes[$this->company_size] ?? $this->company_size ?? 'Not specified';
+    }
+
+    public function getIsCompleteAttribute()
+    {
+        $required = ['name', 'email', 'phone', 'address', 'description', 'industry'];
+        foreach ($required as $field) {
+            if (empty($this->$field)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function getCompletionPercentageAttribute()
+    {
+        $fields = [
+            'name',
+            'email',
+            'phone',
+            'website',
+            'address',
+            'description',
+            'logo',
+            'industry',
+            'company_size',
+            'founded_year',
+            'headquarters'
+        ];
+        $filled = 0;
+        foreach ($fields as $field) {
+            if (!empty($this->$field)) {
+                $filled++;
+            }
+        }
+        return round(($filled / count($fields)) * 100);
+    }
+
+    // ✅ Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeVerified($query)
+    {
+        return $query->where('is_verified', true);
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', "%{$term}%")
+                ->orWhere('description', 'LIKE', "%{$term}%")
+                ->orWhere('industry', 'LIKE', "%{$term}%");
+        });
     }
 }

@@ -1,60 +1,96 @@
 <?php
+// app/Http/Controllers/Employer/DashboardController.php
 
 namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobPosting;
+use App\Models\Company;
+use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Application;
-use App\Http\Controllers\Employer\EmployerJobController;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
+        $company = $user->company;
 
-        // ✅ Get company ID (if employer has company)
-        $companyId = $user->company_id ?? null;
+        // ✅ Check if company exists and profile is complete
+        $companyMissing = false;
+        $isProfileComplete = false;
 
-        // ✅ If employer doesn't have company yet, set defaults
-        if (!$companyId) {
-            return view('employer.dashboard', [
-                'user' => $user,
-                'totalJobs' => 0,
-                'totalApplications' => 0,
-                'totalViews' => 0,
-                'featuredJobs' => 0,
-                'recentApplications' => collect([]),
-                'companyMissing' => true, // ✅ Flag to show "Create Company" message
+        if (!$company) {
+            $companyMissing = true;
+            $isProfileComplete = false;
+        } else {
+            $isProfileComplete = $company->is_complete ?? false;
+        }
+
+        // ✅ Statistics
+        $totalJobs = $company ? $company->jobs()->count() : 0;
+        $activeJobs = $company ? $company->jobs()->where('is_active', true)->count() : 0;
+        $expiredJobs = $company ? $company->jobs()->where('deadline', '<', now())->count() : 0;
+        $pendingJobs = $company ? $company->jobs()->where('is_verified', false)->count() : 0;
+        $featuredJobs = $company ? $company->jobs()->where('is_featured', true)->count() : 0;
+
+        // ✅ Total Applications
+        $totalApplications = 0;
+        if ($company) {
+            $jobIds = $company->jobs()->pluck('id');
+            $totalApplications = JobApplication::whereIn('job_id', $jobIds)->count();
+        }
+
+        // ✅ Total Views
+        $totalViews = $company ? $company->jobs()->sum('views_count') : 0;
+
+        // ✅ Recent Applications
+        $recentApplications = collect();
+        if ($company) {
+            $jobIds = $company->jobs()->pluck('id');
+            $recentApplications = JobApplication::whereIn('job_id', $jobIds)
+                ->with(['job', 'user'])
+                ->latest()
+                ->take(5)
+                ->get();
+        }
+
+        // ✅ Recent Jobs
+        $recentJobs = $company ? $company->jobs()->latest()->take(5)->get() : collect();
+
+        return view('employer.dashboard.index', compact(
+            'user',
+            'company',
+            'companyMissing',
+            'isProfileComplete',
+            'totalJobs',
+            'activeJobs',
+            'expiredJobs',
+            'pendingJobs',
+            'featuredJobs',
+            'totalApplications',
+            'totalViews',
+            'recentApplications',
+            'recentJobs'
+        ));
+    }
+
+    public function checkProfileComplete()
+    {
+        $user = Auth::user();
+        $company = $user->company;
+
+        if (!$company || !$company->is_complete) {
+            return response()->json([
+                'complete' => false,
+                'message' => 'Please complete your company profile first.'
             ]);
         }
 
-        // ✅ Get stats
-        $totalJobs = JobPosting::where('company_id', $companyId)->count();
-        $totalApplications = Application::whereHas('job', function ($query) use ($companyId) {
-            $query->where('company_id', $companyId);
-        })->count();
-        $totalViews = JobPosting::where('company_id', $companyId)->sum('views_count');
-        $featuredJobs = JobPosting::where('company_id', $companyId)->where('is_featured', true)->count();
-
-        // ✅ Get recent applications
-        $recentApplications = Application::whereHas('job', function ($query) use ($companyId) {
-            $query->where('company_id', $companyId);
-        })->with(['seeker', 'job'])
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        return view('employer.dashboard.index', [
-            'user' => $user,
-            'totalJobs' => $totalJobs,
-            'totalApplications' => $totalApplications,
-            'totalViews' => $totalViews,
-            'featuredJobs' => $featuredJobs,
-            'recentApplications' => $recentApplications,
-            'companyMissing' => false,
+        return response()->json([
+            'complete' => true,
+            'message' => 'Profile complete!'
         ]);
     }
 }

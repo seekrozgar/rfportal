@@ -27,7 +27,7 @@
         </a>
     </div>
     <div class="col-md-3 col-sm-6">
-        <a href="{{ route('employer.profile.edit') }}" class="quick-link-card">
+        <a href="{{ route('employer.company-profile.edit') }}" class="quick-link-card">
             <span class="icon"><i class="fa fa-building"></i></span>
             <span class="label">Company Profile</span>
             <span class="desc">Update your company details</span>

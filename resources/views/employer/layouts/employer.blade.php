@@ -13,6 +13,10 @@
             {{ siteName() }} - Employer
         @endif
     </title>
+    @if(siteFavicon())
+        <link rel="icon" type="image/png" href="{{ siteFavicon() }}">
+    @endif
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>

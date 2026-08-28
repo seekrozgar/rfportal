@@ -47,6 +47,7 @@ use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\CompanyVerificationController as AdminCompanyVerificationController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PasswordController;
@@ -64,16 +65,17 @@ use App\Http\Controllers\Author\AdmissionController as AuthorAdmissionController
 // 🏢 EMPLOYER CONTROLLERS
 // ============================================================
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
-use App\Http\Controllers\Employer\EmployerJobController as CompanyJobController;
+use App\Http\Controllers\Employer\JobPostingController as EmployerJobPostingController;
 use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationController;
-use App\Http\Controllers\Employer\ProfileController as EmployerProfileController;
+use App\Http\Controllers\Employer\CompanyProfileController as EmployerProfileController;
+use App\Http\Controllers\Employer\PersonalProfileController as EmployerPersonalProfileController;
 use App\Http\Controllers\Employer\PackageController as EmployerPackageController;
 
 // ============================================================
 // 👤 SEEKER CONTROLLERS
 // ============================================================
 use App\Http\Controllers\Seeker\DashboardController as SeekerDashboardController;
-use App\Http\Controllers\Seeker\ProfileController as SeekerProfileController;
+use App\Http\Controllers\Seeker\ProfileController as EmployerSeekerProfileController;
 use App\Http\Controllers\Seeker\ResumeController as SeekerResumeController;
 use App\Http\Controllers\Seeker\ApplicationController as SeekerApplicationController;
 use App\Http\Controllers\Seeker\FavouriteController as SeekerFavouriteController;
@@ -337,6 +339,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
         Route::put('/{company}', [AdminCompanyController::class, 'update'])->name('update');
         Route::delete('/{company}', [AdminCompanyController::class, 'destroy'])->name('destroy');
     });
+
+    // ✅ Companies Approval Management
+    Route::get('/company-verifications', [AdminCompanyVerificationController::class, 'index'])->name('company-verifications.index');
+    Route::get('/company-verifications/{company}', [AdminCompanyVerificationController::class, 'show'])->name('company-verifications.show');
+    Route::post('/company-verifications/{company}/approve', [AdminCompanyVerificationController::class, 'approve'])->name('company-verifications.approve');
+    Route::post('/company-verifications/{company}/reject', [AdminCompanyVerificationController::class, 'reject'])->name('company-verifications.reject');
 
     // ✅ Education: Scholarships
     Route::prefix('scholarships')->name('scholarships.')->group(function () {
@@ -628,17 +636,43 @@ Route::prefix('author')->middleware(['auth', 'verified', 'author'])->name('autho
 // 🏢 EMPLOYER ROUTES
 // ============================================================
 Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('employer.')->group(function () {
+
     Route::get('/dashboard', [EmployerDashboardController::class, 'index'])->name('dashboard');
 
-    // Jobs
+    // Personal Profile Routes
+    // ✅ User Profile (Personal)
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [EmployerPersonalProfileController::class, 'edit'])->name('edit');
+        Route::put('/update-info', [EmployerPersonalProfileController::class, 'updateInfo'])->name('update-info');
+        Route::put('/update-password', [EmployerPersonalProfileController::class, 'updatePassword'])->name('update-password');
+        Route::post('/avatar', [EmployerPersonalProfileController::class, 'uploadAvatar'])->name('avatar');
+        Route::post('/remove-avatar', [EmployerPersonalProfileController::class, 'removeAvatar'])->name('remove-avatar');
+
+    });
+
+    // Company Profile Routes
+    Route::prefix('company-profile')->name('company-profile.')->group(function () {
+        Route::get('/', [EmployerProfileController::class, 'index'])->name('index');
+        Route::get('/edit', [EmployerProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [EmployerProfileController::class, 'update'])->name('update');
+
+        // AJAX media routes
+        Route::post('/upload-image', [EmployerProfileController::class, 'uploadImage'])->name('upload');
+        Route::post('/remove-image', [EmployerProfileController::class, 'removeImage'])->name('remove-image');
+
+        Route::post('/verify', [EmployerProfileController::class, 'verify'])->name('verify');
+        Route::get('/check-complete', [EmployerProfileController::class, 'checkProfileComplete'])->name('check-complete');
+    });
+
+
+    // ✅ Job Routes (with profile check)
     Route::prefix('jobs')->name('jobs.')->group(function () {
-        Route::get('/', [CompanyJobController::class, 'index'])->name('index');
-        Route::get('/create', [CompanyJobController::class, 'create'])->name('create');
-        Route::post('/', [CompanyJobController::class, 'store'])->name('store');
-        Route::get('/{job}', [CompanyJobController::class, 'show'])->name('show');
-        Route::get('/{job}/edit', [CompanyJobController::class, 'edit'])->name('edit');
-        Route::put('/{job}', [CompanyJobController::class, 'update'])->name('update');
-        Route::delete('/{job}', [CompanyJobController::class, 'destroy'])->name('destroy');
+        Route::get('/', [EmployerJobPostingController::class, 'index'])->name('index');
+        Route::get('/create', [EmployerJobPostingController::class, 'create'])->name('create');
+        Route::post('/', [EmployerJobPostingController::class, 'store'])->name('store');
+        Route::get('/{job}/edit', [EmployerJobPostingController::class, 'edit'])->name('edit');
+        Route::put('/{job}', [EmployerJobPostingController::class, 'update'])->name('update');
+        Route::delete('/{job}', [EmployerJobPostingController::class, 'destroy'])->name('destroy');
     });
 
     // Applications

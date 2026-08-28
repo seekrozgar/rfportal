@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/Employer/EmployerJobController.php
+// app/Http/Controllers/Employer/JobPostingController.php
 
 namespace App\Http\Controllers\Employer;
 
@@ -24,47 +24,83 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class EmployerJobController extends Controller
+class JobPostingController extends Controller
 {
+    /**
+     * ✅ Check if company profile is complete before any job action
+     */
+    protected function checkProfileComplete()
+    {
+        $user = auth()->user();
+
+        if (!$user->is_company_profile_complete || !$user->company) {
+            return redirect()->route('employer.company-profile.edit')
+                ->with('toast', [
+                    'type' => 'warning',
+                    'message' => 'Please complete your company profile before posting a job!'
+                ]);
+        }
+
+        // ✅ Check if company is verified (optional)
+        if (!$user->company->is_verified) {
+            return redirect()->route('employer.company-profile.edit')
+                ->with('toast', [
+                    'type' => 'warning',
+                    'message' => 'Your company is pending verification. You can still post jobs, but they will be reviewed by admin.'
+                ]);
+        }
+
+        return null;
+    }
+
     public function index()
     {
+        $check = $this->checkProfileComplete();
+        if ($check)
+            return $check;
+
         $company = auth()->user()->company;
 
         $jobs = JobPosting::where('company_id', $company->id)
-            ->with(['category', 'author'])
+            ->with(['category', 'jobType'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        $totalJobs = JobPosting::where('company_id', $company->id)->count();
-        $activeJobs = JobPosting::where('company_id', $company->id)->where('is_active', true)->count();
-        $pendingJobs = JobPosting::where('company_id', $company->id)->where('is_verified', false)->count();
-        $expiredJobs = JobPosting::where('company_id', $company->id)->where('deadline', '<', now())->count();
+        $totalJobs = $company->jobs()->count();
+        $activeJobs = $company->jobs()->where('is_active', true)->count();
+        $expiredJobs = $company->jobs()->where('deadline', '<', now())->count();
+        $pendingJobs = $company->jobs()->where('is_verified', false)->count();
 
         return view('employer.jobs.index', compact(
             'jobs',
             'totalJobs',
             'activeJobs',
-            'pendingJobs',
-            'expiredJobs'
+            'expiredJobs',
+            'pendingJobs'
         ));
     }
 
     public function create()
     {
+        // ✅ Check profile complete before showing create form
+        $check = $this->checkProfileComplete();
+        if ($check)
+            return $check;
+
         $categories = JobCategory::active()->ordered()->get();
-        $jobTypes = JobType::active()->orderBy('name')->get();
-        $jobShifts = JobShift::active()->orderBy('name')->get();
-        $experienceLevels = ExperienceLevel::active()->orderBy('name')->get();
-        $careerLevels = CareerLevel::active()->orderBy('name')->get();
-        $industries = Industry::active()->orderBy('name')->get();
-        $functionalAreas = FunctionalArea::active()->orderBy('name')->get();
-        $degreeLevels = DegreeLevel::active()->orderBy('name')->get();
-        $degreeTypes = DegreeType::active()->orderBy('name')->get();
-        $majorSubjects = MajorSubject::active()->orderBy('name')->get();
-        $genders = Gender::active()->orderBy('name')->get();
-        $maritalStatuses = MaritalStatus::active()->orderBy('name')->get();
-        $languageLevels = LanguageLevel::active()->orderBy('name')->get();
-        $salaryPeriods = SalaryPeriod::active()->orderBy('name')->get();
+        $jobTypes = JobType::active()->ordered()->get();
+        $jobShifts = JobShift::active()->ordered()->get();
+        $experienceLevels = ExperienceLevel::active()->ordered()->get();
+        $careerLevels = CareerLevel::active()->ordered()->get();
+        $industries = Industry::active()->ordered()->get();
+        $functionalAreas = FunctionalArea::active()->ordered()->get();
+        $degreeLevels = DegreeLevel::active()->ordered()->get();
+        $degreeTypes = DegreeType::active()->ordered()->get();
+        $majorSubjects = MajorSubject::active()->ordered()->get();
+        $genders = Gender::active()->ordered()->get();
+        $maritalStatuses = MaritalStatus::active()->ordered()->get();
+        $languageLevels = LanguageLevel::active()->ordered()->get();
+        $salaryPeriods = SalaryPeriod::active()->ordered()->get();
 
         return view('employer.jobs.create', compact(
             'categories',
@@ -86,14 +122,13 @@ class EmployerJobController extends Controller
 
     public function store(Request $request)
     {
+        // ✅ Check profile complete before posting
+        $check = $this->checkProfileComplete();
+        if ($check)
+            return $check;
+
         try {
             $company = auth()->user()->company;
-
-            // ✅ Check package limits here if needed
-            // $package = $company->activePackage;
-            // if ($package && $package->job_limit <= $company->jobs()->count()) {
-            //     return back()->with('error', 'You have reached your job posting limit.');
-            // }
 
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
@@ -121,8 +156,6 @@ class EmployerJobController extends Controller
                 'benefits' => 'nullable|string',
                 'skills_required' => 'nullable|string',
                 'responsibilities' => 'nullable|string',
-                'apply_email' => 'nullable|email|max:255',
-                'apply_phone' => 'nullable|string|max:50',
                 'application_instructions' => 'nullable|string',
                 'deadline' => 'nullable|date|after:today',
                 'vacancies' => 'nullable|integer|min:1',
@@ -146,11 +179,17 @@ class EmployerJobController extends Controller
             // ✅ Handle image
             if ($request->hasFile('advertisement_image')) {
                 $file = $request->file('advertisement_image');
-                $path = $file->store('job-postings/advertisements', 'public');
+                $path = $file->store('company-jobs/advertisements', 'public');
                 $validated['advertisement_image'] = $path;
             }
 
             $job = JobPosting::create($validated);
+
+            Log::info('✅ Company job posted', [
+                'job_id' => $job->id,
+                'company_id' => $company->id,
+                'by' => auth()->user()->name
+            ]);
 
             return redirect()->route('employer.jobs.index')
                 ->with('toast', [
@@ -159,7 +198,7 @@ class EmployerJobController extends Controller
                 ]);
 
         } catch (\Exception $e) {
-            Log::error('❌ employer job posting failed', ['error' => $e->getMessage()]);
+            Log::error('❌ Company job posting failed', ['error' => $e->getMessage()]);
             return redirect()->back()->withInput()
                 ->with('toast', ['type' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
         }

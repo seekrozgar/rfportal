@@ -54,6 +54,30 @@
             <i class="fa fa-file"></i>
             <span class="menu-text">{{ __t('Job Categories') }}</span>
         </a>
+        <!-- Companies Management -->
+        <div class="menu-label">{{ __t('Companies Management')}}</div>
+
+        <a href="{{ route('admin.company-verifications.index') }}"
+            class="menu-item {{ str_starts_with($currentRoute, 'admin.company-verifications.') ? 'active' : '' }}">
+            <i class="fas fa-shield-alt"></i>
+            <span class="menu-text">{{ __t('Company Verification') }}</span>
+            @php
+                $pendingVerificationCount =
+                    \App\Models\Company::where(
+                        'verification_status',
+                        'pending'
+                    )->count();
+            @endphp
+
+            @if($pendingVerificationCount > 0)
+
+                <span class="badge bg-warning text-dark ms-auto">
+                    {{ $pendingVerificationCount }}
+                </span>
+
+            @endif
+
+        </a>
 
         <!-- 📝 Education -->
         <div class="menu-label">{{ __t('Education') }}</div>

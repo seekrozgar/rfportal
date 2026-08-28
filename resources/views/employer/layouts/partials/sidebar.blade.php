@@ -124,8 +124,8 @@
 
             {{-- 👤 Profile --}}
             <li>
-                <a href="{{ route('employer.profile.edit') }}"
-                    class="{{ request()->routeIs('employer.profile.*') ? 'active' : '' }}">
+                <a href="{{ route('employer.company-profile.edit') }}"
+                    class="{{ request()->routeIs('employer.company-profile.*') ? 'active' : '' }}">
                     <i class="fa fa-building"></i>
                     <span>Company Profile</span>
                 </a>
@@ -176,6 +176,14 @@
                     class="{{ request()->routeIs('employer.settings.*') ? 'active' : '' }}">
                     <i class="fa fa-cog"></i>
                     <span>Settings</span>
+                </a>
+            </li>
+            {{-- ⚙️ Settings --}}
+            <li>
+                <a href="{{ route('employer.profile.edit') }}"
+                    class="{{ request()->routeIs('employer.profile.*') ? 'active' : '' }}">
+                    <i class="fa fa-user"></i>
+                    <span>User Profile</span>
                 </a>
             </li>
 
