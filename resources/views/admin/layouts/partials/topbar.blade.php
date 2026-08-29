@@ -19,42 +19,8 @@
         </button>
 
         <!-- Notification Bell -->
-        <div class="dropdown notification-dropdown">
-            <button class="topbar-icon" type="button" id="notificationToggle" title="Notifications">
-                <i class="fa fa-bell"></i>
-                <span class="badge-dot" id="notifDot"
-                    style="{{ ($unreadNotifications ?? 0) > 0 ? '' : 'display:none;' }}"></span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-end" id="notificationDropdown">
-                <div class="notif-header">
-                    <span>Notifications</span>
-                    <a href="#" id="markAllRead">Mark all as read</a>
-                </div>
-                <div id="notificationList">
-                    @forelse($notifications ?? [] as $notif)
-                        <div class="notif-item">
-                            <div class="notif-icon {{ $notif['type'] ?? 'info' }}">
-                                <i class="fa fa-{{ $notif['icon'] ?? 'bell' }}"></i>
-                            </div>
-                            <div class="notif-text">
-                                {{ $notif['message'] ?? 'New notification' }}
-                                <small>{{ $notif['time'] ?? now()->diffForHumans() }}</small>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="notif-item">
-                            <div class="notif-text text-center text-muted py-3" style="width:100%;">
-                                <i class="fa fa-bell-slash fa-2x d-block mb-2"></i>
-                                No notifications yet
-                            </div>
-                        </div>
-                    @endforelse
-                </div>
-                <div class="notif-footer">
-                    <a href="{{ route('admin.notifications.index') }}">View all notifications</a>
-                </div>
-            </div>
-        </div>
+        @include('components.notification-bell')
+
 
         <!-- User Dropdown -->
         <div class="dropdown user-dropdown">
@@ -110,25 +76,7 @@
             themeIcon.className = theme === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
         }
 
-        // ============================================================
-        // ✅ NOTIFICATION DROPDOWN (Manual Toggle)
-        // ============================================================
-        const notifToggle = document.getElementById('notificationToggle');
-        const notifDropdown = document.getElementById('notificationDropdown');
 
-        if (notifToggle && notifDropdown) {
-            notifToggle.addEventListener('click', function (e) {
-                e.stopPropagation();
-                notifDropdown.classList.toggle('show');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
-                if (!notifToggle.contains(e.target) && !notifDropdown.contains(e.target)) {
-                    notifDropdown.classList.remove('show');
-                }
-            });
-        }
 
         // ============================================================
         // ✅ USER DROPDOWN (Manual Toggle)
@@ -148,6 +96,8 @@
                 }
             });
         }
+
+
 
         // ============================================================
         // ✅ MARK ALL NOTIFICATIONS AS READ

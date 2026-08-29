@@ -40,29 +40,35 @@ class Company extends Model
         // Verification
         'verification_status',
         'verification_requested_at',
-        'verification_reviewed_at',
-        'verification_reviewed_by',
+        'verified_at',
+        'verified_by',
         'verification_rejection_reason',
-        'verification_admin_note',
-
-        // Trust / fraud
-        'is_verified',
         'is_suspended',
-        'is_blocked',
         'is_fraud',
         'fraud_reason',
+        'fraud_marked_at',
+        'fraud_marked_by',
+        // Trust / fraud
+        'is_verified',
+        'is_blocked',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_suspended' => 'boolean',
+        'is_fraud' => 'boolean',
+        'verification_requested_at' => 'datetime',
+        'verified_at' => 'datetime',
+        'fraud_marked_at' => 'datetime',
+
         'is_verified' => 'boolean',
         'is_featured' => 'boolean',
-        'verified_at' => 'datetime',
+
         'views_count' => 'integer',
         'job_posts_count' => 'integer',
 
-        'verification_requested_at' => 'datetime',
-        'verification_reviewed_at' => 'datetime',
+
+
     ];
 
     protected static function boot()
@@ -86,6 +92,16 @@ class Company extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function actions()
+    {
+        return $this->hasMany(CompanyAction::class);
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(CompanyReport::class);
     }
     public function verificationReviewer()
     {

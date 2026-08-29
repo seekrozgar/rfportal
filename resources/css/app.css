@@ -2759,3 +2759,166 @@ font-size: 10px;
         font-size: 25px;
     }
 }
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-dropdown .topbar-icon {
+            position: relative;
+            border: 0;
+            background: transparent;
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid #fff;
+        }
+
+        .notification-dropdown .dropdown-menu {
+            width: 370px;
+            max-width: calc(100vw - 30px);
+            padding: 0;
+            border: 0;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, .18);
+        }
+
+        .notif-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 17px;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .notification-mark-all {
+            border: 0;
+            background: transparent;
+            color: #11998e;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .notif-item {
+            display: flex;
+            gap: 11px;
+            padding: 13px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background .2s ease;
+            cursor: pointer;
+        }
+
+        .notif-item:hover {
+            background: #f8fafc;
+        }
+
+        .notif-item.unread {
+            background: #f0fdfa;
+        }
+
+        .notif-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .notif-icon.verification {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .notif-icon.verification_approved {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .notif-icon.verification_rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .notif-icon.fraud {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .notif-icon.suspended {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .notif-text {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .notif-text strong {
+            display: block;
+            font-size: 12px;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .notif-text span {
+            display: block;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #64748b;
+        }
+
+        .notif-text small {
+            display: block;
+            margin-top: 4px;
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        .notif-empty {
+            text-align: center;
+            padding: 35px 20px;
+            color: #94a3b8;
+        }
+
+        .notif-empty i {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .notif-footer {
+            padding: 11px;
+            text-align: center;
+            border-top: 1px solid #eef2f7;
+        }
+
+        .notif-footer a {
+            color: #11998e;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .notification-dropdown .dropdown-menu {
+                position: fixed !important;
+                top: 60px !important;
+                right: 10px !important;
+                left: 10px !important;
+                width: auto;
+            }
+        }

@@ -178,12 +178,21 @@
                     <span>Settings</span>
                 </a>
             </li>
-            {{-- ⚙️ Settings --}}
+            {{-- ⚙️ Profile --}}
             <li>
                 <a href="{{ route('employer.profile.edit') }}"
                     class="{{ request()->routeIs('employer.profile.*') ? 'active' : '' }}">
                     <i class="fa fa-user"></i>
                     <span>User Profile</span>
+                </a>
+            </li>
+
+            {{-- ⚙️ Notifications --}}
+            <li>
+                <a href="{{ route('employer.notifications.index') }}"
+                    class="{{ request()->routeIs('employer.notifications.*') ? 'active' : '' }}">
+                    <i class="fa fa-bell"></i>
+                    <span>Notifications</span>
                 </a>
             </li>
 

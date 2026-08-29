@@ -57,6 +57,12 @@
         <!-- Companies Management -->
         <div class="menu-label">{{ __t('Companies Management')}}</div>
 
+        <a href="{{ route('admin.companies.index') }}"
+            class="menu-item {{ str_starts_with($currentRoute, 'admin.companies.') ? 'active' : '' }}">
+            <i class="fa fa-home"></i>
+            <span class="menu-text">{{ __t('Companies') }}</span>
+        </a>
+
         <a href="{{ route('admin.company-verifications.index') }}"
             class="menu-item {{ str_starts_with($currentRoute, 'admin.company-verifications.') ? 'active' : '' }}">
             <i class="fas fa-shield-alt"></i>

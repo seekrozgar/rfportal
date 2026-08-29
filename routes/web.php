@@ -23,6 +23,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\JobController;
 use App\Http\Controllers\Frontend\CompanyController;
 use App\Http\Controllers\Frontend\PageController;
+use app\Http\Controllers\NotificationController;
 
 // ============================================================
 // 👑 ADMIN CONTROLLERS
@@ -48,7 +49,7 @@ use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\SiteSettingController as AdminSiteSettingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\CompanyVerificationController as AdminCompanyVerificationController;
-use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PasswordController;
 
@@ -70,6 +71,7 @@ use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationCo
 use App\Http\Controllers\Employer\CompanyProfileController as EmployerProfileController;
 use App\Http\Controllers\Employer\PersonalProfileController as EmployerPersonalProfileController;
 use App\Http\Controllers\Employer\PackageController as EmployerPackageController;
+use App\Http\Controllers\Employer\NotificationController as EmployerNotificationController;
 
 // ============================================================
 // 👤 SEEKER CONTROLLERS
@@ -259,6 +261,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         return redirect()->route('home');
     })->name('dashboard');
+
+    Route::get('/notifications/latest', [NotificationController::class, 'latest'])->name('notifications.latest');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+
 });
 
 
@@ -338,6 +345,15 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
         Route::get('/{company}/edit', [AdminCompanyController::class, 'edit'])->name('edit');
         Route::put('/{company}', [AdminCompanyController::class, 'update'])->name('update');
         Route::delete('/{company}', [AdminCompanyController::class, 'destroy'])->name('destroy');
+        // Routes of companies for status update
+        Route::get('/{company}', [AdminCompanyController::class, 'show'])->name('show');
+        Route::post('/{company}/approve', [AdminCompanyController::class, 'approve'])->name('approve');
+        Route::post('/{company}/reject', [AdminCompanyController::class, 'reject'])->name('reject');
+        Route::post('/{company}/warn', [AdminCompanyController::class, 'warn'])->name('warn');
+        Route::post('/{company}/suspend', [AdminCompanyController::class, 'suspend'])->name('suspend');
+        Route::post('/{company}/block', [AdminCompanyController::class, 'block'])->name('block');
+        Route::post('/{company}/fraud', [AdminCompanyController::class, 'markFraud'])->name('fraud');
+
     });
 
     // ✅ Companies Approval Management
@@ -577,9 +593,9 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->name('admin.'
 
     // ✅ System: Notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {
-        Route::get('/', [NotificationController::class, 'index'])->name('index');
-        Route::post('/mark-read', [NotificationController::class, 'markRead'])->name('mark-read');
-        Route::post('/{id}/mark-read', [NotificationController::class, 'markSingleRead'])->name('mark-single-read');
+        Route::get('/', [AdminNotificationController::class, 'index'])->name('index');
+        Route::post('/mark-read', [AdminNotificationController::class, 'markRead'])->name('mark-read');
+        Route::post('/{id}/mark-read', [AdminNotificationController::class, 'markSingleRead'])->name('mark-single-read');
     });
 });
 
@@ -723,6 +739,9 @@ Route::prefix('employer')->middleware(['auth', 'verified', 'employer'])->name('e
         Route::get('/', [SettingsController::class, 'index'])->name('index');
         Route::post('/update', [SettingsController::class, 'update'])->name('update');
     });
+
+    // Notifications
+    Route::get('/notifications', [EmployerNotificationController::class, 'index'])->name('notifications.index');
 
 });
 

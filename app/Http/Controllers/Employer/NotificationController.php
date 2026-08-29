@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Employer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class NotificationController extends Controller
             ->paginate(20);
 
         return view(
-            'admin.notifications.index',
+            'employer.notifications.index',
             compact('notifications')
         );
     }
