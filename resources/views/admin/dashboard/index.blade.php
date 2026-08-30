@@ -30,7 +30,7 @@
 
         <div class="admin-stat-card success">
             <i class="fas fa-wallet stat-icon"></i>
-            <h3 class="stat-number">${{ number_format($totalRevenue ?? 0, 2) }}</h3>
+            <h3 class="stat-number">{{ currencySymbol() }}{{ number_format($totalRevenue ?? 0, 2) }}</h3>
             <p class="stat-label">{{ __t('Revenue') }}</p>
             <small class="stat-small text-success">{{ __t('Total earnings') }}</small>
         </div>

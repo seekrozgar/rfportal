@@ -1,4 +1,3 @@
-
 /* ============================================================
    EMPLOYER HEADER - SMART GRADIENT BACKGROUND
    ============================================================ */
@@ -11,7 +10,7 @@
     margin-bottom: 24px;
     color: #ffffff;
     position: relative;
-    overflow: hidden;
+    overflow: visible !important;
     box-shadow: 0 4px 20px rgba(17, 153, 142, 0.25);
     transition: all 0.3s ease;
 }
@@ -27,6 +26,7 @@
     background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
     animation: headerFloat 8s ease-in-out infinite;
+    z-index: 0;
 }
 
 .dashboard-header::after {
@@ -39,6 +39,7 @@
     background: rgba(255, 255, 255, 0.04);
     border-radius: 50%;
     animation: headerFloat 10s ease-in-out infinite reverse;
+    z-index: 0;
 }
 
 @keyframes headerFloat {
@@ -1290,6 +1291,8 @@
     justify-content: space-between;
     gap: 20px;
     width: 100%;
+    position: relative;
+    z-index: 10
 }
 
 .dashboard-header-content {
@@ -1315,227 +1318,249 @@
 }
 
 /* =========================================================
-   EMPLOYER NOTIFICATION AREA
+   EMPLOYER NOTIFICATION BELL & DROPDOWN
+   BELL KE NEECHE - HEADER KE UPAR
    ========================================================= */
 
-.employer-notification-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    z-index: 1100;
-}
-
-/*
-|--------------------------------------------------------------------------
-| Bell button
-|--------------------------------------------------------------------------
-*/
-
-.employer-notification-wrapper .notification-dropdown {
-    position: relative;
-}
-
+/* ✅ Bell Button */
 .employer-notification-wrapper .topbar-icon {
-    width: 42px;
-    height: 42px;
-
+    width: 38px;
+    height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 10px;
-
-    background: rgba(255, 255, 255, 0.16);
     color: #ffffff;
-
     cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1001;
 }
 
 .employer-notification-wrapper .topbar-icon:hover {
-    background: rgba(255, 255, 255, 0.28);
-    border-color: rgba(255, 255, 255, 0.7);
-    color: #ffffff;
     transform: translateY(-1px);
 }
 
 .employer-notification-wrapper .topbar-icon i {
     color: #ffffff;
-    font-size: 17px;
+    font-size: 16px;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Notification red dot
-|--------------------------------------------------------------------------
-*/
-
+/* ✅ Red Dot Badge */
 .employer-notification-wrapper .badge-dot {
     position: absolute;
-
-    top: 5px;
-    right: 5px;
-
-    width: 9px;
-    height: 9px;
-
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-
     background: #ef4444;
     border: 2px solid #ffffff;
+    animation: pulse-dot 2s infinite;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Dropdown
-|--------------------------------------------------------------------------
-|
-| IMPORTANT:
-| Dropdown header ke neeche nahi jayega.
-| Bell ke bilkul neeche/right side se open hoga.
-|
-*/
+@keyframes pulse-dot {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+/* =========================================================
+   EMPLOYER NOTIFICATION BELL & DROPDOWN - FINAL
+   ========================================================= */
+
+/* ✅ Notification Wrapper */
+.employer-notification-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* ✅ Bell Button - BIGGER & WHITE (No BG, No Border) */
+.employer-notification-wrapper .topbar-icon {
+    width: 44px;              /* ✅ Badhi size */
+    height: 44px;             /* ✅ Badhi size */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none !important;   /* ✅ No border */
+    background: transparent !important;  /* ✅ No background */
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1001;
+    padding: 0;
+}
+
+.employer-notification-wrapper .topbar-icon:hover {
+    transform: scale(1.1);     /* ✅ Hover par thoda bada */
+    color: #ffffff;
+}
+
+.employer-notification-wrapper .topbar-icon i {
+    color: #ffffff;
+    font-size: 22px;           /* ✅ Badhi icon */
+}
+
+/* ✅ Red Dot Badge */
+.employer-notification-wrapper .badge-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: 2px solid #ffffff;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+/* =========================================================
+   DROPDOWN - BELL KE NEECHE
+   ========================================================= */
 
 .employer-notification-wrapper .dropdown-menu {
     position: absolute !important;
 
-    top: calc(100% + 10px) !important;
+    /* ✅ BELL KE NEECHE */
+    top: calc(100% + 12px) !important;
     right: 0 !important;
     left: auto !important;
 
     transform: none !important;
 
-    width: 360px;
+    width: 380px;
     max-width: calc(100vw - 24px);
+    max-height: 450px;
 
     margin: 0 !important;
     padding: 0;
 
     background: #ffffff;
-
     border: 1px solid #e2e8f0;
     border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25), 0 4px 12px rgba(15, 23, 42, 0.1);
 
-    box-shadow:
-        0 18px 45px rgba(15, 23, 42, 0.18),
-        0 4px 12px rgba(15, 23, 42, 0.08);
+    overflow: visible !important;
 
-    overflow: hidden;
+    z-index: 99999 !important;
 
-    z-index: 12000;
+    display: none;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Dropdown arrow
-|--------------------------------------------------------------------------
-*/
+.employer-notification-wrapper .dropdown-menu.show {
+    display: block;
 
+}
+
+/* ✅ Dropdown Arrow - Points UP - FIXED */
 .employer-notification-wrapper .dropdown-menu::before {
     content: "";
-
     position: absolute;
-
     top: -7px;
-    right: 16px;
-
+    right: 18px;
     width: 14px;
     height: 14px;
-
     background: #ffffff;
-
     border-left: 1px solid #e2e8f0;
     border-top: 1px solid #e2e8f0;
-
     transform: rotate(45deg);
+    z-index: 999999;
+    display: block !important;  /* ✅ Force show */
+    pointer-events: none;  /* ✅ Click ko block nahi karega */
 }
 
-/*
-|--------------------------------------------------------------------------
-| Notification Header
-|--------------------------------------------------------------------------
-*/
+/* =========================================================
+   DROPDOWN HEADER
+   ========================================================= */
 
 .employer-notification-wrapper .notif-header {
-    position: relative;
-    z-index: 2;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 15px 16px;
-
-    background: #ffffff;
-
-    border-bottom: 1px solid #eef2f6;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 .employer-notification-wrapper .notif-header > span {
     font-size: 15px;
     font-weight: 700;
-    color: #1e293b;
+    color: #0f172a;
 }
 
-.employer-notification-wrapper .notif-header a {
-    font-size: 12px;
-    font-weight: 600;
-
+.employer-notification-wrapper .notif-header .notification-mark-all {
+    border: none;
+    background: transparent;
     color: #11998e;
-    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
-.employer-notification-wrapper .notif-header a:hover {
-    color: #0e7a71;
+.employer-notification-wrapper .notif-header .notification-mark-all:hover {
+    background: #f0fdf4;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Notification list
-|--------------------------------------------------------------------------
-*/
+/* =========================================================
+   NOTIFICATION ITEMS
+   ========================================================= */
 
 .employer-notification-wrapper #notificationList {
-    max-height: 360px;
+    max-height: 350px;
     overflow-y: auto;
+    padding: 0;
 }
 
 .employer-notification-wrapper .notif-item {
     display: flex;
     align-items: flex-start;
-
     gap: 12px;
-
-    padding: 13px 16px;
-
+    padding: 13px 20px;
     background: #ffffff;
-
     border-bottom: 1px solid #f1f5f9;
-
     transition: background 0.2s ease;
+    cursor: pointer;
 }
 
 .employer-notification-wrapper .notif-item:hover {
     background: #f8fafc;
 }
 
+.employer-notification-wrapper .notif-item:last-child {
+    border-bottom: none;
+}
+
+/* ✅ Unread Notification */
+.employer-notification-wrapper .notif-item.unread {
+    background: #f0fdfa;
+    border-left: 3px solid #11998e;
+}
+
+.employer-notification-wrapper .notif-item.unread:hover {
+    background: #e6f9f5;
+}
+
+/* ✅ Notification Icon */
 .employer-notification-wrapper .notif-icon {
-    width: 34px;
-    height: 34px;
-
-    flex: 0 0 34px;
-
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    border-radius: 50%;
-
+    font-size: 14px;
     background: #ecfdf5;
     color: #11998e;
 }
@@ -1560,55 +1585,146 @@
     color: #2563eb;
 }
 
+/* ✅ Notification Text */
 .employer-notification-wrapper .notif-text {
     flex: 1;
-
     min-width: 0;
+}
 
+.employer-notification-wrapper .notif-text strong {
+    display: block;
     font-size: 13px;
-    line-height: 1.45;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
 
-    color: #334155;
+.employer-notification-wrapper .notif-text span {
+    display: block;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #64748b;
 }
 
 .employer-notification-wrapper .notif-text small {
     display: block;
-
-    margin-top: 3px;
-
+    margin-top: 4px;
     font-size: 11px;
     color: #94a3b8;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Footer
-|--------------------------------------------------------------------------
-*/
+/* =========================================================
+   DROPDOWN FOOTER
+   ========================================================= */
 
 .employer-notification-wrapper .notif-footer {
-    padding: 12px 16px;
-
+    padding: 12px 20px;
     text-align: center;
-
     background: #ffffff;
-
-    border-top: 1px solid #eef2f6;
+    border-top: 1px solid #f1f5f9;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
 }
 
 .employer-notification-wrapper .notif-footer a {
     font-size: 13px;
     font-weight: 600;
-
     color: #11998e;
-
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
 .employer-notification-wrapper .notif-footer a:hover {
-    color: #0e7a71;
+    color: #0d7a72;
+    text-decoration: underline;
 }
 
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.employer-notification-wrapper .notif-empty {
+    text-align: center;
+    padding: 45px 20px;
+    color: #94a3b8;
+}
+
+.employer-notification-wrapper .notif-empty i {
+    display: block;
+    font-size: 40px;
+    color: #d1d5db;
+    margin-bottom: 12px;
+}
+
+.employer-notification-wrapper .notif-empty p {
+    font-size: 14px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* =========================================================
+   SCROLLBAR STYLING
+   ========================================================= */
+
+.employer-notification-wrapper #notificationList::-webkit-scrollbar {
+    width: 4px;
+}
+
+.employer-notification-wrapper #notificationList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.employer-notification-wrapper #notificationList::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 2px;
+}
+
+.employer-notification-wrapper #notificationList::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 576px) {
+    .employer-notification-wrapper .topbar-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .employer-notification-wrapper .topbar-icon i {
+        font-size: 18px;
+    }
+
+    .employer-notification-wrapper .dropdown-menu {
+        position: fixed !important;
+        top: 70px !important;
+        right: 12px !important;
+        left: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: 55vh !important;
+        border-radius: 12px;
+    }
+
+    .employer-notification-wrapper .dropdown-menu::before {
+        display: none !important;
+    }
+
+    .employer-notification-wrapper .notif-item {
+        padding: 11px 16px;
+    }
+
+    .employer-notification-wrapper .notif-header {
+        padding: 12px 16px;
+    }
+
+    .employer-notification-wrapper .notif-footer {
+        padding: 10px 16px;
+    }
+}
 /*
 |--------------------------------------------------------------------------
 | Post New Job
@@ -1690,20 +1806,6 @@
         justify-content: flex-end;
     }
 
-    .employer-notification-wrapper .dropdown-menu {
-        position: fixed !important;
-
-        top: 70px !important;
-        right: 12px !important;
-        left: 12px !important;
-
-        width: auto;
-        max-width: none;
-    }
-
-    .employer-notification-wrapper .dropdown-menu::before {
-        right: 92px;
-    }
 
 }
 

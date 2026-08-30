@@ -18,7 +18,7 @@
         <link rel="icon" type="image/png" href="{{ siteFavicon() }}">
     @endif
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 
     @stack('head')
 </head>

@@ -2,92 +2,129 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
     /**
-     * Return latest notifications for bell dropdown.
+     * Return latest notifications for current user.
      */
-    public function latest(Request $request)
+    public function latest(Request $request): JsonResponse
     {
-        $notifications = $request->user()
-            ->notifications()
-            ->latest()
-            ->limit(10)
-            ->get()
-            ->map(function (Notification $notification) {
+        try {
+            $user = $request->user();
 
-                return [
-                    'id' => $notification->id,
-                    'type' => $notification->type,
-                    'title' => $notification->title,
-                    'message' => $notification->message,
-                    'icon' => $notification->icon ?: 'bell',
-                    'url' => $notification->action_url,
-                    'read' => !is_null($notification->read_at),
-                    'time' => $notification->created_at->diffForHumans(),
-                ];
-            });
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                    'notifications' => [],
+                    'unread_count' => 0,
+                ], 401);
+            }
 
-        $unread = $request->user()
-            ->notifications()
-            ->whereNull('read_at')
-            ->count();
+            /*
+             * Laravel's built-in database notifications.
+             *
+             * Important:
+             * This assumes users table has Laravel notifications
+             * relationship available through Notifiable trait.
+             */
+            $notifications = $user->notifications()
+                ->latest()
+                ->take(10)
+                ->get()
+                ->map(function ($notification) {
+                    $data = is_array($notification->data)
+                        ? $notification->data
+                        : [];
 
-        return response()->json([
-            'success' => true,
-            'notifications' => $notifications,
-            'unread' => $unread,
-        ]);
-    }
+                    return [
+                        'id' => $notification->id,
 
-    /**
-     * Mark one notification as read.
-     */
-    public function markRead(Request $request, Notification $notification)
-    {
-        abort_unless(
-            $notification->user_id === $request->user()->id,
-            403
-        );
+                        'type' => $data['type'] ?? 'info',
 
-        $notification->markAsRead();
+                        'icon' => $data['icon'] ?? 'bell',
 
-        return response()->json([
-            'success' => true,
-        ]);
-    }
+                        'message' => $data['message']
+                            ?? $data['title']
+                            ?? 'You have a new notification.',
 
-    /**
-     * Mark all current user's notifications as read.
-     */
-    public function markAllRead(Request $request)
-    {
-        $request->user()
-            ->notifications()
-            ->whereNull('read_at')
-            ->update([
-                'read_at' => now(),
+                        'title' => $data['title'] ?? 'Notification',
+
+                        'url' => $data['url'] ?? null,
+
+                        'time' => $notification->created_at
+                            ? $notification->created_at->diffForHumans()
+                            : '',
+
+                        'read' => !is_null($notification->read_at),
+                    ];
+                });
+
+            $unreadCount = $user->unreadNotifications()->count();
+
+            return response()->json([
+                'success' => true,
+                'notifications' => $notifications,
+                'unread_count' => $unreadCount,
             ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'All notifications marked as read.',
-        ]);
+        } catch (\Throwable $e) {
+
+            \Log::error('Latest notifications failed', [
+                'user_id' => optional($request->user())->id,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to load notifications.',
+                'notifications' => [],
+                'unread_count' => 0,
+            ], 500);
+        }
     }
 
-    /**
-     * Notification page.
-     */
-    public function index(Request $request)
-    {
-        $notifications = $request->user()
-            ->notifications()
-            ->latest()
-            ->paginate(20);
 
-        return view('notifications.index', compact('notifications'));
+    /**
+     * Mark all notifications as read.
+     */
+    public function markAllRead(Request $request): JsonResponse
+    {
+        try {
+
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+
+            $user->unreadNotifications->markAsRead();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All notifications marked as read.',
+                'unread_count' => 0,
+            ]);
+
+        } catch (\Throwable $e) {
+
+            \Log::error('Mark notifications read failed', [
+                'user_id' => optional($request->user())->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to update notifications.',
+            ], 500);
+        }
     }
 }

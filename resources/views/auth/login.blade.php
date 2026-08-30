@@ -10,7 +10,7 @@
     <title>Login - {{ siteName() }}</title>
 
     <!-- ✅ Vite - Single CSS file -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/frontend.css', 'resources/js/app.js'])
 
 </head>
 

@@ -11,7 +11,7 @@
     <title>Reset Password - {{ siteName() }}</title>
 
     <!-- ✅ Vite - Bootstrap 5 + Custom CSS -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/frontend.css', 'resources/js/app.js'])
 
 </head>
 

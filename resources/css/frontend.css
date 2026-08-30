@@ -1,0 +1,546 @@
+/* ============================================================
+   ROZGAR FINDER - FRONTEND PUBLIC STYLES v2.0
+   ============================================================ */
+
+/* ✅ Import Variables */
+@import '_variables.css';
+
+/* ============================================================
+   1. FRONTEND LAYOUT
+   ============================================================ */
+.frontend-body {
+    font-family: var(--font-family);
+    background: #ffffff;
+    color: var(--text-dark);
+}
+
+/* ✅ Frontend Header */
+.frontend-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 0;
+    box-shadow: var(--shadow-sm);
+}
+.frontend-header .logo img {
+    max-height: 50px;
+}
+.frontend-header .nav-link {
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 14px;
+    padding: 8px 16px;
+    transition: var(--transition);
+}
+.frontend-header .nav-link:hover {
+    color: var(--primary-color);
+}
+.frontend-header .nav-link.active {
+    color: var(--primary-color);
+}
+
+/* ✅ Hero Section */
+.hero-section {
+    background: var(--gradient-primary);
+    padding: 80px 0;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+.hero-section h1 {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+.hero-section p {
+    font-size: 18px;
+    opacity: 0.9;
+    max-width: 600px;
+}
+.hero-section .search-form {
+    margin-top: 32px;
+}
+.hero-section .search-form .form-control {
+    border-radius: 30px 0 0 30px;
+    padding: 14px 24px;
+    border: none;
+    font-size: 16px;
+}
+.hero-section .search-form .btn {
+    border-radius: 0 30px 30px 0;
+    padding: 14px 32px;
+    background: #ffffff;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+.hero-section .search-form .btn:hover {
+    background: #f8fafc;
+}
+
+/* ✅ Job Categories */
+.category-section {
+    padding: 60px 0;
+}
+.category-section .section-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.category-section .section-subtitle {
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin-bottom: 32px;
+}
+
+.category-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 24px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+.category-card .category-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(17, 153, 142, 0.1);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 12px;
+}
+.category-card .category-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.category-card .category-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* ✅ Job Listings */
+.job-listing-section {
+    padding: 60px 0;
+    background: var(--bg-body);
+}
+
+.job-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    margin-bottom: 16px;
+}
+.job-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+.job-card .job-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+.job-card .job-title a {
+    color: var(--text-dark);
+    text-decoration: none;
+}
+.job-card .job-title a:hover {
+    color: var(--primary-color);
+}
+.job-card .job-company {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+.job-card .job-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.job-card .job-meta span {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.job-card .job-meta i {
+    margin-right: 4px;
+}
+.job-card .job-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.job-card .job-tags .tag {
+    background: var(--bg-body);
+    padding: 2px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* ✅ Frontend Footer */
+.frontend-footer {
+    background: #1a1a2e;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 60px 0 30px;
+}
+.frontend-footer h5 {
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.frontend-footer a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    display: block;
+    padding: 4px 0;
+    transition: var(--transition);
+}
+.frontend-footer a:hover {
+    color: #ffffff;
+}
+.frontend-footer .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    margin-top: 40px;
+    text-align: center;
+}
+
+/* ============================================================
+   2. AUTH PAGES (Public)
+   ============================================================ */
+.auth-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 45px 15px 50px;
+    background: var(--gradient-body);
+}
+.auth-wrapper .auth-container {
+    width: 100%;
+    max-width: var(--auth-max-width);
+    margin: 0 auto;
+}
+.auth-logo{
+    width: 280;
+    height: 80px;
+}
+
+.auth-card {
+    border-radius: var(--radius-card);
+    background: var(--bg-card);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+.auth-card .auth-card-header {
+    background: var(--gradient-main);
+    padding: 30px 20px;
+    text-align: center;
+}
+.auth-card .auth-card-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 1px;
+}
+.auth-card .auth-card-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+.auth-card .auth-card-body {
+    padding: var(--card-padding-desktop);
+}
+
+.auth-icon {
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+.auth-icon .fas,
+.auth-icon .far {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--primary-color);
+}
+
+/* ✅ Role Buttons */
+.role-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+.role-btn {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-input);
+    background: var(--bg-body);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.role-btn:hover {
+    border-color: var(--secondary-color);
+    background: rgba(56, 239, 125, 0.1);
+}
+.role-btn.active {
+    border-color: var(--secondary-color);
+    background: var(--secondary-color);
+    color: #ffffff;
+}
+.role-btn .icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 3px;
+}
+.role-btn .label {
+    font-size: 14px;
+    font-weight: 600;
+}
+.role-btn small {
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    opacity: 0.7;
+}
+.role-btn input[type="radio"] {
+    display: none;
+}
+
+/* ✅ Social Login */
+.social-login {
+    margin-top: 20px;
+    text-align: center;
+}
+.social-login .divider {
+    position: relative;
+    margin: 20px 0;
+}
+.social-login .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+}
+.social-login .divider span {
+    background: var(--bg-card);
+    padding: 0 15px;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.social-btn {
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-button);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+.social-btn:hover {
+    background: var(--bg-body);
+    border-color: var(--text-secondary);
+}
+.social-btn.google:hover {
+    border-color: #DB4437;
+    color: #DB4437;
+}
+.social-btn.github:hover {
+    border-color: #333333;
+    color: #333333;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.auth-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+.forgot-link {
+    font-size: 14px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+/* ✅ Alert Messages */
+.alert-custom {
+    padding: 12px 20px;
+    border-radius: var(--radius-input);
+    margin-bottom: 15px;
+}
+.alert-custom.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.alert-custom.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.alert-custom.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ============================================================
+   3. FRONTEND RESPONSIVE
+   ============================================================ */
+@media (max-width: 992px) {
+    .auth-card .auth-card-body {
+        padding: var(--card-padding-tablet);
+    }
+    .hero-section h1 {
+        font-size: 36px;
+    }
+    .hero-section p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-card .auth-card-header h2 {
+        font-size: 22px;
+    }
+    .auth-card .auth-card-body {
+        padding: var(--card-padding-tablet);
+    }
+    .role-buttons {
+        flex-direction: column;
+    }
+    .social-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    .social-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .hero-section {
+        padding: 60px 0;
+    }
+    .hero-section h1 {
+        font-size: 28px;
+    }
+    .hero-section p {
+        font-size: 15px;
+    }
+    .hero-section .search-form .form-control {
+        font-size: 14px;
+        padding: 12px 20px;
+    }
+    .hero-section .search-form .btn {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+
+    .category-section {
+        padding: 40px 0;
+    }
+    .category-section .section-title {
+        font-size: 26px;
+    }
+
+    .job-listing-section {
+        padding: 40px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .auth-wrapper {
+        padding: 20px 10px;
+    }
+    .auth-card .auth-card-body {
+        padding: var(--card-padding-mobile);
+    }
+
+    .hero-section h1 {
+        font-size: 24px;
+    }
+    .hero-section .search-form {
+        flex-direction: column;
+    }
+    .hero-section .search-form .form-control {
+        border-radius: 30px;
+        margin-bottom: 10px;
+    }
+    .hero-section .search-form .btn {
+        border-radius: 30px;
+        width: 100%;
+    }
+
+    .category-card {
+        padding: 16px;
+    }
+    .category-card .category-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .job-card {
+        padding: 16px;
+    }
+    .job-card .job-title {
+        font-size: 16px;
+    }
+}

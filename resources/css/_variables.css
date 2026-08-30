@@ -1,0 +1,81 @@
+/* ============================================================
+   ROZGAR FINDER - SHARED VARIABLES v2.0
+   ============================================================ */
+
+:root {
+    /* 🎨 Brand Colors */
+    --primary-color: #11998e;
+    --primary-dark: #0d7a72;
+    --secondary-color: #38ef7d;
+    --gradient-main: linear-gradient(to left, #11998e, #38ef7d);
+    --gradient-body: linear-gradient(to bottom, #11998e, #38ef7d);
+    --gradient-primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+
+    /* 📝 Typography */
+    --font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* 📦 Spacing */
+    --card-padding-desktop: 40px 50px;
+    --card-padding-tablet: 25px 20px;
+    --card-padding-mobile: 20px 15px;
+
+    /* 🔲 Border Radius */
+    --radius-card: 10px;
+    --radius-input: 8px;
+    --radius-button: 25px;
+    --radius: 12px;
+    --radius-sm: 6px;
+
+    /* 📐 Max Widths */
+    --auth-max-width: 600px;
+
+    /* 🎨 Common Colors - LIGHT */
+    --bg-body: #f0f2f5;
+    --bg-card: #ffffff;
+    --dropdown-bg: #ffffff;
+    --text-dark: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --text-muted: #95a5a6;
+    --border-color: #e9ecef;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* 📊 Admin Specific */
+    --admin-sidebar-width: 260px;
+    --admin-header-height: 64px;
+    --admin-sidebar-dark: #1a1a2e;
+
+    /* 📊 Employer Specific */
+    --employer-sidebar-width: 280px;
+
+    /* 🎨 Additional Colors */
+    --bg-purple: #800080;
+    --bg-orange: #ffa500;
+}
+
+/* ============================================================
+   DARK THEME VARIABLES
+   ============================================================ */
+[data-bs-theme="dark"] {
+    --bg-body: #141415;
+    --bg-card: #1e1e20;
+    --dropdown-bg: #2d2d30;
+    --text-dark: #e9ecef;
+    --text-secondary: #adb5bd;
+    --text-muted: #6c757d;
+    --border-color: #2d2d30;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+    --admin-sidebar-dark: #0d0d0e;
+}
+
+[data-bs-theme="dark"] .admin-sidebar {
+    --admin-sidebar-dark: #0d0d0e;
+}
+
+[data-bs-theme="dark"] .employer-sidebar {
+    --employer-sidebar-bg: #0d0d0e;
+}
