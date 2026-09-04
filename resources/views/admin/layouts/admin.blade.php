@@ -47,7 +47,6 @@
 
     {{-- Global Scripts --}}
     @include('admin.layouts.partials.scripts')
-
     @stack('scripts')
 
 </body>

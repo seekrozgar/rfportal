@@ -18,7 +18,7 @@
     @endif
 
     @vite(['resources/css/app.css', 'resources/css/employer.css', 'resources/js/app.js'])
-    @stack('styles')
+
 </head>
 
 <body>

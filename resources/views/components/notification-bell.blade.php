@@ -2,32 +2,56 @@
 
 <div class="dropdown notification-dropdown">
 
-    <button class="topbar-icon" type="button" id="notificationToggle" title="Notifications" aria-expanded="false">
+    <button
+        class="topbar-icon"
+        type="button"
+        id="notificationToggle"
+        title="Notifications"
+        aria-expanded="false"
+    >
         <i class="fa fa-bell"></i>
 
-        <span class="badge-dot" id="notifDot"
-            style="{{ ($unreadNotifications ?? 0) > 0 ? '' : 'display:none;' }}"></span>
+        <span
+            class="badge-dot"
+            id="notifDot"
+            style="{{ ($unreadNotifications ?? 0) > 0 ? '' : 'display:none;' }}"
+        ></span>
     </button>
 
-    <div class="dropdown-menu dropdown-menu-end" id="notificationDropdown">
 
+    <div
+        class="dropdown-menu dropdown-menu-end"
+        id="notificationDropdown"
+    >
+
+        {{-- HEADER --}}
         <div class="notif-header">
+
             <span>
                 <i class="fa fa-bell me-1"></i>
                 Notifications
             </span>
 
-            <button type="button" id="markAllRead" class="notification-mark-all">
+            <button
+                type="button"
+                id="markAllRead"
+                class="notification-mark-all"
+            >
                 Mark all as read
             </button>
+
         </div>
 
+
+        {{-- NOTIFICATION LIST --}}
         <div id="notificationList">
 
             @forelse($notifications ?? [] as $notif)
 
-                <div class="notif-item {{ empty($notif['read_at']) ? 'unread' : '' }}"
-                    data-notification-id="{{ $notif['id'] }}">
+                <div
+                    class="notif-item {{ empty($notif['read_at']) ? 'unread' : '' }}"
+                    data-notification-id="{{ $notif['id'] }}"
+                >
 
                     <div class="notif-icon {{ $notif['type'] ?? 'info' }}">
                         <i class="fa fa-{{ $notif['icon'] ?? 'bell' }}"></i>
@@ -54,309 +78,752 @@
             @empty
 
                 <div class="notif-empty">
+
                     <i class="fa fa-bell-slash fa-2x"></i>
 
-                    <span>No notifications yet</span>
+                    <span>
+                        No notifications yet
+                    </span>
+
                 </div>
 
             @endforelse
 
         </div>
 
+
+        {{-- FOOTER --}}
         <div class="notif-footer">
 
             @if(request()->is('admin/*'))
+
                 <a href="{{ route('admin.notifications.index') }}">
                     View all notifications
                 </a>
+
             @else
+
                 <a href="{{ route('employer.notifications.index') }}">
                     View all notifications
                 </a>
+
             @endif
 
         </div>
 
     </div>
+
 </div>
+
 
 @once
 
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /*
+     * =========================================================
+     * ELEMENTS
+     * =========================================================
+     */
+
+    const toggle =
+        document.getElementById('notificationToggle');
+
+    const dropdown =
+        document.getElementById('notificationDropdown');
+
+    const list =
+        document.getElementById('notificationList');
+
+    const badge =
+        document.getElementById('notifDot');
+
+    const markAll =
+        document.getElementById('markAllRead');
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    /*
+     * =========================================================
+     * STOP IF BELL IS NOT PRESENT
+     * =========================================================
+     */
 
-            const toggle = document.getElementById('notificationToggle');
-            const dropdown = document.getElementById('notificationDropdown');
-            const list = document.getElementById('notificationList');
-            const dot = document.getElementById('notifDot');
-            const markAll = document.getElementById('markAllRead');
+    if (!toggle || !dropdown || !list) {
+        return;
+    }
 
-            if (!toggle || !dropdown) {
+
+    /*
+     * =========================================================
+     * CSRF
+     * =========================================================
+     */
+
+    function csrfToken() {
+
+        return document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content');
+
+    }
+
+
+    /*
+     * =========================================================
+     * ROUTES
+     * =========================================================
+     */
+
+    const latestUrl =
+        @json(route('notifications.latest'));
+
+    const markAllReadUrl =
+        @json(route('notifications.mark-all-read'));
+
+
+    /*
+     * Build single notification read URL
+     *
+     * Example:
+     * /notifications/43/read
+     */
+
+    const markReadUrlTemplate =
+        @json(
+            route(
+                'notifications.mark-read',
+                ['notification' => '__NOTIFICATION_ID__']
+            )
+        );
+
+
+    /*
+     * =========================================================
+     * BADGE
+     * =========================================================
+     */
+
+    function showBadge(count) {
+
+        if (!badge) {
+            return;
+        }
+
+        count =
+            Number(count) || 0;
+
+
+        if (count > 0) {
+
+            badge.style.display =
+                'block';
+
+        } else {
+
+            badge.style.display =
+                'none';
+
+        }
+
+    }
+
+
+    /*
+     * =========================================================
+     * ICON
+     * =========================================================
+     */
+
+    function iconName(icon) {
+
+        if (!icon) {
+            return 'bell';
+        }
+
+        return String(icon)
+            .replace(/^fa-/, '');
+
+    }
+
+
+    /*
+     * =========================================================
+     * HTML ESCAPE
+     * =========================================================
+     */
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement('div');
+
+        div.textContent =
+            value ?? '';
+
+        return div.innerHTML;
+
+    }
+
+
+    /*
+     * =========================================================
+     * BUILD MARK READ URL
+     * =========================================================
+     */
+
+    function buildMarkReadUrl(id) {
+
+        return markReadUrlTemplate.replace(
+            '__NOTIFICATION_ID__',
+            encodeURIComponent(String(id))
+        );
+
+    }
+
+
+    /*
+     * =========================================================
+     * RENDER NOTIFICATIONS
+     * =========================================================
+     */
+
+    function renderNotifications(notifications) {
+
+        if (
+            !notifications ||
+            notifications.length === 0
+        ) {
+
+            list.innerHTML = `
+                <div class="notif-empty">
+                    <i class="fa fa-bell-slash fa-2x"></i>
+                    <span>No notifications yet</span>
+                </div>
+            `;
+
+            return;
+        }
+
+
+        list.innerHTML =
+            notifications.map(function (notification) {
+
+                const id =
+                    notification.id;
+
+                const unreadClass =
+                    notification.read
+                        ? ''
+                        : 'unread';
+
+
+                const title =
+                    escapeHtml(
+                        notification.title ??
+                        'Notification'
+                    );
+
+
+                const message =
+                    escapeHtml(
+                        notification.message ??
+                        ''
+                    );
+
+
+                const time =
+                    escapeHtml(
+                        notification.time ??
+                        ''
+                    );
+
+
+                const icon =
+                    iconName(
+                        notification.icon
+                    );
+
+
+                const url =
+                    notification.url
+                        ? escapeHtml(
+                            notification.url
+                        )
+                        : '';
+
+
+                return `
+                    <div
+                        class="notification-item ${unreadClass}"
+                        data-id="${escapeHtml(String(id))}"
+                        data-url="${url}"
+                    >
+
+                        <div class="notification-item-content">
+
+                            <div class="notification-item-header">
+
+                                <div class="notification-item-icon">
+                                    <i class="fa fa-${icon}"></i>
+                                </div>
+
+                                <div class="notification-item-title">
+                                    ${title}
+                                </div>
+
+                                <span class="notification-item-time">
+                                    ${time}
+                                </span>
+
+                            </div>
+
+
+                            <div class="notification-item-message">
+                                ${message}
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join('');
+
+
+        bindNotificationClicks();
+
+    }
+
+
+    /*
+     * =========================================================
+     * LOAD NOTIFICATIONS
+     * =========================================================
+     */
+
+    async function loadNotifications() {
+
+        try {
+
+            const response =
+                await fetch(
+                    latestUrl,
+                    {
+                        method: 'GET',
+
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With':
+                                'XMLHttpRequest'
+                        },
+
+                        credentials: 'same-origin'
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                console.error(
+                    'Notification API error:',
+                    data
+                );
+
                 return;
             }
 
-            /*
-             * Toggle notification dropdown.
-             */
-            toggle.addEventListener('click', function (event) {
+
+            renderNotifications(
+                data.notifications || []
+            );
+
+
+            showBadge(
+                data.unread_count || 0
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                'Failed to load notifications:',
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =========================================================
+     * MARK SINGLE NOTIFICATION READ
+     * =========================================================
+     */
+
+    async function markNotificationRead(id) {
+
+        if (!id) {
+
+            console.error(
+                'Notification ID is missing.'
+            );
+
+            return false;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    buildMarkReadUrl(id),
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'X-CSRF-TOKEN':
+                                csrfToken(),
+
+                            'Accept':
+                                'application/json',
+
+                            'X-Requested-With':
+                                'XMLHttpRequest'
+                        },
+
+                        credentials:
+                            'same-origin'
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                console.error(
+                    'Mark notification read failed:',
+                    data
+                );
+
+                return false;
+            }
+
+
+            showBadge(
+                data.unread_count || 0
+            );
+
+
+            return true;
+
+
+        } catch (error) {
+
+            console.error(
+                'Mark notification read error:',
+                error
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /*
+     * =========================================================
+     * BIND NOTIFICATION CLICK
+     * =========================================================
+     */
+
+    function bindNotificationClicks() {
+
+        list
+            .querySelectorAll(
+                '.notification-item'
+            )
+            .forEach(function (item) {
+
+                item.addEventListener(
+                    'click',
+                    async function () {
+
+                        const id =
+                            this.dataset.id;
+
+                        const url =
+                            this.dataset.url;
+
+
+                        if (!id) {
+
+                            console.error(
+                                'Notification ID missing:',
+                                this
+                            );
+
+                            return;
+                        }
+
+
+                        /*
+                         * Mark as read first
+                         */
+                        await markNotificationRead(
+                            id
+                        );
+
+
+                        /*
+                         * Navigate if action URL exists
+                         */
+                        if (url) {
+
+                            window.location.href =
+                                url;
+
+                            return;
+                        }
+
+
+                        /*
+                         * Refresh list if no URL
+                         */
+                        await loadNotifications();
+
+                    }
+                );
+
+            });
+
+    }
+
+
+    /*
+     * =========================================================
+     * TOGGLE DROPDOWN
+     * =========================================================
+     */
+
+    toggle.addEventListener(
+        'click',
+        function (event) {
+
+            event.stopPropagation();
+
+
+            const isOpen =
+                dropdown.classList.contains(
+                    'show'
+                );
+
+
+            dropdown.classList.toggle(
+                'show',
+                !isOpen
+            );
+
+
+            toggle.setAttribute(
+                'aria-expanded',
+                !isOpen
+                    ? 'true'
+                    : 'false'
+            );
+
+
+            if (!isOpen) {
+
+                loadNotifications();
+
+            }
+
+        }
+    );
+
+
+    /*
+     * =========================================================
+     * CLOSE DROPDOWN OUTSIDE CLICK
+     * =========================================================
+     */
+
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            if (
+                !dropdown.contains(
+                    event.target
+                ) &&
+                !toggle.contains(
+                    event.target
+                )
+            ) {
+
+                dropdown.classList.remove(
+                    'show'
+                );
+
+
+                toggle.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * =========================================================
+     * MARK ALL AS READ
+     * =========================================================
+     */
+
+    if (markAll) {
+
+        markAll.addEventListener(
+            'click',
+            async function (event) {
 
                 event.preventDefault();
+
                 event.stopPropagation();
 
-                dropdown.classList.toggle('show');
 
-            });
+                const button =
+                    this;
 
-            /*
-             * Close when clicking outside.
-             */
-            document.addEventListener('click', function (event) {
 
-                if (
-                    !dropdown.contains(event.target) &&
-                    !toggle.contains(event.target)
-                ) {
-                    dropdown.classList.remove('show');
-                }
+                button.disabled =
+                    true;
 
-            });
 
-            /*
-             * Load notifications from server.
-             */
-            async function loadNotifications() {
+                const originalText =
+                    button.innerHTML;
+
+
+                button.innerHTML =
+                    '<i class="fa fa-spinner fa-spin me-1"></i> Updating...';
+
 
                 try {
 
-                    const response = await fetch(
-                        '{{ route("notifications.latest") }}',
-                        {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
+                    const response =
+                        await fetch(
+                            markAllReadUrl,
+                            {
+                                method: 'POST',
+
+                                headers: {
+                                    'X-CSRF-TOKEN':
+                                        csrfToken(),
+
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest'
+                                },
+
+                                credentials:
+                                    'same-origin'
                             }
-                        }
-                    );
+                        );
 
-                    if (!response.ok) {
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        console.error(
+                            'Mark all read failed:',
+                            data
+                        );
+
                         return;
                     }
 
-                    const data = await response.json();
 
-                    if (!data.success) {
-                        return;
-                    }
+                    showBadge(0);
 
-                    updateBell(data.unread || 0);
 
-                    renderNotifications(data.notifications || []);
+                    /*
+                     * Reload latest state
+                     */
+                    await loadNotifications();
+
 
                 } catch (error) {
 
                     console.error(
-                        'Notification loading failed:',
+                        'Mark all read error:',
                         error
                     );
 
-                }
-            }
+                } finally {
 
-            /*
-             * Update red notification dot.
-             */
-            function updateBell(count) {
+                    button.disabled =
+                        false;
 
-                if (!dot) {
-                    return;
+                    button.innerHTML =
+                        originalText;
+
                 }
 
-                dot.style.display =
-                    count > 0 ? 'block' : 'none';
             }
+        );
 
-            /*
-             * Render notifications.
-             */
-            function renderNotifications(notifications) {
+    }
 
-                if (!list) {
-                    return;
-                }
 
-                if (!notifications.length) {
+    /*
+     * =========================================================
+     * INITIAL LOAD
+     * =========================================================
+     */
 
-                    list.innerHTML = `
-                        <div class="notif-empty">
-                            <i class="fa fa-bell-slash fa-2x"></i>
-                            <span>No notifications yet</span>
-                        </div>
-                    `;
+    loadNotifications();
 
-                    return;
-                }
 
-                list.innerHTML = notifications.map(function (notification) {
+    /*
+     * =========================================================
+     * AUTO REFRESH
+     * =========================================================
+     */
 
-                    const unreadClass =
-                        notification.read ? '' : 'unread';
+    setInterval(
+        loadNotifications,
+        20000
+    );
 
-                    return `
-                        <div
-                            class="notif-item ${unreadClass}"
-                            data-notification-id="${notification.id}"
-                            data-url="${notification.url || ''}"
-                        >
+});
 
-                            <div class="notif-icon ${notification.type || 'info'}">
-                                <i class="fa fa-${notification.icon || 'bell'}"></i>
-                            </div>
-
-                            <div class="notif-text">
-
-                                <strong>
-                                    ${escapeHtml(notification.title || 'Notification')}
-                                </strong>
-
-                                <span>
-                                    ${escapeHtml(notification.message || '')}
-                                </span>
-
-                                <small>
-                                    ${escapeHtml(notification.time || '')}
-                                </small>
-
-                            </div>
-
-                        </div>
-                    `;
-
-                }).join('');
-
-                bindNotificationClicks();
-            }
-
-            /*
-             * Notification click.
-             */
-            function bindNotificationClicks() {
-
-                document
-                    .querySelectorAll('.notif-item[data-notification-id]')
-                    .forEach(function (item) {
-
-                        item.addEventListener('click', async function () {
-
-                            const id =
-                                item.dataset.notificationId;
-
-                            const url =
-                                item.dataset.url;
-
-                            try {
-
-                                await fetch(
-                                    '{{ url("/notifications") }}/' + id + '/read',
-                                    {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Accept': 'application/json',
-                                            'X-CSRF-TOKEN':
-                                                '{{ csrf_token() }}'
-                                        }
-                                    }
-                                );
-
-                            } catch (error) {
-                                console.error(error);
-                            }
-
-                            item.classList.remove('unread');
-
-                            if (url) {
-                                window.location.href = url;
-                            }
-
-                            loadNotifications();
-
-                        });
-
-                    });
-            }
-
-            /*
-             * Mark all read.
-             */
-            if (markAll) {
-
-                markAll.addEventListener('click', async function (event) {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    try {
-
-                        const response = await fetch(
-                            '{{ route("notifications.mark-all-read") }}',
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN':
-                                        '{{ csrf_token() }}'
-                                }
-                            }
-                        );
-
-                        if (response.ok) {
-                            updateBell(0);
-                            loadNotifications();
-                        }
-
-                    } catch (error) {
-
-                        console.error(
-                            'Mark all read failed:',
-                            error
-                        );
-
-                    }
-
-                });
-
-            }
-
-            /*
-             * Basic HTML escaping.
-             */
-            function escapeHtml(value) {
-
-                const div =
-                    document.createElement('div');
-
-                div.textContent =
-                    value ?? '';
-
-                return div.innerHTML;
-            }
-
-            /*
-             * Initial load.
-             */
-            loadNotifications();
-
-            /*
-             * Automatically refresh every 30 seconds.
-             */
-            setInterval(
-                loadNotifications,
-                30000
-            );
-
-        });
-    </script>
+</script>
 
 @endonce

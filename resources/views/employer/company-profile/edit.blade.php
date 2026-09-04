@@ -6,302 +6,6 @@
 @section('page-title', 'Company Profile')
 @section('page-subtitle', 'Update your company information')
 
-@push('styles')
-    <style>
-        /* ✅ Form Styles */
-        .form-section {
-            background: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid #eef2f6;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-        }
-
-        .form-section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f1f5f9;
-        }
-
-        .form-section-title i {
-            color: #11998e;
-            margin-right: 8px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            font-size: 13px;
-            color: #1e293b;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            padding: 10px 14px;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #11998e;
-            box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
-        }
-
-        .form-control.is-invalid,
-        .form-select.is-invalid {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-
-        .invalid-feedback {
-            font-size: 12px;
-            color: #ef4444;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .invalid-feedback.show {
-            display: block;
-        }
-
-        .required-star {
-            color: #ef4444;
-            margin-left: 2px;
-        }
-
-        .help-text {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 4px;
-        }
-
-        .btn-primary {
-            background: #11998e;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: #0e7a71;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
-        }
-
-        .btn-secondary {
-            border: 1px solid #e2e8f0;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            background: #fff;
-            color: #1e293b;
-        }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-        }
-
-        /* ✅ Image Upload */
-        .image-upload-wrapper {
-            position: relative;
-            border: 2px dashed #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #fafbfc;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .image-upload-wrapper:hover {
-            border-color: #11998e;
-            background: #f8fafc;
-        }
-
-        .image-upload-wrapper .image-preview {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .image-upload-wrapper .image-preview .preview-image {
-            max-width: 100%;
-            max-height: 120px;
-            border-radius: 8px;
-            object-fit: contain;
-            display: none;
-        }
-
-        .image-upload-wrapper .image-preview .preview-image.show {
-            display: block;
-        }
-
-        .image-upload-wrapper .image-preview .placeholder-icon {
-            color: #94a3b8;
-            opacity: 0.5;
-        }
-
-        .image-upload-wrapper .image-preview .placeholder-text {
-            color: #94a3b8;
-            font-size: 13px;
-            margin-top: 6px;
-        }
-
-        .image-upload-wrapper .remove-image-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #fee2e2;
-            color: #ef4444;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .image-upload-wrapper .remove-image-btn:hover {
-            background: #ef4444;
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        .image-upload-wrapper .remove-image-btn.show {
-            display: flex;
-        }
-
-        .image-upload-wrapper input[type="file"] {
-            display: none;
-        }
-
-        /* ✅ Completion Progress */
-        .completion-progress {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 16px 20px;
-            border: 1px solid #eef2f6;
-            margin-bottom: 24px;
-        }
-
-        .completion-progress .progress-bar {
-            height: 8px;
-            border-radius: 4px;
-            background: #e2e8f0;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .completion-progress .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            background: linear-gradient(90deg, #11998e, #38ef7d);
-            transition: width 0.8s ease;
-        }
-
-        .completion-progress .progress-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .completion-progress .progress-label .percentage {
-            font-weight: 700;
-            color: #11998e;
-            font-size: 18px;
-        }
-
-        .completion-progress .progress-label .text {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .completion-progress .progress-label .status {
-            font-size: 13px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .completion-progress .progress-label .status.complete {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .completion-progress .progress-label .status.incomplete {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        /* ✅ Responsive */
-        @media (max-width: 768px) {
-            .form-section {
-                padding: 16px;
-            }
-
-            .image-upload-wrapper {
-                min-height: 120px;
-                padding: 16px;
-            }
-
-            .image-upload-wrapper .image-preview .preview-image {
-                max-height: 100px;
-            }
-
-            .completion-progress .progress-label {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .form-section {
-                padding: 12px;
-            }
-
-            .image-upload-wrapper {
-                min-height: 100px;
-                padding: 12px;
-            }
-
-            .image-upload-wrapper .image-preview .preview-image {
-                max-height: 80px;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .d-flex.gap-2 {
-                flex-direction: column;
-            }
-        }
-    </style>
-@endpush
 
 @section('content')
     <div class="container-fluid px-4">
@@ -638,1080 +342,1305 @@
                         <a href="{{ route('employer.dashboard') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
                         </a>
-@if(isset($company))
+                    </div>
 
-    @if($company->verification_status === 'verified')
+                    @if(isset($company))
 
-        <span class="btn btn-success disabled">
-            <i class="fas fa-check-circle me-2"></i>
-            Verified Company
-        </span>
+    <div class="company-verification-status-wrapper mt-3">
 
-    @elseif($company->verification_status === 'pending')
+        @if($company->verification_status === 'verified')
 
-        <span class="btn btn-warning disabled">
-            <i class="fas fa-clock me-2"></i>
-            Verification Pending
-        </span>
+            <div class="company-verification-notice success">
 
-    @elseif($company->verification_status === 'rejected')
+                <div class="notice-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
 
-    <div class="alert alert-danger mb-3">
+                <div class="notice-content">
 
-        <strong>
-            <i class="fas fa-exclamation-circle me-1"></i>
-            Verification Rejected
-        </strong>
+                    <div class="notice-title">
+                        Company Verified
+                    </div>
 
-        <div class="mt-1">
-            {{ $company->verification_rejection_reason }}
-        </div>
+                    <div class="notice-message">
+                        Your company has been successfully verified.
+                    </div>
 
-        <small class="d-block mt-2">
-            Please correct the issue and submit again.
-        </small>
+                </div>
+
+            </div>
+
+
+        @elseif($company->verification_status === 'pending')
+
+            <div class="company-verification-notice warning">
+
+                <div class="notice-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+
+                <div class="notice-content">
+
+                    <div class="notice-title">
+                        Verification Pending
+                    </div>
+
+                    <div class="notice-message">
+                        Your verification request has been submitted and is currently waiting for admin review.
+                    </div>
+
+                    @if($company->verification_requested_at)
+                        <div class="notice-meta">
+                            Requested
+                            {{ $company->verification_requested_at->diffForHumans() }}
+                        </div>
+                    @endif
+
+                </div>
+
+            </div>
+
+
+        @elseif($company->verification_status === 'rejected')
+
+            <div class="company-verification-notice danger">
+
+                <div class="notice-icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+
+                <div class="notice-content">
+
+                    <div class="notice-title">
+                        Verification Rejected
+                    </div>
+
+                    <div class="notice-message">
+                        Your company verification request was rejected by the admin.
+                    </div>
+
+                    @if($company->verification_rejection_reason)
+                        <div class="notice-reason">
+                            <strong>Reason:</strong>
+                            {{ $company->verification_rejection_reason }}
+                        </div>
+                    @endif
+
+                    <div class="notice-help">
+                        Please correct the issue mentioned above and submit your company for verification again.
+                    </div>
+
+                    @if($company->is_complete)
+                        <div class="mt-3">
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm"
+                                onclick="requestVerification()"
+                            >
+                                <i class="fas fa-redo me-2"></i>
+                                Request Verification Again
+                            </button>
+                        </div>
+                    @endif
+
+                </div>
+
+            </div>
+
+
+        @elseif($company->is_suspended)
+
+            <div class="company-verification-notice danger">
+
+                <div class="notice-icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+
+                <div class="notice-content">
+
+                    <div class="notice-title">
+                        Company Account Suspended
+                    </div>
+
+                    <div class="notice-message">
+                        Your company account is currently suspended and verification cannot be requested.
+                    </div>
+
+                    @if($company->suspension_reason)
+                        <div class="notice-reason">
+                            <strong>Reason:</strong>
+                            {{ $company->suspension_reason }}
+                        </div>
+                    @endif
+
+                </div>
+
+            </div>
+
+
+        @elseif($company->is_fraud)
+
+            <div class="company-verification-notice danger">
+
+                <div class="notice-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+
+                <div class="notice-content">
+
+                    <div class="notice-title">
+                        Verification Restricted
+                    </div>
+
+                    <div class="notice-message">
+                        This company has been flagged for fraud and cannot submit a verification request.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        @elseif($company->is_complete)
+
+            <div class="company-verification-action mt-3">
+
+                <button
+                    type="button"
+                    class="btn btn-warning"
+                    onclick="requestVerification()"
+                >
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Request Verification
+                </button>
+
+            </div>
+
+
+        @else
+
+            <div class="company-verification-notice info">
+
+                <div class="notice-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+
+                <div class="notice-content">
+
+                    <div class="notice-title">
+                        Complete Your Company Profile
+                    </div>
+
+                    <div class="notice-message">
+                        Please complete at least 80% of your company profile before requesting verification.
+                    </div>
+
+                </div>
+
+            </div>
+
+        @endif
 
     </div>
-        <button type="button"
-                class="btn btn-danger"
-                onclick="requestVerification()">
-            <i class="fas fa-redo me-2"></i>
-            Request Verification Again
-        </button>
-
-    @elseif($company->is_complete)
-
-        <button type="button"
-                class="btn btn-warning"
-                onclick="requestVerification()">
-            <i class="fas fa-shield-alt me-2"></i>
-            Request Verification
-        </button>
-
-    @endif
 
 @endif
-                    </div>
                 </form>
             </div>
         </div>
     </div>
     @push('scripts')
         <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            /*
-             * ============================================================
-             * COMPANY PROFILE MEDIA
-             * Logo + Cover + Business License
-             * No browser alert()/confirm()
-             * ============================================================
-             */
-
-            const uploadConfig = {
-                logo: {
-                    inputId: 'logoInput',
-                    previewId: 'logoPreviewImg',
-                    wrapperId: 'logoWrapper',
-                    removeBtnId: 'removeLogoBtn',
-                    maxSize: 2 * 1024 * 1024,
-                    label: 'Company logo'
-                },
-                cover: {
-                    inputId: 'coverInput',
-                    previewId: 'coverPreviewImg',
-                    wrapperId: 'coverWrapper',
-                    removeBtnId: 'removeCoverBtn',
-                    maxSize: 5 * 1024 * 1024,
-                    label: 'Cover image'
-                },
-                license: {
-                    inputId: 'licenseInput',
-                    previewId: 'licensePreviewImg',
-                    wrapperId: 'licenseWrapper',
-                    removeBtnId: 'removeLicenseBtn',
-                    maxSize: 5 * 1024 * 1024,
-                    label: 'Business license'
-                }
-            };
-
-            /*
-             * ------------------------------------------------------------
-             * Custom Toast
-             * ------------------------------------------------------------
-             */
-            function escapeHtml(value) {
-                const div = document.createElement('div');
-                div.textContent = value ?? '';
-                return div.innerHTML;
-            }
-
-            function showToast(type, message, title = null) {
-
-                let container = document.getElementById('companyToastContainer');
-
-                if (!container) {
-                    container = document.createElement('div');
-                    container.id = 'companyToastContainer';
-
-                    Object.assign(container.style, {
-                        position: 'fixed',
-                        top: '24px',
-                        right: '24px',
-                        zIndex: '99999',
-                        width: 'min(390px, calc(100vw - 32px))',
-                        pointerEvents: 'none'
-                    });
-
-                    document.body.appendChild(container);
-                }
-
-                const meta = {
-                    success: {
-                        title: title || 'Success',
-                        icon: 'fa-check',
-                        iconClass: 'success'
-                    },
-                    error: {
-                        title: title || 'Error',
-                        icon: 'fa-times',
-                        iconClass: 'error'
-                    },
-                    warning: {
-                        title: title || 'Warning',
-                        icon: 'fa-exclamation',
-                        iconClass: 'warning'
-                    },
-                    info: {
-                        title: title || 'Information',
-                        icon: 'fa-info',
-                        iconClass: 'info'
-                    }
-                };
-
-                const item = meta[type] || meta.info;
-
-                const toast = document.createElement('div');
-
-                toast.innerHTML = `
-                    <div class="company-profile-toast ${item.iconClass}">
-                        <div class="company-profile-toast-icon">
-                            <i class="fas ${item.icon}"></i>
-                        </div>
-
-                        <div class="company-profile-toast-body">
-                            <div class="company-profile-toast-title">
-                                ${escapeHtml(item.title)}
-                            </div>
-                            <div class="company-profile-toast-message">
-                                ${escapeHtml(message)}
-                            </div>
-                        </div>
-
-                        <button type="button"
-                                class="company-profile-toast-close"
-                                aria-label="Close">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-
-                const toastElement = toast.firstElementChild;
-
-                toastElement.style.cssText = `
-                    display:flex;
-                    align-items:flex-start;
-                    gap:12px;
-                    padding:14px 16px;
-                    margin-bottom:10px;
-                    border-radius:12px;
-                    background:#fff;
-                    color:#1e293b;
-                    border:1px solid #e2e8f0;
-                    box-shadow:0 12px 35px rgba(15,23,42,.16);
-                    opacity:0;
-                    transform:translateY(-10px);
-                    transition:all .25s ease;
-                    pointer-events:auto;
-                `;
-
-                const icon = toastElement.querySelector('.company-profile-toast-icon');
-
-                icon.style.cssText = `
-                    width:34px;
-                    height:34px;
-                    flex:0 0 34px;
-                    border-radius:50%;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                `;
-
-                const iconBackgrounds = {
-                    success: ['#dcfce7', '#15803d'],
-                    error: ['#fee2e2', '#dc2626'],
-                    warning: ['#fef3c7', '#b45309'],
-                    info: ['#dbeafe', '#2563eb']
-                };
-
-                const colors = iconBackgrounds[item.iconClass] || iconBackgrounds.info;
-                icon.style.background = colors[0];
-                icon.style.color = colors[1];
-
-                toastElement.querySelector('.company-profile-toast-body')
-                    .style.cssText = 'flex:1;min-width:0;';
-
-                toastElement.querySelector('.company-profile-toast-title')
-                    .style.cssText = 'font-size:13px;font-weight:700;margin-bottom:2px;';
-
-                toastElement.querySelector('.company-profile-toast-message')
-                    .style.cssText = 'font-size:12px;line-height:1.45;color:#64748b;';
-
-                const closeButton =
-                    toastElement.querySelector('.company-profile-toast-close');
-
-                closeButton.style.cssText = `
-                    border:0;
-                    background:transparent;
-                    color:#94a3b8;
-                    padding:0 2px;
-                    cursor:pointer;
-                `;
-
-                container.appendChild(toastElement);
-
-                requestAnimationFrame(() => {
-                    toastElement.style.opacity = '1';
-                    toastElement.style.transform = 'translateY(0)';
-                });
-
-                function closeToast() {
-                    toastElement.style.opacity = '0';
-                    toastElement.style.transform = 'translateY(-10px)';
-
-                    setTimeout(() => {
-                        toastElement.remove();
-                    }, 250);
-                }
-
-                closeButton.addEventListener('click', closeToast);
-
-                setTimeout(closeToast, 4500);
-            }
-
-            window.showToast = showToast;
-
-
-            /*
-             * ------------------------------------------------------------
-             * Custom confirmation modal
-             * ------------------------------------------------------------
-             */
-            function showConfirm(title, message, confirmText = 'Remove') {
-
-                return new Promise(resolve => {
-
-                    const oldModal =
-                        document.getElementById('companyConfirmModal');
-
-                    if (oldModal) {
-                        oldModal.remove();
-                    }
-
-                    const modal = document.createElement('div');
-
-                    modal.id = 'companyConfirmModal';
-
-                    modal.innerHTML = `
-                        <div style="
-                            position:fixed;
-                            inset:0;
-                            z-index:100000;
-                            background:rgba(15,23,42,.55);
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            padding:20px;
-                        ">
-                            <div style="
-                                width:min(420px,100%);
-                                background:#fff;
-                                border-radius:16px;
-                                padding:24px;
-                                box-shadow:0 20px 60px rgba(15,23,42,.25);
-                            ">
-                                <div style="
-                                    width:48px;
-                                    height:48px;
-                                    border-radius:50%;
-                                    background:#fee2e2;
-                                    color:#dc2626;
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    margin-bottom:14px;
-                                ">
-                                    <i class="fas fa-trash-alt"></i>
-                                </div>
-
-                                <h5 style="
-                                    margin:0 0 8px;
-                                    font-weight:700;
-                                    color:#1e293b;
-                                ">
-                                    ${escapeHtml(title)}
-                                </h5>
-
-                                <p style="
-                                    margin:0 0 20px;
-                                    color:#64748b;
-                                    font-size:14px;
-                                ">
-                                    ${escapeHtml(message)}
-                                </p>
-
-                                <div style="
-                                    display:flex;
-                                    gap:10px;
-                                    justify-content:flex-end;
-                                ">
-                                    <button type="button"
-                                            class="btn btn-secondary"
-                                            id="companyConfirmCancel">
-                                        Cancel
-                                    </button>
-
-                                    <button type="button"
-                                            class="btn btn-danger"
-                                            id="companyConfirmOk">
-                                        <i class="fas fa-trash-alt me-1"></i>
-                                        ${escapeHtml(confirmText)}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    document.body.appendChild(modal);
-
-                    modal.querySelector('#companyConfirmCancel')
-                        .addEventListener('click', () => {
-                            modal.remove();
-                            resolve(false);
-                        });
-
-                    modal.querySelector('#companyConfirmOk')
-                        .addEventListener('click', () => {
-                            modal.remove();
-                            resolve(true);
-                        });
-
-                    modal.addEventListener('click', event => {
-                        if (event.target === modal.firstElementChild) {
-                            modal.remove();
-                            resolve(false);
-                        }
-                    });
-                });
-            }
-
-
-            /*
-             * ------------------------------------------------------------
-             * Loading overlay
-             * ------------------------------------------------------------
-             */
-            function setLoading(wrapper, loading) {
-
-                if (!wrapper) return;
-
-                const existing =
-                    wrapper.querySelector('.company-media-loading');
-
-                if (loading) {
-
-                    if (existing) return;
-
-                    const loader = document.createElement('div');
-
-                    loader.className = 'company-media-loading';
-
-                    loader.style.cssText = `
-                        position:absolute;
-                        inset:0;
-                        z-index:20;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        background:rgba(255,255,255,.72);
-                        backdrop-filter:blur(2px);
-                        border-radius:12px;
-                    `;
-
-                    loader.innerHTML = `
-                        <span class="spinner-border spinner-border-sm text-success"
-                              role="status"></span>
-                    `;
-
-                    wrapper.appendChild(loader);
-
-                } else if (existing) {
-                    existing.remove();
-                }
-            }
-
-
-            /*
-             * ------------------------------------------------------------
-             * Normalize URL returned by controller
-             * ------------------------------------------------------------
-             */
-            function getReturnedUrl(data) {
-
-                if (!data) return null;
-
-                let url =
-                    data.url ||
-                    data.avatar ||
-                    data.image ||
-                    data.file_url ||
-                    data.path_url ||
-                    null;
-
-                if (!url && data.path) {
-                    url = `{{ asset('storage') }}/${String(data.path).replace(/^\/+/, '')}`;
-                }
-
-                if (!url && data.file) {
-                    url = `{{ asset('storage') }}/${String(data.file).replace(/^\/+/, '')}`;
-                }
-
-                return url;
-            }
-
-
-            /*
-             * ------------------------------------------------------------
-             * Set image preview
-             * ------------------------------------------------------------
-             */
-            function setImagePreview(type, url) {
-
-                const config = uploadConfig[type];
-
-                if (!config) return;
-
-                const preview =
-                    document.getElementById(config.previewId);
-
-                const wrapper =
-                    document.getElementById(config.wrapperId);
-
-                if (!preview || !url) return;
-
-                const icon =
-                    wrapper?.querySelector('.placeholder-icon');
-
-                const text =
-                    wrapper?.querySelector('.placeholder-text');
-
-                preview.onload = function () {
-
-                    preview.style.display = 'block';
-                    preview.classList.add('show');
-
-                    if (icon) icon.style.display = 'none';
-                    if (text) text.style.display = 'none';
-                };
-
-                preview.onerror = function () {
-
-                    preview.style.display = 'none';
-                    preview.classList.remove('show');
-
-                    if (icon) icon.style.display = 'block';
-                    if (text) text.style.display = 'block';
-
-                    showToast(
-                        'error',
-                        `${config.label} was uploaded, but could not be displayed. Please check the storage link.`,
-                        'Display Error'
-                    );
-                };
-
-                preview.src =
-                    url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
-
-                const removeButton =
-                    document.getElementById(config.removeBtnId);
-
-                if (removeButton) {
-                    removeButton.classList.add('show');
-                }
-            }
-
-
-            /*
-             * ------------------------------------------------------------
-             * Reset placeholder
-             * ------------------------------------------------------------
-             */
-            function resetPreview(type) {
-
-                const config = uploadConfig[type];
-
-                if (!config) return;
-
-                const preview =
-                    document.getElementById(config.previewId);
-
-                const wrapper =
-                    document.getElementById(config.wrapperId);
-
-                const removeButton =
-                    document.getElementById(config.removeBtnId);
-
-                if (preview) {
-                    preview.src = '#';
-                    preview.style.display = 'none';
-                    preview.classList.remove('show');
-                }
-
-                if (wrapper) {
-
-                    const icon =
-                        wrapper.querySelector('.placeholder-icon');
-
-                    const text =
-                        wrapper.querySelector('.placeholder-text');
-
-                    if (icon) icon.style.display = 'block';
-                    if (text) text.style.display = 'block';
-
-                    /*
-                     * License placeholder can have no .placeholder-icon.
-                     * Leave its existing markup untouched if absent.
-                     */
-                }
-
-                if (removeButton) {
-                    removeButton.classList.remove('show');
-                }
-            }
-
-
-            /*
-             * ------------------------------------------------------------
-             * Upload
-             * ------------------------------------------------------------
-             */
-            async function uploadImage(input, type) {
-
-                const config = uploadConfig[type];
-
-                if (!config || !input.files || !input.files[0]) {
-                    return;
-                }
-
-                const file = input.files[0];
-
-                const isLicense = type === 'license';
-
-                const allowedTypes = isLicense
-                    ? [
-                        'image/jpeg',
-                        'image/png',
-                        'image/gif',
-                        'image/webp',
-                        'application/pdf'
-                    ]
-                    : [
-                        'image/jpeg',
-                        'image/png',
-                        'image/gif',
-                        'image/webp'
-                    ];
-
-                if (file.size > config.maxSize) {
-
-                    showToast(
-                        'error',
-                        `${config.label} exceeds the ${config.maxSize / 1024 / 1024}MB limit.`,
-                        'Upload Failed'
-                    );
-
-                    input.value = '';
-                    return;
-                }
-
-                if (!allowedTypes.includes(file.type)) {
-
-                    showToast(
-                        'error',
-                        isLicense
-                            ? 'Please upload a PDF, JPG, PNG, GIF or WebP file.'
-                            : 'Please upload a JPG, PNG, GIF or WebP image.',
-                        'Invalid File'
-                    );
-
-                    input.value = '';
-                    return;
-                }
-
-                const wrapper =
-                    document.getElementById(config.wrapperId);
-
-                const preview =
-                    document.getElementById(config.previewId);
+            document.addEventListener('DOMContentLoaded', function () {
 
                 /*
-                 * Local preview before server request.
+                 * ============================================================
+                 * COMPANY PROFILE MEDIA
+                 * Logo + Cover + Business License
+                 * No browser alert()/confirm()
+                 * ============================================================
                  */
-                if (preview && !isLicense) {
 
-                    const reader = new FileReader();
+                const uploadConfig = {
+                    logo: {
+                        inputId: 'logoInput',
+                        previewId: 'logoPreviewImg',
+                        wrapperId: 'logoWrapper',
+                        removeBtnId: 'removeLogoBtn',
+                        maxSize: 2 * 1024 * 1024,
+                        label: 'Company logo'
+                    },
+                    cover: {
+                        inputId: 'coverInput',
+                        previewId: 'coverPreviewImg',
+                        wrapperId: 'coverWrapper',
+                        removeBtnId: 'removeCoverBtn',
+                        maxSize: 5 * 1024 * 1024,
+                        label: 'Cover image'
+                    },
+                    license: {
+                        inputId: 'licenseInput',
+                        previewId: 'licensePreviewImg',
+                        wrapperId: 'licenseWrapper',
+                        removeBtnId: 'removeLicenseBtn',
+                        maxSize: 5 * 1024 * 1024,
+                        label: 'Business license'
+                    }
+                };
 
-                    reader.onload = event => {
+                /*
+                 * ------------------------------------------------------------
+                 * Custom Toast
+                 * ------------------------------------------------------------
+                 */
+                function escapeHtml(value) {
+                    const div = document.createElement('div');
+                    div.textContent = value ?? '';
+                    return div.innerHTML;
+                }
 
-                        preview.src = event.target.result;
+                function showToast(type, message, title = null) {
+
+                    let container = document.getElementById('companyToastContainer');
+
+                    if (!container) {
+                        container = document.createElement('div');
+                        container.id = 'companyToastContainer';
+
+                        Object.assign(container.style, {
+                            position: 'fixed',
+                            top: '24px',
+                            right: '24px',
+                            zIndex: '99999',
+                            width: 'min(390px, calc(100vw - 32px))',
+                            pointerEvents: 'none'
+                        });
+
+                        document.body.appendChild(container);
+                    }
+
+                    const meta = {
+                        success: {
+                            title: title || 'Success',
+                            icon: 'fa-check',
+                            iconClass: 'success'
+                        },
+                        error: {
+                            title: title || 'Error',
+                            icon: 'fa-times',
+                            iconClass: 'error'
+                        },
+                        warning: {
+                            title: title || 'Warning',
+                            icon: 'fa-exclamation',
+                            iconClass: 'warning'
+                        },
+                        info: {
+                            title: title || 'Information',
+                            icon: 'fa-info',
+                            iconClass: 'info'
+                        }
+                    };
+
+                    const item = meta[type] || meta.info;
+
+                    const toast = document.createElement('div');
+
+                    toast.innerHTML = `
+                                                                    <div class="company-profile-toast ${item.iconClass}">
+                                                                        <div class="company-profile-toast-icon">
+                                                                            <i class="fas ${item.icon}"></i>
+                                                                        </div>
+
+                                                                        <div class="company-profile-toast-body">
+                                                                            <div class="company-profile-toast-title">
+                                                                                ${escapeHtml(item.title)}
+                                                                            </div>
+                                                                            <div class="company-profile-toast-message">
+                                                                                ${escapeHtml(message)}
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <button type="button"
+                                                                                class="company-profile-toast-close"
+                                                                                aria-label="Close">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                `;
+
+                    const toastElement = toast.firstElementChild;
+
+                    toastElement.style.cssText = `
+                                                                    display:flex;
+                                                                    align-items:flex-start;
+                                                                    gap:12px;
+                                                                    padding:14px 16px;
+                                                                    margin-bottom:10px;
+                                                                    border-radius:12px;
+                                                                    background:#fff;
+                                                                    color:#1e293b;
+                                                                    border:1px solid #e2e8f0;
+                                                                    box-shadow:0 12px 35px rgba(15,23,42,.16);
+                                                                    opacity:0;
+                                                                    transform:translateY(-10px);
+                                                                    transition:all .25s ease;
+                                                                    pointer-events:auto;
+                                                                `;
+
+                    const icon = toastElement.querySelector('.company-profile-toast-icon');
+
+                    icon.style.cssText = `
+                                                                    width:34px;
+                                                                    height:34px;
+                                                                    flex:0 0 34px;
+                                                                    border-radius:50%;
+                                                                    display:flex;
+                                                                    align-items:center;
+                                                                    justify-content:center;
+                                                                `;
+
+                    const iconBackgrounds = {
+                        success: ['#dcfce7', '#15803d'],
+                        error: ['#fee2e2', '#dc2626'],
+                        warning: ['#fef3c7', '#b45309'],
+                        info: ['#dbeafe', '#2563eb']
+                    };
+
+                    const colors = iconBackgrounds[item.iconClass] || iconBackgrounds.info;
+                    icon.style.background = colors[0];
+                    icon.style.color = colors[1];
+
+                    toastElement.querySelector('.company-profile-toast-body')
+                        .style.cssText = 'flex:1;min-width:0;';
+
+                    toastElement.querySelector('.company-profile-toast-title')
+                        .style.cssText = 'font-size:13px;font-weight:700;margin-bottom:2px;';
+
+                    toastElement.querySelector('.company-profile-toast-message')
+                        .style.cssText = 'font-size:12px;line-height:1.45;color:#64748b;';
+
+                    const closeButton =
+                        toastElement.querySelector('.company-profile-toast-close');
+
+                    closeButton.style.cssText = `
+                                                                    border:0;
+                                                                    background:transparent;
+                                                                    color:#94a3b8;
+                                                                    padding:0 2px;
+                                                                    cursor:pointer;
+                                                                `;
+
+                    container.appendChild(toastElement);
+
+                    requestAnimationFrame(() => {
+                        toastElement.style.opacity = '1';
+                        toastElement.style.transform = 'translateY(0)';
+                    });
+
+                    function closeToast() {
+                        toastElement.style.opacity = '0';
+                        toastElement.style.transform = 'translateY(-10px)';
+
+                        setTimeout(() => {
+                            toastElement.remove();
+                        }, 250);
+                    }
+
+                    closeButton.addEventListener('click', closeToast);
+
+                    setTimeout(closeToast, 4500);
+                }
+
+                window.showToast = showToast;
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Custom confirmation modal
+                 * ------------------------------------------------------------
+                 */
+                function showConfirm(title, message, confirmText = 'Remove') {
+
+                    return new Promise(resolve => {
+
+                        const oldModal =
+                            document.getElementById('companyConfirmModal');
+
+                        if (oldModal) {
+                            oldModal.remove();
+                        }
+
+                        const modal = document.createElement('div');
+
+                        modal.id = 'companyConfirmModal';
+
+                        modal.innerHTML = `
+                                                                        <div style="
+                                                                            position:fixed;
+                                                                            inset:0;
+                                                                            z-index:100000;
+                                                                            background:rgba(15,23,42,.55);
+                                                                            display:flex;
+                                                                            align-items:center;
+                                                                            justify-content:center;
+                                                                            padding:20px;
+                                                                        ">
+                                                                            <div style="
+                                                                                width:min(420px,100%);
+                                                                                background:#fff;
+                                                                                border-radius:16px;
+                                                                                padding:24px;
+                                                                                box-shadow:0 20px 60px rgba(15,23,42,.25);
+                                                                            ">
+                                                                                <div style="
+                                                                                    width:48px;
+                                                                                    height:48px;
+                                                                                    border-radius:50%;
+                                                                                    background:#fee2e2;
+                                                                                    color:#dc2626;
+                                                                                    display:flex;
+                                                                                    align-items:center;
+                                                                                    justify-content:center;
+                                                                                    margin-bottom:14px;
+                                                                                ">
+                                                                                    <i class="fas fa-trash-alt"></i>
+                                                                                </div>
+
+                                                                                <h5 style="
+                                                                                    margin:0 0 8px;
+                                                                                    font-weight:700;
+                                                                                    color:#1e293b;
+                                                                                ">
+                                                                                    ${escapeHtml(title)}
+                                                                                </h5>
+
+                                                                                <p style="
+                                                                                    margin:0 0 20px;
+                                                                                    color:#64748b;
+                                                                                    font-size:14px;
+                                                                                ">
+                                                                                    ${escapeHtml(message)}
+                                                                                </p>
+
+                                                                                <div style="
+                                                                                    display:flex;
+                                                                                    gap:10px;
+                                                                                    justify-content:flex-end;
+                                                                                ">
+                                                                                    <button type="button"
+                                                                                            class="btn btn-secondary"
+                                                                                            id="companyConfirmCancel">
+                                                                                        Cancel
+                                                                                    </button>
+
+                                                                                    <button type="button"
+                                                                                            class="btn btn-danger"
+                                                                                            id="companyConfirmOk">
+                                                                                        <i class="fas fa-trash-alt me-1"></i>
+                                                                                        ${escapeHtml(confirmText)}
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
+
+                        document.body.appendChild(modal);
+
+                        modal.querySelector('#companyConfirmCancel')
+                            .addEventListener('click', () => {
+                                modal.remove();
+                                resolve(false);
+                            });
+
+                        modal.querySelector('#companyConfirmOk')
+                            .addEventListener('click', () => {
+                                modal.remove();
+                                resolve(true);
+                            });
+
+                        modal.addEventListener('click', event => {
+                            if (event.target === modal.firstElementChild) {
+                                modal.remove();
+                                resolve(false);
+                            }
+                        });
+                    });
+                }
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Loading overlay
+                 * ------------------------------------------------------------
+                 */
+                function setLoading(wrapper, loading) {
+
+                    if (!wrapper) return;
+
+                    const existing =
+                        wrapper.querySelector('.company-media-loading');
+
+                    if (loading) {
+
+                        if (existing) return;
+
+                        const loader = document.createElement('div');
+
+                        loader.className = 'company-media-loading';
+
+                        loader.style.cssText = `
+                                                                        position:absolute;
+                                                                        inset:0;
+                                                                        z-index:20;
+                                                                        display:flex;
+                                                                        align-items:center;
+                                                                        justify-content:center;
+                                                                        background:rgba(255,255,255,.72);
+                                                                        backdrop-filter:blur(2px);
+                                                                        border-radius:12px;
+                                                                    `;
+
+                        loader.innerHTML = `
+                                                                        <span class="spinner-border spinner-border-sm text-success"
+                                                                              role="status"></span>
+                                                                    `;
+
+                        wrapper.appendChild(loader);
+
+                    } else if (existing) {
+                        existing.remove();
+                    }
+                }
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Normalize URL returned by controller
+                 * ------------------------------------------------------------
+                 */
+                function getReturnedUrl(data) {
+
+                    if (!data) return null;
+
+                    let url =
+                        data.url ||
+                        data.avatar ||
+                        data.image ||
+                        data.file_url ||
+                        data.path_url ||
+                        null;
+
+                    if (!url && data.path) {
+                        url = `{{ asset('storage') }}/${String(data.path).replace(/^\/+/, '')}`;
+                    }
+
+                    if (!url && data.file) {
+                        url = `{{ asset('storage') }}/${String(data.file).replace(/^\/+/, '')}`;
+                    }
+
+                    return url;
+                }
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Set image preview
+                 * ------------------------------------------------------------
+                 */
+                function setImagePreview(type, url) {
+
+                    const config = uploadConfig[type];
+
+                    if (!config) return;
+
+                    const preview =
+                        document.getElementById(config.previewId);
+
+                    const wrapper =
+                        document.getElementById(config.wrapperId);
+
+                    if (!preview || !url) return;
+
+                    const icon =
+                        wrapper?.querySelector('.placeholder-icon');
+
+                    const text =
+                        wrapper?.querySelector('.placeholder-text');
+
+                    preview.onload = function () {
+
                         preview.style.display = 'block';
                         preview.classList.add('show');
-
-                        const icon =
-                            wrapper?.querySelector('.placeholder-icon');
-
-                        const text =
-                            wrapper?.querySelector('.placeholder-text');
 
                         if (icon) icon.style.display = 'none';
                         if (text) text.style.display = 'none';
                     };
 
-                    reader.readAsDataURL(file);
-                }
+                    preview.onerror = function () {
 
-                const formData = new FormData();
+                        preview.style.display = 'none';
+                        preview.classList.remove('show');
 
-                /*
-                 * IMPORTANT:
-                 * Existing controller expects "logo" for all three types.
-                 */
-                formData.append('logo', file);
-                formData.append('type', type);
+                        if (icon) icon.style.display = 'block';
+                        if (text) text.style.display = 'block';
 
-                setLoading(wrapper, true);
-
-                showToast(
-                    'info',
-                    `Uploading ${config.label.toLowerCase()}...`,
-                    'Please wait'
-                );
-
-                try {
-
-                    const response = await fetch(
-                        '{{ route("employer.company-profile.upload") }}',
-                        {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        }
-                    );
-
-                    const contentType =
-                        response.headers.get('content-type') || '';
-
-                    if (!contentType.includes('application/json')) {
-                        throw new Error(
-                            'Server returned an invalid response. Please check Laravel logs.'
+                        showToast(
+                            'error',
+                            `${config.label} was uploaded, but could not be displayed. Please check the storage link.`,
+                            'Display Error'
                         );
-                    }
+                    };
 
-                    const data = await response.json();
+                    preview.src =
+                        url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now();
 
-                    if (!response.ok || !data.success) {
-                        throw new Error(
-                            data.message ||
-                            `${config.label} upload failed.`
-                        );
-                    }
-
-                    /*
-                     * If controller returns URL/path, immediately use it.
-                     */
-                    const returnedUrl = getReturnedUrl(data);
-
-                    if (returnedUrl && !isLicense) {
-                        setImagePreview(type, returnedUrl);
-                    }
-
-                    if (returnedUrl && isLicense) {
-
-                        /*
-                         * For a PDF, replace preview with a simple file card.
-                         */
-                        if (file.type === 'application/pdf' && wrapper) {
-
-                            const previewBox =
-                                document.getElementById('licensePreview');
-
-                            if (previewBox) {
-
-                                previewBox.innerHTML = `
-                                    <i class="fas fa-file-pdf fa-3x text-danger"></i>
-                                    <p class="text-muted small mt-2 mb-0">
-                                        Business License PDF uploaded
-                                    </p>
-                                `;
-                            }
-
-                            const removeButton =
-                                document.getElementById('removeLicenseBtn');
-
-                            if (removeButton) {
-                                removeButton.classList.add('show');
-                            }
-                        } else {
-                            setImagePreview(type, returnedUrl);
-                        }
-                    }
-
-                    /*
-                     * If controller doesn't return a URL, keep the local
-                     * preview; after refresh the DB value will be loaded.
-                     */
-                    showToast(
-                        'success',
-                        data.message || `${config.label} updated successfully!`,
-                        'Profile Updated'
-                    );
-
-                    input.value = '';
-
-                } catch (error) {
-
-                    console.error(`${type} upload error:`, error);
-
-                    showToast(
-                        'error',
-                        error.message || `${config.label} upload failed.`,
-                        'Upload Failed'
-                    );
-
-                } finally {
-
-                    setLoading(wrapper, false);
-                }
-            }
-
-            window.uploadImage = uploadImage;
-
-
-            /*
-             * ------------------------------------------------------------
-             * Remove
-             * ------------------------------------------------------------
-             */
-            async function removeImage(type) {
-
-                const config = uploadConfig[type];
-
-                if (!config) return;
-
-                const confirmed = await showConfirm(
-                    `Remove ${config.label}?`,
-                    `Your current ${config.label.toLowerCase()} will be removed.`,
-                    'Remove'
-                );
-
-                if (!confirmed) return;
-
-                const wrapper =
-                    document.getElementById(config.wrapperId);
-
-                setLoading(wrapper, true);
-
-                try {
-
-                    const response = await fetch(
-                        '{{ route("employer.company-profile.remove-image") }}',
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({
-                                type: type
-                            })
-                        }
-                    );
-
-                    const contentType =
-                        response.headers.get('content-type') || '';
-
-                    if (!contentType.includes('application/json')) {
-                        throw new Error(
-                            'Server returned an invalid response.'
-                        );
-                    }
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        throw new Error(
-                            data.message ||
-                            `Unable to remove ${config.label.toLowerCase()}.`
-                        );
-                    }
-
-                    resetPreview(type);
-
-                    /*
-                     * Restore original license placeholder structure.
-                     */
-                    if (type === 'license') {
-
-                        const previewBox =
-                            document.getElementById('licensePreview');
-
-                        if (previewBox) {
-                            previewBox.innerHTML = `
-                                <i class="fas fa-file-upload fa-3x text-muted placeholder-icon"></i>
-                                <p class="text-muted small mt-2 placeholder-text">
-                                    Click to upload business license
-                                </p>
-                                <img
-                                    id="licensePreviewImg"
-                                    src="#"
-                                    alt="Preview"
-                                    class="preview-image"
-                                >
-                            `;
-                        }
-                    }
-
-                    showToast(
-                        'success',
-                        data.message || `${config.label} removed successfully!`,
-                        'Profile Updated'
-                    );
-
-                } catch (error) {
-
-                    console.error(`${type} removal error:`, error);
-
-                    showToast(
-                        'error',
-                        error.message ||
-                        `Unable to remove ${config.label.toLowerCase()}.`,
-                        'Remove Failed'
-                    );
-
-                } finally {
-
-                    setLoading(wrapper, false);
-                }
-            }
-
-            window.removeImage = removeImage;
-
-
-            /*
-             * ------------------------------------------------------------
-             * Request Verification
-             * ------------------------------------------------------------
-             */
-            async function requestVerification() {
-
-                const confirmed = await showConfirm(
-                    'Request verification?',
-                    'Your company profile will be submitted for verification.',
-                    'Request'
-                );
-
-                if (!confirmed) return;
-
-                try {
-
-                    const response = await fetch(
-                        '{{ route("employer.company-profile.verify") }}',
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        }
-                    );
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        throw new Error(
-                            data.message || 'Verification request failed.'
-                        );
-                    }
-
-                    showToast(
-                        'success',
-                        data.message || 'Verification request submitted.',
-                        'Verification'
-                    );
-
-                } catch (error) {
-
-                    console.error('Verification error:', error);
-
-                    showToast(
-                        'error',
-                        error.message || 'Verification request failed.',
-                        'Verification Failed'
-                    );
-                }
-            }
-
-            window.requestVerification = requestVerification;
-
-
-            /*
-             * ------------------------------------------------------------
-             * Existing previews
-             * ------------------------------------------------------------
-             */
-            Object.keys(uploadConfig).forEach(type => {
-
-                const config = uploadConfig[type];
-
-                const preview =
-                    document.getElementById(config.previewId);
-
-                const removeButton =
-                    document.getElementById(config.removeBtnId);
-
-                if (
-                    preview &&
-                    preview.getAttribute('src') &&
-                    preview.getAttribute('src') !== '#'
-                ) {
-
-                    if (
-                        type !== 'license' ||
-                        !preview.src.toLowerCase().endsWith('.pdf')
-                    ) {
-                        preview.classList.add('show');
-                        preview.style.display = 'block';
-
-                        const wrapper =
-                            document.getElementById(config.wrapperId);
-
-                        if (wrapper) {
-
-                            const icon =
-                                wrapper.querySelector('.placeholder-icon');
-
-                            const text =
-                                wrapper.querySelector('.placeholder-text');
-
-                            if (icon) icon.style.display = 'none';
-                            if (text) text.style.display = 'none';
-                        }
-                    }
+                    const removeButton =
+                        document.getElementById(config.removeBtnId);
 
                     if (removeButton) {
                         removeButton.classList.add('show');
                     }
                 }
-            });
 
-
-            /*
-             * ------------------------------------------------------------
-             * Prevent nested remove buttons from opening file picker.
-             * Keep whole upload box clickable.
-             * ------------------------------------------------------------
-             */
-            Object.keys(uploadConfig).forEach(type => {
-
-                const config = uploadConfig[type];
-
-                const wrapper =
-                    document.getElementById(config.wrapperId);
-
-                const input =
-                    document.getElementById(config.inputId);
-
-                const removeButton =
-                    document.getElementById(config.removeBtnId);
-
-                if (!wrapper || !input) return;
 
                 /*
-                 * Remove old inline onclick behaviour by stopping the
-                 * click before it bubbles to the wrapper.
+                 * ------------------------------------------------------------
+                 * Reset placeholder
+                 * ------------------------------------------------------------
                  */
-                if (removeButton) {
+                function resetPreview(type) {
 
-                    removeButton.addEventListener('click', event => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    });
+                    const config = uploadConfig[type];
+
+                    if (!config) return;
+
+                    const preview =
+                        document.getElementById(config.previewId);
+
+                    const wrapper =
+                        document.getElementById(config.wrapperId);
+
+                    const removeButton =
+                        document.getElementById(config.removeBtnId);
+
+                    if (preview) {
+                        preview.src = '#';
+                        preview.style.display = 'none';
+                        preview.classList.remove('show');
+                    }
+
+                    if (wrapper) {
+
+                        const icon =
+                            wrapper.querySelector('.placeholder-icon');
+
+                        const text =
+                            wrapper.querySelector('.placeholder-text');
+
+                        if (icon) icon.style.display = 'block';
+                        if (text) text.style.display = 'block';
+
+                        /*
+                         * License placeholder can have no .placeholder-icon.
+                         * Leave its existing markup untouched if absent.
+                         */
+                    }
+
+                    if (removeButton) {
+                        removeButton.classList.remove('show');
+                    }
                 }
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Upload
+                 * ------------------------------------------------------------
+                 */
+                async function uploadImage(input, type) {
+
+                    const config = uploadConfig[type];
+
+                    if (!config || !input.files || !input.files[0]) {
+                        return;
+                    }
+
+                    const file = input.files[0];
+
+                    const isLicense = type === 'license';
+
+                    const allowedTypes = isLicense
+                        ? [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf'
+                        ]
+                        : [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp'
+                        ];
+
+                    if (file.size > config.maxSize) {
+
+                        showToast(
+                            'error',
+                            `${config.label} exceeds the ${config.maxSize / 1024 / 1024}MB limit.`,
+                            'Upload Failed'
+                        );
+
+                        input.value = '';
+                        return;
+                    }
+
+                    if (!allowedTypes.includes(file.type)) {
+
+                        showToast(
+                            'error',
+                            isLicense
+                                ? 'Please upload a PDF, JPG, PNG, GIF or WebP file.'
+                                : 'Please upload a JPG, PNG, GIF or WebP image.',
+                            'Invalid File'
+                        );
+
+                        input.value = '';
+                        return;
+                    }
+
+                    const wrapper =
+                        document.getElementById(config.wrapperId);
+
+                    const preview =
+                        document.getElementById(config.previewId);
+
+                    /*
+                     * Local preview before server request.
+                     */
+                    if (preview && !isLicense) {
+
+                        const reader = new FileReader();
+
+                        reader.onload = event => {
+
+                            preview.src = event.target.result;
+                            preview.style.display = 'block';
+                            preview.classList.add('show');
+
+                            const icon =
+                                wrapper?.querySelector('.placeholder-icon');
+
+                            const text =
+                                wrapper?.querySelector('.placeholder-text');
+
+                            if (icon) icon.style.display = 'none';
+                            if (text) text.style.display = 'none';
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+
+                    const formData = new FormData();
+
+                    /*
+                     * IMPORTANT:
+                     * Existing controller expects "logo" for all three types.
+                     */
+                    formData.append('logo', file);
+                    formData.append('type', type);
+
+                    setLoading(wrapper, true);
+
+                    showToast(
+                        'info',
+                        `Uploading ${config.label.toLowerCase()}...`,
+                        'Please wait'
+                    );
+
+                    try {
+
+                        const response = await fetch(
+                            '{{ route("employer.company-profile.upload") }}',
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: formData
+                            }
+                        );
+
+                        const contentType =
+                            response.headers.get('content-type') || '';
+
+                        if (!contentType.includes('application/json')) {
+                            throw new Error(
+                                'Server returned an invalid response. Please check Laravel logs.'
+                            );
+                        }
+
+                        const data = await response.json();
+
+                        if (!response.ok || !data.success) {
+                            throw new Error(
+                                data.message ||
+                                `${config.label} upload failed.`
+                            );
+                        }
+
+                        /*
+                         * If controller returns URL/path, immediately use it.
+                         */
+                        const returnedUrl = getReturnedUrl(data);
+
+                        if (returnedUrl && !isLicense) {
+                            setImagePreview(type, returnedUrl);
+                        }
+
+                        if (returnedUrl && isLicense) {
+
+                            /*
+                             * For a PDF, replace preview with a simple file card.
+                             */
+                            if (file.type === 'application/pdf' && wrapper) {
+
+                                const previewBox =
+                                    document.getElementById('licensePreview');
+
+                                if (previewBox) {
+
+                                    previewBox.innerHTML = `
+                                                                                    <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                                                                                    <p class="text-muted small mt-2 mb-0">
+                                                                                        Business License PDF uploaded
+                                                                                    </p>
+                                                                                `;
+                                }
+
+                                const removeButton =
+                                    document.getElementById('removeLicenseBtn');
+
+                                if (removeButton) {
+                                    removeButton.classList.add('show');
+                                }
+                            } else {
+                                setImagePreview(type, returnedUrl);
+                            }
+                        }
+
+                        /*
+                         * If controller doesn't return a URL, keep the local
+                         * preview; after refresh the DB value will be loaded.
+                         */
+                        showToast(
+                            'success',
+                            data.message || `${config.label} updated successfully!`,
+                            'Profile Updated'
+                        );
+
+                        input.value = '';
+
+                    } catch (error) {
+
+                        console.error(`${type} upload error:`, error);
+
+                        showToast(
+                            'error',
+                            error.message || `${config.label} upload failed.`,
+                            'Upload Failed'
+                        );
+
+                    } finally {
+
+                        setLoading(wrapper, false);
+                    }
+                }
+
+                window.uploadImage = uploadImage;
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Remove
+                 * ------------------------------------------------------------
+                 */
+                async function removeImage(type) {
+
+                    const config = uploadConfig[type];
+
+                    if (!config) return;
+
+                    const confirmed = await showConfirm(
+                        `Remove ${config.label}?`,
+                        `Your current ${config.label.toLowerCase()} will be removed.`,
+                        'Remove'
+                    );
+
+                    if (!confirmed) return;
+
+                    const wrapper =
+                        document.getElementById(config.wrapperId);
+
+                    setLoading(wrapper, true);
+
+                    try {
+
+                        const response = await fetch(
+                            '{{ route("employer.company-profile.remove-image") }}',
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: JSON.stringify({
+                                    type: type
+                                })
+                            }
+                        );
+
+                        const contentType =
+                            response.headers.get('content-type') || '';
+
+                        if (!contentType.includes('application/json')) {
+                            throw new Error(
+                                'Server returned an invalid response.'
+                            );
+                        }
+
+                        const data = await response.json();
+
+                        if (!response.ok || !data.success) {
+                            throw new Error(
+                                data.message ||
+                                `Unable to remove ${config.label.toLowerCase()}.`
+                            );
+                        }
+
+                        resetPreview(type);
+
+                        /*
+                         * Restore original license placeholder structure.
+                         */
+                        if (type === 'license') {
+
+                            const previewBox =
+                                document.getElementById('licensePreview');
+
+                            if (previewBox) {
+                                previewBox.innerHTML = `
+                                                                                <i class="fas fa-file-upload fa-3x text-muted placeholder-icon"></i>
+                                                                                <p class="text-muted small mt-2 placeholder-text">
+                                                                                    Click to upload business license
+                                                                                </p>
+                                                                                <img
+                                                                                    id="licensePreviewImg"
+                                                                                    src="#"
+                                                                                    alt="Preview"
+                                                                                    class="preview-image"
+                                                                                >
+                                                                            `;
+                            }
+                        }
+
+                        showToast(
+                            'success',
+                            data.message || `${config.label} removed successfully!`,
+                            'Profile Updated'
+                        );
+
+                    } catch (error) {
+
+                        console.error(`${type} removal error:`, error);
+
+                        showToast(
+                            'error',
+                            error.message ||
+                            `Unable to remove ${config.label.toLowerCase()}.`,
+                            'Remove Failed'
+                        );
+
+                    } finally {
+
+                        setLoading(wrapper, false);
+                    }
+                }
+
+                window.removeImage = removeImage;
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Request Verification
+                 * ------------------------------------------------------------
+                 */
+                async function requestVerification() {
+
+    const confirmed = await showConfirm(
+        'Request verification?',
+        'Your company profile will be submitted for verification.',
+        'Request'
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            '{{ route("employer.company-profile.verify") }}',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }
+        );
+
+
+        /*
+         * Always safely parse JSON.
+         */
+        const contentType =
+            response.headers.get('content-type') || '';
+
+        if (!contentType.includes('application/json')) {
+
+            throw new Error(
+                'Server returned an invalid response. Please check Laravel logs.'
+            );
+        }
+
+
+        const data = await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                'Verification request failed.'
+            );
+        }
+
+
+        /*
+         * Success toast
+         */
+        showToast(
+            'success',
+            data.message ||
+            'Verification request submitted successfully.',
+            'Verification Submitted'
+        );
+
+
+        /*
+         * Update UI immediately instead of making the user
+         * click again.
+         */
+        const verificationWrapper =
+            document.querySelector(
+                '.company-verification-status-wrapper'
+            );
+
+        if (verificationWrapper) {
+
+            verificationWrapper.innerHTML = `
+                <div class="company-verification-notice warning">
+
+                    <div class="notice-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+
+                    <div class="notice-content">
+
+                        <div class="notice-title">
+                            Verification Pending
+                        </div>
+
+                        <div class="notice-message">
+                            Your verification request has been submitted and is currently waiting for admin review.
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        }
+
+
+        /*
+         * Prevent duplicate clicks.
+         */
+        document
+            .querySelectorAll(
+                '.company-verification-action button'
+            )
+            .forEach(button => {
+                button.disabled = true;
             });
 
 
-            /*
-             * ------------------------------------------------------------
-             * Session toast
-             * ------------------------------------------------------------
-             */
-            @if(session('toast'))
-                const sessionToast = @json(session('toast'));
+    } catch (error) {
 
-                showToast(
-                    sessionToast.type || 'info',
-                    sessionToast.message || 'Notification'
-                );
-            @endif
+        console.error(
+            'Verification error:',
+            error
+        );
+
+        showToast(
+            'error',
+            error.message ||
+            'Verification request failed.',
+            'Verification Failed'
+        );
+    }
+}
+
+                window.requestVerification = requestVerification;
 
 
-            /*
-             * ------------------------------------------------------------
-             * Company form loading state
-             * ------------------------------------------------------------
-             */
-            const companyForm =
-                document.getElementById('companyForm');
+                /*
+                 * ------------------------------------------------------------
+                 * Existing previews
+                 * ------------------------------------------------------------
+                 */
+                Object.keys(uploadConfig).forEach(type => {
 
-            if (companyForm) {
+                    const config = uploadConfig[type];
 
-                companyForm.addEventListener('submit', function () {
+                    const preview =
+                        document.getElementById(config.previewId);
 
-                    const button =
-                        companyForm.querySelector(
-                            'button[type="submit"]'
-                        );
+                    const removeButton =
+                        document.getElementById(config.removeBtnId);
 
-                    if (button) {
+                    if (
+                        preview &&
+                        preview.getAttribute('src') &&
+                        preview.getAttribute('src') !== '#'
+                    ) {
 
-                        button.disabled = true;
+                        if (
+                            type !== 'license' ||
+                            !preview.src.toLowerCase().endsWith('.pdf')
+                        ) {
+                            preview.classList.add('show');
+                            preview.style.display = 'block';
 
-                        button.innerHTML =
-                            '<span class="spinner-border spinner-border-sm me-2"></span>' +
-                            'Saving...';
+                            const wrapper =
+                                document.getElementById(config.wrapperId);
+
+                            if (wrapper) {
+
+                                const icon =
+                                    wrapper.querySelector('.placeholder-icon');
+
+                                const text =
+                                    wrapper.querySelector('.placeholder-text');
+
+                                if (icon) icon.style.display = 'none';
+                                if (text) text.style.display = 'none';
+                            }
+                        }
+
+                        if (removeButton) {
+                            removeButton.classList.add('show');
+                        }
                     }
                 });
-            }
 
-        });
+
+                /*
+                 * ------------------------------------------------------------
+                 * Prevent nested remove buttons from opening file picker.
+                 * Keep whole upload box clickable.
+                 * ------------------------------------------------------------
+                 */
+                Object.keys(uploadConfig).forEach(type => {
+
+                    const config = uploadConfig[type];
+
+                    const wrapper =
+                        document.getElementById(config.wrapperId);
+
+                    const input =
+                        document.getElementById(config.inputId);
+
+                    const removeButton =
+                        document.getElementById(config.removeBtnId);
+
+                    if (!wrapper || !input) return;
+
+                    /*
+                     * Remove old inline onclick behaviour by stopping the
+                     * click before it bubbles to the wrapper.
+                     */
+                    if (removeButton) {
+
+                        removeButton.addEventListener('click', event => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        });
+                    }
+                });
+
+
+                /*
+                 * ------------------------------------------------------------
+                 * Session toast
+                 * ------------------------------------------------------------
+                 */
+                @if(session('toast'))
+                    const sessionToast = @json(session('toast'));
+
+                    showToast(
+                        sessionToast.type || 'info',
+                        sessionToast.message || 'Notification'
+                    );
+                @endif
+
+
+                                                            /*
+                                                             * ------------------------------------------------------------
+                                                             * Company form loading state
+                                                             * ------------------------------------------------------------
+                                                             */
+                                                            const companyForm =
+                    document.getElementById('companyForm');
+
+                if (companyForm) {
+
+                    companyForm.addEventListener('submit', function () {
+
+                        const button =
+                            companyForm.querySelector(
+                                'button[type="submit"]'
+                            );
+
+                        if (button) {
+
+                            button.disabled = true;
+
+                            button.innerHTML =
+                                '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                                'Saving...';
+                        }
+                    });
+                }
+
+            });
         </script>
     @endpush
 

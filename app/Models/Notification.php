@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
+    protected $table = 'notifications';
     protected $fillable = [
         'user_id',
         'type',
@@ -38,5 +39,9 @@ class Notification extends Model
                 'read_at' => now(),
             ]);
         }
+    }
+    public function getIsReadAttribute(): bool
+    {
+        return !is_null($this->read_at);
     }
 }

@@ -1,6 +1,10 @@
 /* ============================================================
    EMPLOYER HEADER - SMART GRADIENT BACKGROUND
    ============================================================ */
+.dashboard-wrapper {
+
+    max-width: 100% !important;
+}
 
 .dashboard-header {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -15,38 +19,7 @@
     transition: all 0.3s ease;
 }
 
-/* ✅ Animated Background Effect */
-.dashboard-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 400px;
-    height: 400px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    animation: headerFloat 8s ease-in-out infinite;
-    z-index: 0;
-}
 
-.dashboard-header::after {
-    content: '';
-    position: absolute;
-    bottom: -40%;
-    left: -10%;
-    width: 300px;
-    height: 300px;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 50%;
-    animation: headerFloat 10s ease-in-out infinite reverse;
-    z-index: 0;
-}
-
-@keyframes headerFloat {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(30px, -20px) scale(1.1); }
-    100% { transform: translate(0, 0) scale(1); }
-}
 
 /* ✅ Header Content - Above Background */
 .dashboard-header > .d-flex {
@@ -1046,7 +1019,7 @@
         .btn-primary {
             background: #11998e;
             border: none;
-            padding: 10px 24px;
+            padding: 10px 10px;
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -1532,6 +1505,218 @@
     transition: background 0.2s ease;
     cursor: pointer;
 }
+/* =========================================================
+   PROFESSIONAL NOTIFICATION ITEMS
+   ========================================================= */
+
+/* ✅ Main Container */
+.notification-item {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: #ffffff;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+/* ✅ Unread State - Light Background + Left Border */
+.notification-item.unread {
+    background: #f0fdfa;
+    border-left: 3px solid #11998e;
+}
+
+.notification-item.unread:hover {
+    background: #e6f9f5;
+}
+
+/* ✅ Hover Effect */
+.notification-item:hover {
+    background: #f8fafc;
+}
+
+.notification-item.unread:hover {
+    background: #e6f9f5;
+}
+
+/* =========================================================
+   NOTIFICATION HEADER - Icon + Title + Time (Same Line)
+   ========================================================= */
+
+.notification-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+/* ✅ Icon */
+.notification-item-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    background: #ecfdf5;
+    color: #11998e;
+    flex-shrink: 0;
+}
+
+/* ✅ Icon Color Variations */
+.notification-item-icon.success {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.notification-item-icon.error {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.notification-item-icon.warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.notification-item-icon.info {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.notification-item-icon.verification {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.notification-item-icon.verification_approved {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.notification-item-icon.verification_rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.notification-item-icon.fraud {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.notification-item-icon.suspended {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* ✅ Title - Truncate if too long */
+.notification-item-title {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ✅ Time - Right Corner, Small */
+.notification-item-time {
+    font-size: 10px;
+    color: #94a3b8;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================================================
+   NOTIFICATION MESSAGE - Below Header
+   ========================================================= */
+
+.notification-item-message {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #64748b;
+    padding-left: 42px;  /* ✅ Align with icon position */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* =========================================================
+   UNREAD INDICATOR - Side Border
+   ========================================================= */
+
+.notification-item.unread .notification-item-title {
+    color: #0f172a;
+}
+
+.notification-item.unread .notification-item-message {
+    color: #334155;
+}
+
+.notification-item.unread .notification-item-time {
+    color: #11998e;
+    font-weight: 500;
+}
+
+/* =========================================================
+   READ STATE - Slightly Dimmed
+   ========================================================= */
+
+.notification-item:not(.unread) .notification-item-title {
+    color: #475569;
+}
+
+.notification-item:not(.unread) .notification-item-message {
+    color: #94a3b8;
+}
+
+.notification-item:not(.unread) .notification-item-time {
+    color: #cbd5e1;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 576px) {
+    .notification-item {
+        padding: 12px 14px;
+    }
+
+    .notification-item-header {
+        gap: 8px;
+    }
+
+    .notification-item-icon {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 11px;
+    }
+
+    .notification-item-title {
+        font-size: 12px;
+    }
+
+    .notification-item-message {
+        font-size: 12px;
+        padding-left: 36px;
+        -webkit-line-clamp: 2;
+    }
+
+    .notification-item-time {
+        font-size: 9px;
+    }
+}
 
 .employer-notification-wrapper .notif-item:hover {
     background: #f8fafc;
@@ -1808,4 +1993,357 @@
 
 
 }
+ /* ✅ Image Upload */
+        .image-upload-wrapper {
+            position: relative;
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
+        .image-upload-wrapper:hover {
+            border-color: #11998e;
+            background: #f8fafc;
+        }
+
+        .image-upload-wrapper .image-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .image-upload-wrapper .image-preview .preview-image {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 8px;
+            object-fit: contain;
+            display: none;
+        }
+
+        .image-upload-wrapper .image-preview .preview-image.show {
+            display: block;
+        }
+
+        .image-upload-wrapper .image-preview .placeholder-icon {
+            color: #94a3b8;
+            opacity: 0.5;
+        }
+
+        .image-upload-wrapper .image-preview .placeholder-text {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .image-upload-wrapper .remove-image-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .image-upload-wrapper .remove-image-btn:hover {
+            background: #ef4444;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .image-upload-wrapper .remove-image-btn.show {
+            display: flex;
+        }
+
+        .image-upload-wrapper input[type="file"] {
+            display: none;
+        }
+
+        /* ✅ Completion Progress */
+        .completion-progress {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid #eef2f6;
+            margin-bottom: 24px;
+        }
+
+        .completion-progress .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .completion-progress .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            transition: width 0.8s ease;
+        }
+
+        .completion-progress .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .completion-progress .progress-label .percentage {
+            font-weight: 700;
+            color: #11998e;
+            font-size: 18px;
+        }
+
+        .completion-progress .progress-label .text {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .completion-progress .progress-label .status {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .completion-progress .progress-label .status.complete {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .completion-progress .progress-label .status.incomplete {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* ✅ Responsive */
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 16px;
+            }
+
+            .image-upload-wrapper {
+                min-height: 120px;
+                padding: 16px;
+            }
+
+            .image-upload-wrapper .image-preview .preview-image {
+                max-height: 100px;
+            }
+
+            .completion-progress .progress-label {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-section {
+                padding: 12px;
+            }
+
+            .image-upload-wrapper {
+                min-height: 100px;
+                padding: 12px;
+            }
+
+            .image-upload-wrapper .image-preview .preview-image {
+                max-height: 80px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .d-flex.gap-2 {
+                flex-direction: column;
+            }
+        }
+
+.company-verification-status-wrapper {
+    width: 100%;
+}
+
+.company-verification-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid;
+}
+
+.company-verification-notice.success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.company-verification-notice.warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.company-verification-notice.danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.company-verification-notice.info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+
+.company-verification-notice .notice-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.75);
+    font-size: 17px;
+}
+
+.company-verification-notice .notice-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.company-verification-notice .notice-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.company-verification-notice .notice-message {
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.company-verification-notice .notice-reason {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,.7);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.company-verification-notice .notice-help {
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: .85;
+}
+
+.company-verification-notice .notice-meta {
+    margin-top: 7px;
+    font-size: 11px;
+    opacity: .75;
+
+}
+
+/* ============================================================
+   DELETE ALL BUTTON - INSPECT FIX
+   ============================================================ */
+
+/* ✅ Force button to be on top */
+.employer-delete-all-btn,
+#employerDeleteAll {
+    position: relative !important;
+    z-index: 999999 !important;      /* ✅ Highest z-index */
+    pointer-events: auto !important;  /* ✅ Always clickable */
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    opacity: 1 !important;
+    isolation: isolate !important;    /* ✅ Prevent parent interference */
+}
+
+/* ✅ Hover effect */
+.employer-delete-all-btn:hover:not(:disabled),
+#employerDeleteAll:hover:not(:disabled) {
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    border-color: #dc2626 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* ✅ Processing state - Keep clickable */
+.employer-delete-all-btn[data-delete-all-processing="true"],
+#employerDeleteAll[data-delete-all-processing="true"] {
+    opacity: 0.6 !important;
+    cursor: wait !important;
+    pointer-events: auto !important;  /* ✅ Don't block */
+}
+
+/* ✅ Disabled state */
+.employer-delete-all-btn:disabled,
+#employerDeleteAll:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+/* ✅ Ensure parent containers don't capture clicks */
+.card-header {
+    position: relative !important;
+    z-index: 10 !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+}
+
+.card-header .d-flex {
+    position: relative !important;
+    z-index: 20 !important;
+    pointer-events: auto !important;
+}
+
+.card-header .d-flex.gap-2.flex-wrap {
+    position: relative !important;
+    z-index: 30 !important;
+    pointer-events: auto !important;
+}
+
+/* ✅ Force button container to be clickable */
+.card-header .d-flex .btn {
+    position: relative !important;
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* ✅ Override any parent that might block */
+.dashboard-header {
+    overflow: visible !important;
+    pointer-events: auto !important;
+}

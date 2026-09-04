@@ -283,4 +283,46 @@
 
     </div>
 
+    @push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.verification-action-form')
+        .forEach(function (form) {
+
+            form.addEventListener('submit', function () {
+
+                const button =
+                    form.querySelector('.verification-submit-btn');
+
+                if (!button) {
+                    return;
+                }
+
+                button.disabled = true;
+
+                const isReject =
+                    form.querySelector('textarea[name="reason"]');
+
+                if (isReject) {
+
+                    button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                        'Rejecting...';
+
+                } else {
+
+                    button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                        'Approving...';
+                }
+
+            });
+
+        });
+
+});
+</script>
+@endpush
+
 @endsection

@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\Company;
 
 use App\Services\NotificationService;
-use App\Notifications\CompanyNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -281,78 +280,109 @@ class CompanyProfileController extends Controller
 
     public function verify()
     {
-        $user = auth()->user();
-        $company = $user->company;
+        try {
 
-        if (!$company) {
+            $user = auth()->user();
+            $company = $user->company;
+
+            if (!$company) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Company not found.',
+                ], 404);
+            }
+
+            if (!$company->is_complete) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please complete your company profile first.',
+                ], 422);
+            }
+            if ($company->is_verified) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your company is already verified.',
+                ], 422);
+            }
+
+            if ($company->is_suspended) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This company account is currently suspended.',
+                ], 422);
+            }
+
+            if ($company->is_fraud) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This company has been flagged for fraud.',
+                ], 422);
+            }
+
+            /*
+             * Prevent duplicate requests.
+             */
+            if (
+                isset($company->verification_status) &&
+                $company->verification_status === 'pending'
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your verification request is already pending.',
+                ], 422);
+            }
+
+            /*
+             * Update verification status.
+             */
+            $company->update([
+                'verification_status' => 'pending',
+                'verification_requested_at' => now(),
+            ]);
+
+            /*
+             * Admin notification.
+             */
+            NotificationService::sendToAdmins(
+                'company_verification',
+                'New Company Verification Request',
+                $company->name . ' has submitted a company verification request.',
+                route('admin.company-verifications.show', $company),
+                'shield-alt'
+            );
+
+            /*
+             * Employer confirmation notification.
+             */
+            NotificationService::send(
+                $user,
+                'company_verification',
+                'Verification Request Submitted',
+                'Your company verification request has been submitted successfully and is waiting for admin review.',
+                route('employer.company-profile.edit'),
+                'shield-alt'
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Verification request submitted successfully! Admin will review your company.',
+            ]);
+        } catch (\Throwable $e) {
+
+            \Log::error('Company verification request failed', [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage(),
+            ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Company not found.',
-            ], 404);
+                'message' => 'Unable to submit verification request. Please try again.',
+            ], 500);
         }
-
-        if (!$company->is_complete) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Please complete your company profile first.',
-            ], 422);
-        }
-
-        if ($company->is_suspended) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'This company account is currently suspended.',
-            ], 422);
-        }
-
-        if ($company->is_fraud) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'This company has been flagged for fraud.',
-            ], 422);
-        }
-
-        if ($company->verification_status === 'pending') {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Verification request is already pending.',
-            ], 422);
-        }
-
-        if ($company->verification_status === 'verified') {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Company is already verified.',
-            ], 422);
-        }
-
-        $company->update([
-            'verification_status' => 'pending',
-            'verification_requested_at' => now(),
-            'verification_rejection_reason' => null,
-        ]);
-
-        /*
-         * Notify all admins.
-         */
-        $this->notificationService->sendToAdmins(
-            'verification',
-            'New Company Verification Request',
-            $company->name . ' has requested company verification.',
-            route('admin.companies.show', $company->id),
-            'shield-alt'
-        );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Verification request submitted successfully. Our admin team will review your company.',
-        ]);
     }
 
     public function checkProfileComplete()

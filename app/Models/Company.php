@@ -4,6 +4,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -43,6 +44,7 @@ class Company extends Model
         'verified_at',
         'verified_by',
         'verification_rejection_reason',
+        'verification_admin_note',
         'is_suspended',
         'is_fraud',
         'fraud_reason',
@@ -153,6 +155,7 @@ class Company extends Model
             '11-50' => '11-50 employees',
             '51-200' => '51-200 employees',
             '201-500' => '201-500 employees',
+            '501-1000' => '501-1000 employees',
             '500+' => '500+ employees',
         ];
         return $sizes[$this->company_size] ?? $this->company_size ?? 'Not specified';
@@ -179,10 +182,14 @@ class Company extends Model
             'address',
             'description',
             'logo',
+            'cover_image',
             'industry',
             'company_size',
             'founded_year',
-            'headquarters'
+            'headquarters',
+            'ntn_number',
+            'secp_number',
+            'business_license'
         ];
         $filled = 0;
         foreach ($fields as $field) {
@@ -217,4 +224,70 @@ class Company extends Model
                 ->orWhere('industry', 'LIKE', "%{$term}%");
         });
     }
+
+    /**
+     * Get verification status badge
+     */
+    public function getVerificationBadgeAttribute(): string
+    {
+        return match ($this->verification_status) {
+            'verified' => '<span class="badge bg-success">Verified</span>',
+            'pending' => '<span class="badge bg-warning text-dark">Pending</span>',
+            'rejected' => '<span class="badge bg-danger">Rejected</span>',
+            default => '<span class="badge bg-secondary">Unverified</span>',
+        };
+    }
+
+    /**
+     * Get all audit logs for this company
+     */
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(CompanyAuditLog::class)->latest();
+    }
+
+    /**
+     * Get latest audit log
+     */
+    public function latestAuditLog(): ?CompanyAuditLog
+    {
+        return $this->auditLogs()->first();
+    }
+
+    /**
+     * Log an admin action with full audit trail
+     */
+    public function logAdminAction(
+        string $action,
+        ?string $reason = null,
+        ?string $adminNote = null,
+        ?string $ticketNumber = null,
+        array $metadata = []
+    ): CompanyAuditLog {
+        // Get current admin
+        $admin = auth()->user();
+
+        // Generate ticket number if not provided
+        $ticketNumber = $ticketNumber ?? CompanyAuditLog::generateTicketNumber();
+
+        return CompanyAuditLog::create([
+            'company_id' => $this->id,
+            'user_id' => $admin?->id,
+            'action' => $action,
+            'status_before' => $this->verification_status,
+            'status_after' => $this->verification_status, // Will be updated after
+            'reason' => $reason,
+            'admin_note' => $adminNote,
+            'ticket_number' => $ticketNumber,
+            'metadata' => array_merge($metadata, [
+                'company_name' => $this->name,
+                'admin_name' => $admin?->name,
+                'admin_email' => $admin?->email,
+            ]),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+    }
+
+
 }
