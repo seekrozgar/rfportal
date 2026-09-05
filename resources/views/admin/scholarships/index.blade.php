@@ -5,8 +5,6 @@
 @section('page-title', 'Scholarships')
 @section('page-subtitle', 'Manage scholarship opportunities')
 
-
-
 @section('content')
     <div class="container-fluid px-4">
         <div class="row">
@@ -20,7 +18,7 @@
                                     <i class="fas fa-graduation-cap"></i>
                                 </div>
                                 <div class="stats-info">
-                                    <div class="stats-number">{{ $totalScholarships }}</div>
+                                    <div class="stats-number">{{ $totalScholarships ?? 0 }}</div>
                                     <div class="stats-label">Total</div>
                                 </div>
                             </div>
@@ -36,7 +34,7 @@
                                     <i class="fas fa-check-circle"></i>
                                 </div>
                                 <div class="stats-info">
-                                    <div class="stats-number">{{ $publishedCount }}</div>
+                                    <div class="stats-number">{{ $publishedCount ?? 0 }}</div>
                                     <div class="stats-label">Published</div>
                                 </div>
                             </div>
@@ -52,7 +50,7 @@
                                     <i class="fas fa-clock"></i>
                                 </div>
                                 <div class="stats-info">
-                                    <div class="stats-number">{{ $upcomingCount }}</div>
+                                    <div class="stats-number">{{ $upcomingCount ?? 0 }}</div>
                                     <div class="stats-label">Upcoming</div>
                                 </div>
                             </div>
@@ -68,7 +66,7 @@
                                     <i class="fas fa-exclamation-circle"></i>
                                 </div>
                                 <div class="stats-info">
-                                    <div class="stats-number">{{ $expiredCount }}</div>
+                                    <div class="stats-number">{{ $expiredCount ?? 0 }}</div>
                                     <div class="stats-label">Expired</div>
                                 </div>
                             </div>
@@ -84,7 +82,7 @@
                                     <i class="fas fa-file-alt"></i>
                                 </div>
                                 <div class="stats-info">
-                                    <div class="stats-number">{{ $draftCount }}</div>
+                                    <div class="stats-number">{{ $draftCount ?? 0 }}</div>
                                     <div class="stats-label">Drafts</div>
                                 </div>
                             </div>
@@ -214,9 +212,9 @@
                                             </td>
                                             <td>
                                                 <div class="deadline-info">
-                                                    <strong>{{ $item->formatted_deadline }}</strong>
+                                                    <strong>{{ $item->formatted_deadline ?? 'N/A' }}</strong>
                                                     @php
-                                                        $daysRemaining = $item->days_remaining;
+                                                        $daysRemaining = $item->days_remaining ?? 0;
                                                     @endphp
                                                     @if($daysRemaining > 0)
                                                         <br>
@@ -231,23 +229,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                @if($item->is_draft)
-                                                    <span class="status-badge status-draft">
-                                                        <i class="fas fa-file-alt"></i> Draft
-                                                    </span>
-                                                @elseif($item->is_published && !$item->is_deadline_passed)
-                                                    <span class="status-badge status-completed">
-                                                        <i class="fas fa-check-circle"></i> Active
-                                                    </span>
-                                                @elseif($item->is_published && $item->is_deadline_passed)
-                                                    <span class="status-badge status-expired">
-                                                        <i class="fas fa-clock"></i> Expired
-                                                    </span>
-                                                @else
-                                                    <span class="status-badge status-pending">
-                                                        <i class="fas fa-clock"></i> Pending
-                                                    </span>
-                                                @endif
+                                                {!! $item->status_badge !!}
                                             </td>
                                             <td>
                                                 @php
@@ -313,71 +295,71 @@
                             </table>
                         </div>
                     </div>
-                    {{-- ✅ Improved Pagination --}}
-        <div class="pagination-wrapper mt-3">
-            @if ($scholarships->hasPages())
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        {{-- Previous Page Link --}}
-                        @if ($scholarships->onFirstPage())
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
-                                </span>
-                            </li>
-                        @else
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $scholarships->previousPageUrl() }}" rel="prev">
-                                    <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
-                                </a>
-                            </li>
-                        @endif
-
-                        {{-- Pagination Elements --}}
-                        @foreach ($scholarships->links()->elements as $element)
-                            @if (is_string($element))
-                                <li class="page-item disabled">
-                                    <span class="page-link">{{ $element }}</span>
-                                </li>
-                            @endif
-
-                            @if (is_array($element))
-                                @foreach ($element as $page => $url)
-                                    @if ($page == $scholarships->currentPage())
-                                        <li class="page-item active" aria-current="page">
-                                            <span class="page-link">{{ $page }}</span>
+                    {{-- Pagination --}}
+                    <div class="pagination-wrapper mt-3">
+                        @if ($scholarships->hasPages())
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    {{-- Previous Page Link --}}
+                                    @if ($scholarships->onFirstPage())
+                                        <li class="page-item disabled">
+                                            <span class="page-link">
+                                                <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                            </span>
                                         </li>
                                     @else
                                         <li class="page-item">
-                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                            <a class="page-link" href="{{ $scholarships->previousPageUrl() }}" rel="prev">
+                                                <i class="fas fa-chevron-left" style="font-size: 11px;"></i>
+                                            </a>
                                         </li>
                                     @endif
-                                @endforeach
-                            @endif
-                        @endforeach
 
-                        {{-- Next Page Link --}}
-                        @if ($scholarships->hasMorePages())
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $scholarships->nextPageUrl() }}" rel="next">
-                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
-                                </a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
-                                </span>
-                            </li>
+                                    {{-- Pagination Elements --}}
+                                    @foreach ($scholarships->links()->elements as $element)
+                                        @if (is_string($element))
+                                            <li class="page-item disabled">
+                                                <span class="page-link">{{ $element }}</span>
+                                            </li>
+                                        @endif
+
+                                        @if (is_array($element))
+                                            @foreach ($element as $page => $url)
+                                                @if ($page == $scholarships->currentPage())
+                                                    <li class="page-item active" aria-current="page">
+                                                        <span class="page-link">{{ $page }}</span>
+                                                    </li>
+                                                @else
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+
+                                    {{-- Next Page Link --}}
+                                    @if ($scholarships->hasMorePages())
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $scholarships->nextPageUrl() }}" rel="next">
+                                                <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                            </a>
+                                        </li>
+                                    @else
+                                        <li class="page-item disabled">
+                                            <span class="page-link">
+                                                <i class="fas fa-chevron-right" style="font-size: 11px;"></i>
+                                            </span>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </nav>
+
+                            <div class="pagination-info text-center text-muted small">
+                                Showing {{ $scholarships->firstItem() ?? 0 }} to {{ $scholarships->lastItem() ?? 0 }} of {{ $scholarships->total() }} entries
+                            </div>
                         @endif
-                    </ul>
-                </nav>
-
-                <div class="pagination-info text-center text-muted small">
-                    Showing {{ $scholarships->firstItem() ?? 0 }} to {{ $scholarships->lastItem() ?? 0 }} of {{ $scholarships->total() }} entries
-                </div>
-            @endif
-        </div>
+                    </div>
                 </div>
             </div>
         </div>

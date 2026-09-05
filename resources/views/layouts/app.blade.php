@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', siteName() . ' - Find Your Dream Job')</title>
 
+    <title>
+    @hasSection('title')
+        @yield('title') - {{ siteName() }}
+    @else
+        {{ siteName() }} - {{ siteTagline() }}
+    @endif
+</title>
     @if(siteFavicon())
         <link rel="icon" type="image/png" href="{{ siteFavicon() }}">
     @endif
@@ -16,6 +22,9 @@
 
     {{-- Meta Tags for SEO --}}
     @yield('meta')
+    @if(!isset($metaDescription))
+    <meta name="description" content="{{ siteTagline() }} - Pakistan's leading job portal. Find jobs, post jobs, and build your career.">
+@endif
 </head>
 <body class="frontend-body">
 

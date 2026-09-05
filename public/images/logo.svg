@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#11998e"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#11998e"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon -->
+  <rect x="0" y="0" width="50" height="50" rx="12" fill="url(#logoGrad)"/>
+
+  <!-- Briefcase Icon -->
+  <rect x="15" y="18" width="20" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/>
+  <rect x="12" y="22" width="26" height="4" rx="1" fill="white" opacity="0.3"/>
+  <path d="M20 15C20 13.5 21.5 12 25 12C28.5 12 30 13.5 30 15" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Text -->
+  <text x="62" y="22" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" fill="url(#textGrad)" letter-spacing="-0.5">
+    Rozgar Finder
+  </text>
+  <text x="62" y="36" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="500" fill="#94a3b8" letter-spacing="0.5">
+    FIND YOUR DREAM JOB
+  </text>
+</svg>

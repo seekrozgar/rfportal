@@ -176,13 +176,22 @@ class ScholarshipController extends Controller
                 'contact_phone' => 'nullable|string|max:255',
                 'source_url' => 'nullable|url|max:255',
                 'source' => 'nullable|string|max:255',
-                'is_published' => 'boolean',
-                'is_draft' => 'boolean',
+                'status' => 'nullable|in:published,draft',  // ✅ FIX: Use status field
             ]);
 
+
             $validated['slug'] = Str::slug($request->title);
-            $validated['is_published'] = $request->has('is_published');
-            $validated['is_draft'] = $request->has('is_draft');
+
+            // ✅ FIX: Handle status from radio button
+    if ($request->has('status')) {
+        if ($request->status === 'published') {
+            $validated['is_published'] = true;
+            $validated['is_draft'] = false;
+        } else {
+            $validated['is_published'] = false;
+            $validated['is_draft'] = true;
+        }
+    }
 
             if ($request->hasFile('featured_image')) {
                 if ($scholarship->featured_image) {
@@ -245,28 +254,33 @@ class ScholarshipController extends Controller
         }
     }
 
-    public function toggleStatus(Scholarship $scholarship)
-    {
-        try {
-            $wasPublished = $scholarship->is_published;
-            $scholarship->update(['is_published' => !$scholarship->is_published]);
+    /**
+ * Toggle status (Publish/Unpublish)
+ */
+public function toggleStatus($id)
+{
+    $scholarship = Scholarship::findOrFail($id);
 
-            // ✅ Send notification if newly published
-            if (!$wasPublished && $scholarship->is_published) {
-                $this->sendScholarshipNotifications([$scholarship]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Status updated successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 422);
-        }
+    // ✅ FIX: Toggle between published and draft
+    if ($scholarship->is_published) {
+        $scholarship->update([
+            'is_published' => false,
+            'is_draft' => true
+        ]);
+        $message = 'Scholarship unpublished successfully.';
+    } else {
+        $scholarship->update([
+            'is_published' => true,
+            'is_draft' => false
+        ]);
+        $message = 'Scholarship published successfully.';
     }
+
+    return response()->json([
+        'success' => true,
+        'message' => $message
+    ]);
+}
 
     // ============================================================
     // ✅ RSS FEED SCRAPING WITH MULTIPLE SOURCES

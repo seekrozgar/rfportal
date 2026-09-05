@@ -82,11 +82,6 @@
 
         .form-control.is-invalid {
             border-color: #dc3545 !important;
-            padding-right: calc(1.5em + 0.75rem);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right calc(0.375em + 0.1875rem) center;
-            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
         }
 
         .ck-editor__editable {
@@ -111,6 +106,57 @@
 
         .alert ul li {
             font-size: 14px;
+        }
+
+        /* ✅ FIX: Status Radio Buttons */
+        .status-radio-group {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            padding-top: 4px;
+        }
+
+        .status-radio-group .form-check {
+            margin-bottom: 0;
+        }
+
+        .status-radio-group .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .status-radio-group .form-check-input:checked {
+            background-color: #11998e;
+            border-color: #11998e;
+        }
+
+        .status-radio-group .form-check-label {
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding-left: 4px;
+        }
+
+        .status-radio-group .form-check-label.text-success {
+            color: #11998e;
+        }
+
+        .status-radio-group .form-check-label.text-secondary {
+            color: #6c757d;
+        }
+
+        .status-radio-group .form-check-input:checked + .form-check-label.text-success {
+            color: #11998e;
+        }
+
+        .status-radio-group .form-check-input:checked + .form-check-label.text-secondary {
+            color: #11998e;
+        }
+
+        .status-radio-group .form-check-input:checked ~ .form-check-label {
+            font-weight: 700;
         }
     </style>
 @endpush
@@ -139,7 +185,7 @@
                             </div>
                         @endif
 
-                        <form id="scholarshipForm" action="{{ route('admin.scholarships.update', $scholarship) }}"
+                        <form id="scholarshipForm" action="{{ route('admin.scholarships.update', $scholarship->id) }}"
                             method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
@@ -147,8 +193,7 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group mb-3">
-                                        <label class="form-label fw-semibold">Title <span
-                                                class="text-danger">*</span></label>
+                                        <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
                                         <input type="text" name="title" id="title"
                                             class="form-control @error('title') is-invalid @enderror"
                                             placeholder="Enter scholarship title"
@@ -156,7 +201,6 @@
                                         @error('title')
                                             <div class="invalid-feedback show">{{ $message }}</div>
                                         @enderror
-                                        <div class="invalid-feedback" id="titleError">Title is required</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -168,8 +212,6 @@
                                         @error('deadline')
                                             <div class="invalid-feedback show">{{ $message }}</div>
                                         @enderror
-                                        <div class="invalid-feedback" id="deadlineError">Deadline cannot be in the past
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -208,13 +250,11 @@
                                         <select name="degree_level"
                                             class="form-select @error('degree_level') is-invalid @enderror">
                                             <option value="">Select Degree Level</option>
-                                            <option value="Bachelor" {{ old('degree_level', $scholarship->degree_level) == 'Bachelor' ? 'selected' : '' }}>Bachelor
-                                            </option>
+                                            <option value="Bachelor" {{ old('degree_level', $scholarship->degree_level) == 'Bachelor' ? 'selected' : '' }}>Bachelor</option>
                                             <option value="Master" {{ old('degree_level', $scholarship->degree_level) == 'Master' ? 'selected' : '' }}>Master</option>
                                             <option value="M.Phil" {{ old('degree_level', $scholarship->degree_level) == 'M.Phil' ? 'selected' : '' }}>M.Phil</option>
                                             <option value="PhD" {{ old('degree_level', $scholarship->degree_level) == 'PhD' ? 'selected' : '' }}>PhD</option>
-                                            <option value="Post Doc" {{ old('degree_level', $scholarship->degree_level) == 'Post Doc' ? 'selected' : '' }}>Post Doc
-                                            </option>
+                                            <option value="Post Doc" {{ old('degree_level', $scholarship->degree_level) == 'Post Doc' ? 'selected' : '' }}>Post Doc</option>
                                         </select>
                                         @error('degree_level')
                                             <div class="invalid-feedback show">{{ $message }}</div>
@@ -227,14 +267,10 @@
                                         <select name="scholarship_type"
                                             class="form-select @error('scholarship_type') is-invalid @enderror">
                                             <option value="">Select Type</option>
-                                            <option value="Fully Funded" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Fully Funded' ? 'selected' : '' }}>Fully
-                                                Funded</option>
-                                            <option value="Partial Funded" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Partial Funded' ? 'selected' : '' }}>
-                                                Partial Funded</option>
-                                            <option value="Tuition Waiver" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Tuition Waiver' ? 'selected' : '' }}>
-                                                Tuition Waiver</option>
-                                            <option value="Stipend" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Stipend' ? 'selected' : '' }}>Stipend
-                                            </option>
+                                            <option value="Fully Funded" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Fully Funded' ? 'selected' : '' }}>Fully Funded</option>
+                                            <option value="Partial Funded" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Partial Funded' ? 'selected' : '' }}>Partial Funded</option>
+                                            <option value="Tuition Waiver" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Tuition Waiver' ? 'selected' : '' }}>Tuition Waiver</option>
+                                            <option value="Stipend" {{ old('scholarship_type', $scholarship->scholarship_type) == 'Stipend' ? 'selected' : '' }}>Stipend</option>
                                         </select>
                                         @error('scholarship_type')
                                             <div class="invalid-feedback show">{{ $message }}</div>
@@ -271,36 +307,35 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Apply Link (URL)</label>
-                                        <input type="url" name="apply_link"
+                                        <input type="url" name="apply_link" id="apply_link"
                                             class="form-control @error('apply_link') is-invalid @enderror"
                                             placeholder="https://example.com/apply"
                                             value="{{ old('apply_link', $scholarship->apply_link) }}">
                                         @error('apply_link')
                                             <div class="invalid-feedback show">{{ $message }}</div>
                                         @enderror
-                                        <div class="invalid-feedback" id="applyLinkError">Please enter a valid URL</div>
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- ✅ Description with CKEditor --}}
+                            {{-- Description with CKEditor --}}
                             <div class="form-group mb-3">
                                 <label class="form-label fw-semibold">Description</label>
                                 <textarea name="description" id="descriptionEditor"
-                                    class="form-control ckeditor5 @error('description') is-invalid @enderror"
+                                    class="form-control @error('description') is-invalid @enderror"
                                     placeholder="Write scholarship description here...">{{ old('description', $scholarship->description) }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback show">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            {{-- ✅ Eligibility & Benefits --}}
+                            {{-- Eligibility & Benefits --}}
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Eligibility Criteria</label>
                                         <textarea name="eligibility" id="eligibilityEditor"
-                                            class="form-control ckeditor5 @error('eligibility') is-invalid @enderror"
+                                            class="form-control @error('eligibility') is-invalid @enderror"
                                             placeholder="List eligibility criteria...">{{ old('eligibility', $scholarship->eligibility) }}</textarea>
                                         @error('eligibility')
                                             <div class="invalid-feedback show">{{ $message }}</div>
@@ -311,7 +346,7 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Benefits</label>
                                         <textarea name="benefits" id="benefitsEditor"
-                                            class="form-control ckeditor5 @error('benefits') is-invalid @enderror"
+                                            class="form-control @error('benefits') is-invalid @enderror"
                                             placeholder="List benefits...">{{ old('benefits', $scholarship->benefits) }}</textarea>
                                         @error('benefits')
                                             <div class="invalid-feedback show">{{ $message }}</div>
@@ -325,7 +360,7 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Required Documents</label>
                                         <textarea name="required_documents" id="documentsEditor"
-                                            class="form-control ckeditor5 @error('required_documents') is-invalid @enderror"
+                                            class="form-control @error('required_documents') is-invalid @enderror"
                                             placeholder="List required documents...">{{ old('required_documents', $scholarship->required_documents) }}</textarea>
                                         @error('required_documents')
                                             <div class="invalid-feedback show">{{ $message }}</div>
@@ -362,8 +397,6 @@
                                             @error('featured_image')
                                                 <div class="invalid-feedback show">{{ $message }}</div>
                                             @enderror
-                                            <div class="invalid-feedback" id="imageError">Image size must be less than 2MB
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -387,8 +420,7 @@
                                         <label class="form-label fw-semibold">Source</label>
                                         <select name="source" class="form-select @error('source') is-invalid @enderror">
                                             <option value="">Select Source</option>
-                                            <option value="propakistani" {{ old('source', $scholarship->source) == 'propakistani' ? 'selected' : '' }}>Propakistani
-                                            </option>
+                                            <option value="propakistani" {{ old('source', $scholarship->source) == 'propakistani' ? 'selected' : '' }}>Propakistani</option>
                                             <option value="official" {{ old('source', $scholarship->source) == 'official' ? 'selected' : '' }}>Official</option>
                                             <option value="other" {{ old('source', $scholarship->source) == 'other' ? 'selected' : '' }}>Other</option>
                                         </select>
@@ -403,15 +435,13 @@
                                 <div class="col-md-4">
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Contact Email</label>
-                                        <input type="email" name="contact_email"
+                                        <input type="email" name="contact_email" id="contact_email"
                                             class="form-control @error('contact_email') is-invalid @enderror"
                                             placeholder="scholarships@example.com"
                                             value="{{ old('contact_email', $scholarship->contact_email) }}">
                                         @error('contact_email')
                                             <div class="invalid-feedback show">{{ $message }}</div>
                                         @enderror
-                                        <div class="invalid-feedback" id="emailError">Please enter a valid email address
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -427,21 +457,31 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-check mb-3 mt-4">
-                                        <div>
-                                            <input type="checkbox" name="is_published" class="form-check-input"
-                                                id="isPublished" value="1" {{ old('is_published', $scholarship->is_published) ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="isPublished">
-                                                <i class="fas fa-check-circle text-success"></i> Publish
-                                            </label>
+                                    {{-- ✅ FIX: Radio Buttons for Status --}}
+                                    <div class="form-group mb-3">
+                                        <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                                        <div class="status-radio-group">
+                                            <div class="form-check">
+                                                <input type="radio" name="status" id="statusPublished"
+                                                    class="form-check-input" value="published"
+                                                    {{ old('status', $scholarship->is_published ? 'published' : 'draft') == 'published' ? 'checked' : '' }}>
+                                                <label class="form-check-label text-success" for="statusPublished">
+                                                    <i class="fas fa-check-circle me-1"></i> Published
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" name="status" id="statusDraft"
+                                                    class="form-check-input" value="draft"
+                                                    {{ old('status', $scholarship->is_published ? 'published' : 'draft') == 'draft' ? 'checked' : '' }}>
+                                                <label class="form-check-label text-secondary" for="statusDraft">
+                                                    <i class="fas fa-file-alt me-1"></i> Draft
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="mt-2">
-                                            <input type="checkbox" name="is_draft" class="form-check-input" id="isDraft"
-                                                value="1" {{ old('is_draft', $scholarship->is_draft) ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="isDraft">
-                                                <i class="fas fa-file-alt text-info"></i> Save as Draft
-                                            </label>
-                                        </div>
+                                        <small class="text-muted d-block mt-1">Select one option: Published (visible) or Draft (hidden)</small>
+                                        @error('status')
+                                            <div class="invalid-feedback show">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -464,7 +504,8 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // ✅ Image Preview with Size Validation
+
+                // ✅ Image Preview
                 const preview = document.getElementById('imagePreview');
                 const fileInput = document.getElementById('featuredImage');
 
@@ -475,11 +516,9 @@
 
                     fileInput.addEventListener('change', function (e) {
                         const file = e.target.files[0];
-                        const imageError = document.getElementById('imageError');
                         if (file) {
                             if (file.size > 2 * 1024 * 1024) {
-                                imageError.style.display = 'block';
-                                fileInput.classList.add('is-invalid');
+                                alert('Image size must be less than 2MB');
                                 fileInput.value = '';
                                 preview.innerHTML = `
                                         <i class="fas fa-image fa-3x text-muted"></i>
@@ -487,8 +526,6 @@
                                     `;
                                 return;
                             }
-                            imageError.style.display = 'none';
-                            fileInput.classList.remove('is-invalid');
                             const reader = new FileReader();
                             reader.onload = function (e) {
                                 preview.innerHTML = `<img src="${e.target.result}" class="preview-image">`;
@@ -498,116 +535,75 @@
                     });
                 }
 
-                // ✅ Form Validation
+                // ✅ Form Validation - SIMPLE & WORKING
                 document.getElementById('scholarshipForm').addEventListener('submit', function (e) {
                     e.preventDefault();
 
-                    // Clear all previous errors
-                    document.querySelectorAll('.is-invalid').forEach(function (el) {
-                        el.classList.remove('is-invalid');
-                    });
-                    document.querySelectorAll('.invalid-feedback').forEach(function (el) {
-                        el.style.display = 'none';
-                        el.classList.remove('show');
-                    });
-                    document.querySelectorAll('.ck-editor__editable_inline').forEach(function (el) {
-                        el.classList.remove('is-invalid');
-                    });
-
                     let isValid = true;
 
-                    // ✅ Title
+                    // ✅ Title validation
                     const title = document.getElementById('title');
                     if (!title.value.trim()) {
                         title.classList.add('is-invalid');
-                        document.getElementById('titleError').style.display = 'block';
-                        document.getElementById('titleError').classList.add('show');
                         isValid = false;
+                    } else {
+                        title.classList.remove('is-invalid');
                     }
 
-                    // ✅ Deadline
-                    const deadline = document.getElementById('deadline');
-                    if (deadline.value) {
-                        const selectedDate = new Date(deadline.value);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        if (selectedDate < today) {
-                            deadline.classList.add('is-invalid');
-                            document.getElementById('deadlineError').style.display = 'block';
-                            document.getElementById('deadlineError').classList.add('show');
-                            isValid = false;
-                        }
-                    }
-
-                    // ✅ Description (CKEditor 5)
-                    const descEditor = document.querySelector('#descriptionEditor');
+                    // ✅ Description validation
+                    const descEditor = document.getElementById('descriptionEditor');
                     if (descEditor) {
                         const data = descEditor.value;
                         if (!data.trim() || data === '<p>&nbsp;</p>' || data === '<p><br></p>') {
                             descEditor.classList.add('is-invalid');
-                            const ckWrapper = descEditor.closest('.ck-editor__editable_inline');
-                            if (ckWrapper) {
-                                ckWrapper.classList.add('is-invalid');
-                            }
-                            // Show error for description
-                            const descError = document.querySelector('#descriptionEditor + .invalid-feedback') ||
-                                document.createElement('div');
-                            if (!descError.classList.contains('invalid-feedback')) {
-                                descError.className = 'invalid-feedback show';
-                                descError.style.display = 'block';
-                                descError.textContent = 'Description is required';
-                                descEditor.parentNode.insertBefore(descError, descEditor.nextSibling);
-                            }
                             isValid = false;
+                        } else {
+                            descEditor.classList.remove('is-invalid');
                         }
                     }
 
-                    // ✅ Apply Link
+                    // ✅ Apply Link validation
                     const applyLink = document.getElementById('apply_link');
-                    if (applyLink.value.trim()) {
+                    if (applyLink && applyLink.value.trim()) {
                         try {
                             new URL(applyLink.value.trim());
+                            applyLink.classList.remove('is-invalid');
                         } catch (e) {
                             applyLink.classList.add('is-invalid');
-                            document.getElementById('applyLinkError').style.display = 'block';
-                            document.getElementById('applyLinkError').classList.add('show');
                             isValid = false;
                         }
                     }
 
-                    // ✅ Email
+                    // ✅ Email validation
                     const contactEmail = document.getElementById('contact_email');
-                    if (contactEmail.value.trim()) {
+                    if (contactEmail && contactEmail.value.trim()) {
                         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!emailRegex.test(contactEmail.value.trim())) {
+                        if (emailRegex.test(contactEmail.value.trim())) {
+                            contactEmail.classList.remove('is-invalid');
+                        } else {
                             contactEmail.classList.add('is-invalid');
-                            document.getElementById('emailError').style.display = 'block';
-                            document.getElementById('emailError').classList.add('show');
                             isValid = false;
                         }
                     }
 
-                    // ✅ Image
-                    const imageInput = document.getElementById('featuredImage');
-                    if (imageInput.files.length > 0) {
-                        const file = imageInput.files[0];
-                        if (file.size > 2 * 1024 * 1024) {
-                            imageInput.classList.add('is-invalid');
-                            document.getElementById('imageError').style.display = 'block';
-                            document.getElementById('imageError').classList.add('show');
-                            isValid = false;
-                        }
+                    // ✅ Status validation (radio buttons)
+                    const statusPublished = document.getElementById('statusPublished');
+                    const statusDraft = document.getElementById('statusDraft');
+                    if (!statusPublished.checked && !statusDraft.checked) {
+                        // Both unchecked - default to draft
+                        statusDraft.checked = true;
                     }
 
                     if (isValid) {
-                        // Update CKEditor data
+                        // ✅ Remove any hidden CKEditor instances
                         if (typeof CKEDITOR !== 'undefined') {
                             for (let instance in CKEDITOR.instances) {
                                 CKEDITOR.instances[instance].updateElement();
                             }
                         }
-                        document.getElementById('scholarshipForm').submit();
+                        this.submit();
                     } else {
+                        // ✅ Scroll to first error
                         const firstError = document.querySelector('.is-invalid');
                         if (firstError) {
                             setTimeout(function () {

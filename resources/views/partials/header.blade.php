@@ -1,5 +1,5 @@
 <header class="site-header">
-    <div class="container-fluid px-4">  {{-- ✅ Full Width --}}
+    <div class="container-fluid px-4">
         <nav class="navbar navbar-expand-lg">
             {{-- Logo / Brand --}}
             <a class="navbar-brand" href="{{ route('home') }}">
@@ -10,9 +10,13 @@
                 @endif
             </a>
 
-            {{-- Mobile Toggle --}}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            {{-- ✅ Mobile Toggle with proper attributes --}}
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 

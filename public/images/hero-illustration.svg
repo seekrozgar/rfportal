@@ -52,5 +52,5 @@
   <circle cx="360" cy="340" r="4" fill="#11998e" opacity="0.3"/>
 
   <!-- Text Labels -->
-  <text x="250" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#11998e" font-weight="600">Find Your Dream Job</text>
+  <text x="250" y="370" text-anchor="middle" font-family="Open Sans, calibri" font-size="14" fill="#11998e" font-weight="600">Find Your Dream Job</text>
 </svg>

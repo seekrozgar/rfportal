@@ -198,4 +198,5 @@ class SiteHelper
 
         return json_encode($links);
     }
-}
+
+    }

@@ -10,11 +10,38 @@
                     with top employers across the country.
                 </p>
                 <div class="social-links">
-                    <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    @php
+                        // ✅ Get social links from SiteHelper or helper function
+                        $socialLinks = [];
+                        if (function_exists('socialLinks')) {
+                            $socialLinks = socialLinks();
+                        } elseif (class_exists('App\Helpers\SiteHelper')) {
+                            $socialLinks = \App\Helpers\SiteHelper::get('social_links', []);
+                        }
+
+                        // ✅ Decode if string
+                        if (is_string($socialLinks)) {
+                            $socialLinks = json_decode($socialLinks, true) ?? [];
+                        }
+                    @endphp
+
+                    @if(!empty($socialLinks) && is_array($socialLinks))
+                        @foreach($socialLinks as $platform => $url)
+                            @if($url)
+                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer"
+                                   class="social-link" aria-label="{{ ucfirst($platform) }}">
+                                    <i class="fab fa-{{ $platform }}"></i>
+                                </a>
+                            @endif
+                        @endforeach
+                    @else
+                        {{-- Default social links fallback --}}
+                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    @endif
                 </div>
             </div>
 
@@ -35,7 +62,6 @@
                 <ul class="footer-links">
                     <li><a href="{{ route('register') }}">Post a Job</a></li>
                     <li><a href="{{ route('register') }}">Find Talent</a></li>
-                    <li><a href="#">Pricing Plans</a></li>
                     <li><a href="#">Resources</a></li>
                 </ul>
             </div>
@@ -66,13 +92,15 @@
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start">
                     <p class="mb-0">
-                        &copy; {{ date('Y') }} {{ siteName() }}. All rights reserved.
+                        &copy; {{ date('Y') }}
+                        <span class="footer-company-name">{{ siteName() }}</span>.
+                        All rights reserved.
                     </p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <ul class="footer-bottom-links">
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="{{ route('privacy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ route('terms') }}">Terms of Service</a></li>
                         <li><a href="#">Cookies</a></li>
                     </ul>
                 </div>

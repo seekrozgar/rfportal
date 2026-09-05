@@ -245,3 +245,4 @@ if (!function_exists('isPaymentEnabled')) {
         return SiteHelper::isPaymentEnabled();
     }
 }
+
