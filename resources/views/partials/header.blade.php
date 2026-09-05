@@ -39,13 +39,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">
-                            <i class="fas fa-info-circle me-1"></i> About
+                        <a class="nav-link {{ request()->routeIs('scholarships.*') ? 'active' : '' }}" href="{{ route('scholarships.index') }}">
+                            <i class="fas fa-award me-1"></i> Scholarships
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">
-                            <i class="fas fa-envelope me-1"></i> Contact
+                        <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">
+                            <i class="fas fa-newspaper me-1"></i> News
                         </a>
                     </li>
                 </ul>

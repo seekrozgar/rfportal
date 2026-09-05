@@ -344,9 +344,10 @@
 
 
 {{-- ============================================================
-    5. EDUCATION & NEWS SECTION (Scholarships, Admissions, Results, News)
-    ============================================================ --}}
-<section class="education-section py-5">
+    EDUCATION SECTION - SCHOLARSHIPS, ADMISSIONS, RESULTS, NEWS
+    All 4 Sections with Professional Cards
+============================================================ --}}
+<section class="education-main-section py-5">
     <div class="container">
         <div class="section-header text-center">
             <span class="section-tag">
@@ -360,179 +361,304 @@
             </p>
         </div>
 
-        <div class="row g-4">
-            {{-- Scholarships --}}
-            <div class="col-lg-6 col-md-12">
-                <div class="education-card-wrapper">
-                    <div class="education-card-header">
-                        <h4 class="education-card-title">
-                            <i class="fas fa-award text-success me-2"></i> Scholarships
-                        </h4>
-                        <a href="{{ route('scholarships.index') }}" class="view-all-link">
-                            View All <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+        {{-- ============================================================
+            1. SCHOLARSHIPS SECTION
+        ============================================================ --}}
+        <div class="education-section-block">
+            <div class="section-block-header">
+                <div class="block-header-left">
+                    <div class="block-icon success">
+                        <i class="fas fa-award"></i>
                     </div>
-                    <div class="education-card-body">
-                        @if(isset($scholarships) && $scholarships->count() > 0)
-                            @foreach($scholarships as $scholarship)
-                                <a href="{{ route('scholarships.show', $scholarship->slug) }}" class="education-item">
-                                    <div class="education-item-icon">
-                                        <i class="fas fa-award text-success"></i>
-                                    </div>
-                                    <div class="education-item-content">
-                                        <h6 class="education-item-title">{{ $scholarship->title }}</h6>
-                                        <p class="education-item-meta">
-                                            <span><i class="fas fa-building"></i> {{ $scholarship->provider ?? $scholarship->university ?? 'N/A' }}</span>
-                                            @if($scholarship->amount)
-                                                <span><i class="fas fa-money-bill-wave"></i> {{ $scholarship->amount }}</span>
-                                            @endif
-                                            @if($scholarship->deadline)
-                                                <span><i class="fas fa-calendar-alt"></i> {{ $scholarship->deadline->format('d M Y') }}</span>
-                                            @endif
-                                            @if($scholarship->days_remaining > 0)
-                                                <span class="text-success"><i class="fas fa-clock"></i> {{ $scholarship->days_remaining }} days left</span>
-                                            @elseif($scholarship->days_remaining == 0 && $scholarship->deadline)
-                                                <span class="text-danger"><i class="fas fa-clock"></i> Today</span>
-                                            @endif
-                                        </p>
-                                    </div>
-                                    <span class="education-item-arrow">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            @endforeach
-                        @else
-                            <p class="text-muted text-center py-3">No scholarships available.</p>
-                        @endif
-                    </div>
+                    <h3 class="block-title">Scholarships</h3>
+                    <span class="block-count">{{ $scholarships->count() ?? 0 }}</span>
                 </div>
+                <a href="{{ route('scholarships.index') }}" class="block-view-all">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
 
-            {{-- Admissions --}}
-            <div class="col-lg-6 col-md-12">
-                <div class="education-card-wrapper">
-                    <div class="education-card-header">
-                        <h4 class="education-card-title">
-                            <i class="fas fa-university text-primary me-2"></i> Admissions
-                        </h4>
-                        <a href="{{ route('admissions.index') }}" class="view-all-link">
-                            View All <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                    <div class="education-card-body">
-                        @if(isset($admissions) && $admissions->count() > 0)
-                            @foreach($admissions as $admission)
-                                <a href="{{ route('admissions.show', $admission->slug) }}" class="education-item">
-                                    <div class="education-item-icon">
-                                        <i class="fas fa-university text-primary"></i>
-                                    </div>
-                                    <div class="education-item-content">
-                                        <h6 class="education-item-title">{{ $admission->title }}</h6>
-                                        <p class="education-item-meta">
-                                            <span><i class="fas fa-building"></i> {{ $admission->institution ?? 'N/A' }}</span>
-                                            <span><i class="fas fa-graduation-cap"></i> {{ Str::limit($admission->programs_offered ?? 'N/A', 30) }}</span>
-                                            @if($admission->last_date)
-                                                <span><i class="fas fa-calendar-alt"></i> {{ $admission->last_date->format('d M Y') }}</span>
-                                            @endif
-                                            @if($admission->days_remaining > 0)
-                                                <span class="text-success"><i class="fas fa-clock"></i> {{ $admission->days_remaining }} days left</span>
-                                            @elseif($admission->days_remaining == 0 && $admission->last_date)
-                                                <span class="text-danger"><i class="fas fa-clock"></i> Today</span>
-                                            @endif
-                                        </p>
-                                    </div>
-                                    <span class="education-item-arrow">
-                                        <i class="fas fa-chevron-right"></i>
+            <div class="row g-4">
+                @if(isset($scholarships) && $scholarships->count() > 0)
+                    @foreach($scholarships as $item)
+                        <div class="col-lg-3 col-md-6">
+                            <div class="education-card">
+                                @if($item->scholarship_type)
+                                    <span class="education-badge {{ strtolower($item->scholarship_type) == 'fully funded' ? 'badge-fully' : (strtolower($item->scholarship_type) == 'partially funded' ? 'badge-partial' : 'badge-other') }}">
+                                        {{ $item->scholarship_type }}
                                     </span>
+                                @endif
+                                <h5 class="education-card-title">{{ Str::limit($item->title, 45) }}</h5>
+                                <p class="education-card-subtitle">
+                                    <i class="fas fa-university"></i> {{ $item->university ?? $item->provider ?? 'N/A' }}
+                                </p>
+                                @if($item->country)
+                                    <p class="education-card-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ $item->country }}
+                                    </p>
+                                @endif
+                                <div class="education-card-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Application Type</span>
+                                        <span class="detail-value">Online</span>
+                                    </div>
+                                    @if($item->deadline)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Deadline</span>
+                                            <span class="detail-value {{ $item->days_remaining > 0 ? 'text-success' : 'text-danger' }}">
+                                                @if($item->days_remaining > 0)
+                                                    {{ $item->deadline->format('d M, Y') }}
+                                                @elseif($item->days_remaining == 0)
+                                                    Today
+                                                @else
+                                                    Expired
+                                                @endif
+                                            </span>
+                                        </div>
+                                    @endif
+                                    @if($item->amount)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Award Amount</span>
+                                            <span class="detail-value">{{ $item->amount }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <a href="{{ route('scholarships.show', $item->slug) }}" class="education-card-btn">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
-                            @endforeach
-                        @else
-                            <p class="text-muted text-center py-3">No admissions available.</p>
-                        @endif
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="col-12">
+                        <div class="education-empty">
+                            <i class="fas fa-award"></i>
+                            <p>No scholarships available</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            {{-- Results --}}
-            <div class="col-lg-6 col-md-12">
-                <div class="education-card-wrapper">
-                    <div class="education-card-header">
-                        <h4 class="education-card-title">
-                            <i class="fas fa-file-alt text-warning me-2"></i> Results
-                        </h4>
-                        <a href="{{ route('results.index') }}" class="view-all-link">
-                            View All <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                    <div class="education-card-body">
-                        @if(isset($results) && $results->count() > 0)
-                            @foreach($results as $result)
-                                <a href="{{ route('results.show', $result->slug) }}" class="education-item">
-                                    <div class="education-item-icon">
-                                        <i class="fas fa-file-alt text-warning"></i>
-                                    </div>
-                                    <div class="education-item-content">
-                                        <h6 class="education-item-title">{{ $result->title }}</h6>
-                                        <p class="education-item-meta">
-                                            <span><i class="fas fa-building"></i> {{ $result->institution ?? 'N/A' }}</span>
-                                            @if($result->exam_type)
-                                                <span><i class="fas fa-tag"></i> {{ $result->exam_type }}</span>
-                                            @endif
-                                            <span><i class="fas fa-calendar-alt"></i> {{ $result->formatted_date }}</span>
-                                        </p>
-                                    </div>
-                                    <span class="education-item-arrow">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            @endforeach
-                        @else
-                            <p class="text-muted text-center py-3">No results available.</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- News --}}
-            <div class="col-lg-6 col-md-12">
-                <div class="education-card-wrapper">
-                    <div class="education-card-header">
-                        <h4 class="education-card-title">
-                            <i class="fas fa-newspaper text-danger me-2"></i> News
-                        </h4>
-                        <a href="{{ route('news.index') }}" class="view-all-link">
-                            View All <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                    <div class="education-card-body">
-                        @if(isset($news) && $news->count() > 0)
-                            @foreach($news as $newsItem)
-                                <a href="{{ route('news.show', $newsItem->slug) }}" class="education-item">
-                                    <div class="education-item-icon">
-                                        <i class="fas fa-newspaper text-danger"></i>
-                                    </div>
-                                    <div class="education-item-content">
-                                        <h6 class="education-item-title">{{ $newsItem->title }}</h6>
-                                        <p class="education-item-meta">
-                                            @if($newsItem->source)
-                                                <span><i class="fas fa-link"></i> {{ $newsItem->source }}</span>
-                                            @endif
-                                            <span><i class="fas fa-user"></i> {{ $newsItem->author?->name ?? 'Admin' }}</span>
-                                            <span><i class="fas fa-calendar-alt"></i> {{ $newsItem->formatted_date }}</span>
-                                        </p>
-                                    </div>
-                                    <span class="education-item-arrow">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            @endforeach
-                        @else
-                            <p class="text-muted text-center py-3">No news available.</p>
-                        @endif
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
+
+        {{-- ============================================================
+            2. ADMISSIONS SECTION
+        ============================================================ --}}
+        <div class="education-section-block">
+            <div class="section-block-header">
+                <div class="block-header-left">
+                    <div class="block-icon primary">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3 class="block-title">Admissions</h3>
+                    <span class="block-count">{{ $admissions->count() ?? 0 }}</span>
+                </div>
+                <a href="{{ route('admissions.index') }}" class="block-view-all">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row g-4">
+                @if(isset($admissions) && $admissions->count() > 0)
+                    @foreach($admissions as $item)
+                        <div class="col-lg-3 col-md-6">
+                            <div class="education-card">
+                                @if($item->category)
+                                    <span class="education-badge badge-other">{{ $item->category }}</span>
+                                @endif
+                                <h5 class="education-card-title">{{ Str::limit($item->title, 45) }}</h5>
+                                <p class="education-card-subtitle">
+                                    <i class="fas fa-building"></i> {{ $item->institution ?? 'N/A' }}
+                                </p>
+                                @if($item->programs_offered)
+                                    <p class="education-card-location">
+                                        <i class="fas fa-graduation-cap"></i> {{ Str::limit($item->programs_offered, 25) }}
+                                    </p>
+                                @endif
+                                <div class="education-card-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Application Type</span>
+                                        <span class="detail-value">Online</span>
+                                    </div>
+                                    @if($item->last_date)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Deadline</span>
+                                            <span class="detail-value {{ $item->days_remaining > 0 ? 'text-success' : 'text-danger' }}">
+                                                @if($item->days_remaining > 0)
+                                                    {{ $item->last_date->format('d M, Y') }}
+                                                @elseif($item->days_remaining == 0)
+                                                    Today
+                                                @else
+                                                    Expired
+                                                @endif
+                                            </span>
+                                        </div>
+                                    @endif
+                                    @if($item->fee)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fee</span>
+                                            <span class="detail-value">{{ $item->fee }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <a href="{{ route('admissions.show', $item->slug) }}" class="education-card-btn">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="col-12">
+                        <div class="education-empty">
+                            <i class="fas fa-university"></i>
+                            <p>No admissions available</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- ============================================================
+            3. RESULTS SECTION
+        ============================================================ --}}
+        <div class="education-section-block">
+            <div class="section-block-header">
+                <div class="block-header-left">
+                    <div class="block-icon warning">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="block-title">Results</h3>
+                    <span class="block-count">{{ $results->count() ?? 0 }}</span>
+                </div>
+                <a href="{{ route('results.index') }}" class="block-view-all">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row g-4">
+                @if(isset($results) && $results->count() > 0)
+                    @foreach($results as $item)
+                        <div class="col-lg-3 col-md-6">
+                            <div class="education-card">
+                                @if($item->exam_type)
+                                    <span class="education-badge badge-other">{{ $item->exam_type }}</span>
+                                @endif
+                                <h5 class="education-card-title">{{ Str::limit($item->title, 45) }}</h5>
+                                <p class="education-card-subtitle">
+                                    <i class="fas fa-building"></i> {{ $item->institution ?? 'N/A' }}
+                                </p>
+                                @if($item->category)
+                                    <p class="education-card-location">
+                                        <i class="fas fa-tag"></i> {{ $item->category }}
+                                    </p>
+                                @endif
+                                <div class="education-card-details">
+                                    @if($item->result_date)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Result Date</span>
+                                            <span class="detail-value">{{ $item->result_date->format('d M, Y') }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="detail-item">
+                                        <span class="detail-label">Status</span>
+                                        <span class="detail-value text-success">Published</span>
+                                    </div>
+                                    @if($item->file_path)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Download</span>
+                                            <span class="detail-value">
+                                                <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank" class="text-primary">
+                                                    <i class="fas fa-file-pdf"></i> PDF
+                                                </a>
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <a href="{{ route('results.show', $item->slug) }}" class="education-card-btn">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="col-12">
+                        <div class="education-empty">
+                            <i class="fas fa-file-alt"></i>
+                            <p>No results available</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- ============================================================
+            4. NEWS SECTION
+        ============================================================ --}}
+        <div class="education-section-block">
+            <div class="section-block-header">
+                <div class="block-header-left">
+                    <div class="block-icon danger">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3 class="block-title">News</h3>
+                    <span class="block-count">{{ $news->count() ?? 0 }}</span>
+                </div>
+                <a href="{{ route('news.index') }}" class="block-view-all">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row g-4">
+                @if(isset($news) && $news->count() > 0)
+                    @foreach($news as $item)
+                        <div class="col-lg-3 col-md-6">
+                            <div class="education-card">
+                                @if($item->source)
+                                    <span class="education-badge badge-other">{{ $item->source }}</span>
+                                @endif
+                                <h5 class="education-card-title">{{ Str::limit($item->title, 45) }}</h5>
+                                <p class="education-card-subtitle">
+                                    <i class="fas fa-user"></i> {{ $item->author?->name ?? 'Admin' }}
+                                </p>
+                                @if($item->excerpt)
+                                    <p class="education-card-location">
+                                        <i class="fas fa-quote-left"></i> {{ Str::limit($item->excerpt, 40) }}
+                                    </p>
+                                @endif
+                                <div class="education-card-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Published</span>
+                                        <span class="detail-value">{{ $item->formatted_date }}</span>
+                                    </div>
+                                    @if($item->source)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Source</span>
+                                            <span class="detail-value">{{ $item->source }}</span>
+                                        </div>
+                                    @endif
+                                    @if($item->views_count)
+                                        <div class="detail-item">
+                                            <span class="detail-label">Views</span>
+                                            <span class="detail-value">{{ $item->views_count }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <a href="{{ route('news.show', $item->slug) }}" class="education-card-btn">
+                                    Read More <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="col-12">
+                        <div class="education-empty">
+                            <i class="fas fa-newspaper"></i>
+                            <p>No news available</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
     </div>
 </section>
 @endsection
